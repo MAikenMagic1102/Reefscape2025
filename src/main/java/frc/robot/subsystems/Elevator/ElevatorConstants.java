@@ -11,12 +11,23 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.util.Units;
+
 /** Add your docs here. */
     public class ElevatorConstants {
-    public static String busnameString = "rio";
-    public static int motorL = 1;
-    public static int motorR = 2;
-    public static TalonFXConfiguration Lconfig = new TalonFXConfiguration()
+    public static String bus = "rio";
+
+    public static int motorLID = 21;
+    public static int motorRID = 22;
+
+    public static double kElevatorGearing = 6.5;
+    public static double kCarriageMass = Units.lbsToKilograms(20);
+    public static double kElevatorDrumRadius = Units.inchesToMeters(1);
+    public static double kMinElevatorHeightMeters = Units.inchesToMeters(0);
+    public static double kMaxElevatorHeightMeters = Units.inchesToMeters(54.42);
+    public static double kStartingHeight = Units.inchesToMeters(0);
+
+    public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
                 .withSupplyCurrentLimit(20)
@@ -30,7 +41,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
         )
         .withFeedback(
             new FeedbackConfigs()
-                .withSensorToMechanismRatio(5.0)
+                .withSensorToMechanismRatio(6.5)
         );
     
 }
