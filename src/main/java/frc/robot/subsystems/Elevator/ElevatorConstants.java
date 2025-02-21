@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
@@ -16,15 +17,15 @@ import edu.wpi.first.math.util.Units;
 /** Add your docs here. */
     public class ElevatorConstants {
     public static String bus = "rio";
-    public static int motorLID = 1;
-    public static int motorRID = 2;
+    public static int motorLID = 21;
+    public static int motorRID = 22;
 
-    public static double elevatorGearing = 0;
-    public static double elevatorMass = Units.lbsToKilograms(0);
-    public static double elevatorPullyRadius = Units.inchesToMeters(0);
-    public static double elevatorMinHeightMeters = Units.inchesToMeters(0);
-    public static double elevatorMaxHeightMeters = Units.inchesToMeters(0);
-    public static double elevatorStartingHeightMeters = Units.inchesToMeters(0);
+    public static double elevatorGearing = 1/5.4;
+    public static double elevatorMass = Units.lbsToKilograms(10);
+    public static double elevatorPullyRadius = Units.inchesToMeters(1);
+    public static double elevatorMinHeightMeters = Units.inchesToMeters(1);
+    public static double elevatorMaxHeightMeters = Units.inchesToMeters(40);
+    public static double elevatorStartingHeightMeters = Units.inchesToMeters(1);
     public static double elevatorPullyCircum = Math.PI*2*ElevatorConstants.elevatorPullyRadius;
 
     public static double setHome = 0;
@@ -39,18 +40,20 @@ import edu.wpi.first.math.util.Units;
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(20)
-                .withStatorCurrentLimit(15)
+                .withSupplyCurrentLimit(30)
+                .withStatorCurrentLimit(35)
             
         )
         .withMotorOutput(
             new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
+                .withInverted(InvertedValue.Clockwise_Positive)
             
         )
         .withFeedback(
             new FeedbackConfigs()
-                .withSensorToMechanismRatio(5.0)
+                .withSensorToMechanismRatio(5.4)
         );
+
     
 }

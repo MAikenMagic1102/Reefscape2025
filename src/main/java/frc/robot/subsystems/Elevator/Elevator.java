@@ -42,8 +42,8 @@ public class Elevator extends SubsystemBase {
 
   /** Creates a new Elevator. */
   public Elevator() {
-    motorL = new TalonFX(ElevatorConstants.motorLID, ElevatorConstants.bus);
-    motorR = new TalonFX(ElevatorConstants.motorRID, ElevatorConstants.bus);
+    motorL = new TalonFX(ElevatorConstants.motorLID);
+    motorR = new TalonFX(ElevatorConstants.motorRID);
 
     motorR.setControl(new Follower(ElevatorConstants.motorLID, true)); 
 
@@ -57,12 +57,14 @@ public class Elevator extends SubsystemBase {
     if(!status.isOK()) {
       System.out.println("Could not apply configs, error code: " + status.toString());
     }
+    motorSim = motorL.getSimState();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     //SmartDashboard
+    SmartDashboard.putNumber(getName() + "/PositionMeters", getPositionMeters());
   }
 
   @Override
@@ -75,6 +77,8 @@ public class Elevator extends SubsystemBase {
     RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(ElevatorSim.getCurrentDrawAmps()));
 
     motorSim.addRotorPosition(ElevatorSim.getPositionMeters()/(ElevatorConstants.elevatorPullyCircum / ElevatorConstants.elevatorGearing));
+  
+    
   }
 
   public boolean atGoal() {
