@@ -88,7 +88,6 @@ public class Elevator extends SubsystemBase {
     // In this method, we update our simulation of what our arm is doing
     // First, we set our "inputs" (voltages)
     m_elevatorSim.setInput(motorL_sim.getMotorVoltage());
-    m_elevatorSim.setInputVoltage(motorL_sim.getMotorVoltage());
     SmartDashboard.putNumber("motorL_sim Volts", motorL_sim.getMotorVoltage());
 
     // Next, we update it. The standard loop time is 20ms.
