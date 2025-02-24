@@ -4,12 +4,14 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Mechanism.SuperStructureMechanism;
 
 public class Superstructure extends SubsystemBase {
-  private final Elevator elevator = new Elevator();
+  private Elevator elevator = new Elevator();
 
   private final SuperStructureMechanism structMechanism = new SuperStructureMechanism();
   /** Creates a new Superstructure. */
@@ -20,6 +22,22 @@ public class Superstructure extends SubsystemBase {
     // This method will be called once per scheduler run
     elevator.periodic();
 
-    structMechanism.update(elevator.getPositionMeters());
+    structMechanism.update(elevator.getSimPositionMeters());
+  }
+
+  @Override
+  public void simulationPeriodic(){
+    elevator.simulationPeriodic();
+  }
+
+  public Command runElevatorUp() {
+    return new InstantCommand(() -> elevator.setOpenLoop(0.45));
+  }
+  public Command runElevatorDown(){
+    return new InstantCommand(() -> elevator.setOpenLoop(-0.45));
+  }
+
+  public Command stopElevator() {
+    return new InstantCommand(() -> elevator.setOpenLoop(0));
   }
 }

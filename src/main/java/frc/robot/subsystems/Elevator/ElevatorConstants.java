@@ -4,14 +4,18 @@
 
 package frc.robot.subsystems.Elevator;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 
 /** Add your docs here. */
     public class ElevatorConstants {
@@ -20,28 +24,32 @@ import edu.wpi.first.math.util.Units;
     public static int motorLID = 21;
     public static int motorRID = 22;
 
-    public static double kElevatorGearing = 6.5;
-    public static double kCarriageMass = Units.lbsToKilograms(20);
-    public static double kElevatorDrumRadius = Units.inchesToMeters(1);
+    public static double kElevatorGearing = 5.4;
+    public static double kCarriageMass = Units.lbsToKilograms(10);
+    public static double kElevatorDrumRadius = Units.inchesToMeters(1.128);
     public static double kMinElevatorHeightMeters = Units.inchesToMeters(0);
     public static double kMaxElevatorHeightMeters = Units.inchesToMeters(54.42);
     public static double kStartingHeight = Units.inchesToMeters(0);
 
+    public static Distance kElevatorDrumRadiusDistance = Inches.of(1.128);
+    
+    public static double kElevatorDrumCircumfrence = (Math.PI * kElevatorDrumRadius * 2);
+    public static double conversion = (Math.PI * kElevatorDrumRadius * 2) / kElevatorGearing;
+
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(20)
-                .withStatorCurrentLimit(15)
-            
+                .withSupplyCurrentLimit(70)
+                .withStatorCurrentLimit(120)      
         )
         .withMotorOutput(
             new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
-            
+                .withInverted(InvertedValue.Clockwise_Positive)
         )
         .withFeedback(
             new FeedbackConfigs()
-                .withSensorToMechanismRatio(6.5)
+                .withSensorToMechanismRatio(5.4)
         );
     
 }
