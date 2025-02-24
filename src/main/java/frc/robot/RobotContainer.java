@@ -53,6 +53,21 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         configureBindings();
+
+        autoChooser.addRoutine("Tetoris", autoRoutines::TetorisAuto);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        configureBindings();
+
+        autoChooser.addRoutine("Bermuda", autoRoutines::BermudaAuto);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        configureBindings();
+
+        autoChooser.addRoutine("TetorisANDBermuda", autoRoutines::TetorisANDBermudaAuto);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        configureBindings();
     }
 
     private void configureBindings() {
