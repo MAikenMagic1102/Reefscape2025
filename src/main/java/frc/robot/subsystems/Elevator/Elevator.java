@@ -46,8 +46,8 @@ public class Elevator extends SubsystemBase {
           ElevatorConstants.kCarriageMass,
           ElevatorConstants.kElevatorDrumRadius,
           ElevatorConstants.kMinElevatorHeightMeters,
-          ElevatorConstants.kMinElevatorHeightMeters,
-          false,
+          ElevatorConstants.kMaxElevatorHeightMeters,
+          true,
           ElevatorConstants.kStartingHeight);   
   
   private DutyCycleOut dutyOut = new DutyCycleOut(0);
@@ -83,25 +83,19 @@ public class Elevator extends SubsystemBase {
   public void simulationPeriodic() {
 
     motorL_sim.setSupplyVoltage(RobotController.getBatteryVoltage());
-    SmartDashboard.putNumber("Sim Battery Volts", RobotController.getBatteryVoltage());
     // This method will be called once per scheduler run during simulation
     // In this method, we update our simulation of what our arm is doing
     // First, we set our "inputs" (voltages)
     m_elevatorSim.setInput(motorL_sim.getMotorVoltage());
-    SmartDashboard.putNumber("motorL_sim Volts", motorL_sim.getMotorVoltage());
 
     // Next, we update it. The standard loop time is 20ms.
     m_elevatorSim.update(0.020);
 
-    SmartDashboard.putNumber("Elevator Pos Meters", m_elevatorSim.getPositionMeters());
-    SmartDashboard.putNumber("Elevator Pos Meters Per Second", m_elevatorSim.getVelocityMetersPerSecond());
     motorL_sim.setRawRotorPosition(m_elevatorSim.getPositionMeters() / ElevatorConstants.conversion);
     motorL_sim.setRotorVelocity(m_elevatorSim.getVelocityMetersPerSecond() / ElevatorConstants.conversion);
 
     // SimBattery estimates loaded battery voltages
     RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps()));
-
-    SmartDashboard.putNumberArray("Elevator Simulator Output", m_elevatorSim.getOutput().getData());
   }
 
   public double getSimPositionMeters(){
@@ -110,7 +104,7 @@ public class Elevator extends SubsystemBase {
 
   public double getPositionMeters(){
     //Convert rotor position to meters..
-    return rotationsToMeters(motorL.getPosition().getValue()).in(Meters);
+    return rotationsToMeters(motorL.getRotorPosition().getValue()).in(Meters);
   }
 
   public void setOpenLoop(double demand){

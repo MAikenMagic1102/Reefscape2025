@@ -25,7 +25,7 @@ import edu.wpi.first.units.measure.Distance;
     public static int motorRID = 22;
 
     public static double kElevatorGearing = 5.4;
-    public static double kCarriageMass = Units.lbsToKilograms(10);
+    public static double kCarriageMass = Units.lbsToKilograms(15);
     public static double kElevatorDrumRadius = Units.inchesToMeters(1.128);
     public static double kMinElevatorHeightMeters = Units.inchesToMeters(0);
     public static double kMaxElevatorHeightMeters = Units.inchesToMeters(54.42);

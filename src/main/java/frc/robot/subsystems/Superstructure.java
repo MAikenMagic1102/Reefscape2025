@@ -22,7 +22,7 @@ public class Superstructure extends SubsystemBase {
     // This method will be called once per scheduler run
     elevator.periodic();
 
-    structMechanism.update(elevator.getSimPositionMeters());
+    structMechanism.update(elevator.getPositionMeters());
   }
 
   @Override
@@ -31,10 +31,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command runElevatorUp() {
-    return new InstantCommand(() -> elevator.setOpenLoop(0.45));
+    return new InstantCommand(() -> elevator.setOpenLoop(-0.15));
   }
   public Command runElevatorDown(){
-    return new InstantCommand(() -> elevator.setOpenLoop(-0.45));
+    return new InstantCommand(() -> elevator.setOpenLoop(0.15));
   }
 
   public Command stopElevator() {
