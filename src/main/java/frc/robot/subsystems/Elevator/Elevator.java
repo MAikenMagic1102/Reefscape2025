@@ -9,6 +9,8 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -51,6 +53,8 @@ public class Elevator extends SubsystemBase {
           ElevatorConstants.kStartingHeight);   
   
   private DutyCycleOut dutyOut = new DutyCycleOut(0);
+  private PositionVoltage posVoltage = new PositionVoltage(0).withSlot(0);
+  //private MotionMagicVoltage mmVoltage = new MotionMagicVoltage(0).withSlot(0);
 
   /** Creates a new Elevator. */
   public Elevator() {
@@ -76,6 +80,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Elevator Velocity", motorL.getVelocity().getValueAsDouble());
   }
 
 
@@ -110,6 +115,11 @@ public class Elevator extends SubsystemBase {
   public void setOpenLoop(double demand){
     dutyOut.withOutput(demand);
     motorL.setControl(dutyOut);
+  }
+
+  public void setPositionMeters(double height){
+    posVoltage.withPosition(-height / ElevatorConstants.kElevatorDrumCircumfrence);
+    motorL.setControl(posVoltage);
   }
 
   private Distance rotationsToMeters(Angle rotations) {

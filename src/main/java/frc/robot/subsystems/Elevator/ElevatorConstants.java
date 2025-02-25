@@ -9,7 +9,9 @@ import static edu.wpi.first.units.Units.Meters;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -50,6 +52,18 @@ import edu.wpi.first.units.measure.Distance;
         .withFeedback(
             new FeedbackConfigs()
                 .withSensorToMechanismRatio(5.4)
+        )
+        .withSlot0(
+            new Slot0Configs()
+                .withKP(13.0)
+                .withKD(0.5)
+                .withKG(0.4)
+                .withKV(7.2)
         );
+        // .withMotionMagic(
+        //     new MotionMagicConfigs()
+        //         .withMotionMagicCruiseVelocity(2)
+        //         .withMotionMagicAcceleration(100)
+        // );
     
 }

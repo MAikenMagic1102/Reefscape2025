@@ -98,6 +98,8 @@ public class RobotContainer {
         operatorJoy.povUp().whileTrue(superstructure.runElevatorUp()).onFalse(superstructure.stopElevator());
         operatorJoy.povDown().whileTrue(superstructure.runElevatorDown()).onFalse(superstructure.stopElevator());
 
+        operatorJoy.a().onTrue(superstructure.middlePosition());
+
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 

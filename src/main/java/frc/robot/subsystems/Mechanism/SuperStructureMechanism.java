@@ -21,6 +21,7 @@ public class SuperStructureMechanism {
   private final MechanismRoot2d elevatorRoot;
   private final MechanismLigament2d elevatorTower;
   private final MechanismLigament2d elevatorStage;  
+  private final MechanismLigament2d arm;
 
    public SuperStructureMechanism(){
     elevatorRoot = mech2d.getRoot("Elevator Root", Units.inchesToMeters(1), Units.inchesToMeters(2));
@@ -36,10 +37,21 @@ public class SuperStructureMechanism {
           8,
           new Color8Bit(Color.kRed)));  
 
+      arm = elevatorStage.append(new MechanismLigament2d(
+            "Arm", 
+            Units.inchesToMeters(25), 
+            90,
+            8,
+            new Color8Bit(Color.kGreen)));
+
     SmartDashboard.putData("Elevator Sim", mech2d);
    }
    
-   public void update(double elevatorHeightMeters){
+   public void updateElevator(double elevatorHeightMeters){
         elevatorStage.setLength(-elevatorHeightMeters);
+   }
+
+   public void updateArm(double armAngle){
+      arm.setAngle(armAngle);
    }
 }
