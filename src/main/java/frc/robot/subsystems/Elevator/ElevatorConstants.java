@@ -4,15 +4,21 @@
 
 package frc.robot.subsystems.Elevator;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
+import com.ctre.phoenix6.configs.SlotConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 
 /** Add your docs here. */
     public class ElevatorConstants {
@@ -20,13 +26,17 @@ import edu.wpi.first.math.util.Units;
     public static int motorLID = 21;
     public static int motorRID = 22;
 
-    public static double elevatorGearing = 1/5.4;
+    public static double elevatorGearing = 5.4;
     public static double elevatorMass = Units.lbsToKilograms(10);
-    public static double elevatorPullyRadius = Units.inchesToMeters(1);
+    public static double elevatorPullyRadius = Units.inchesToMeters(1.125);
     public static double elevatorMinHeightMeters = Units.inchesToMeters(1);
     public static double elevatorMaxHeightMeters = Units.inchesToMeters(40);
     public static double elevatorStartingHeightMeters = Units.inchesToMeters(1);
     public static double elevatorPullyCircum = Math.PI*2*ElevatorConstants.elevatorPullyRadius;
+
+    public static double conversion = (Math.PI * elevatorPullyRadius * 2) / elevatorGearing;
+    public static Distance elevatorPullyRadiusDistance = Inches.of(1.128);
+
 
     public static double setHome = 0;
     public static double hpLoad = 0;
@@ -40,8 +50,8 @@ import edu.wpi.first.math.util.Units;
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(30)
-                .withStatorCurrentLimit(35)
+                .withSupplyCurrentLimit(70)
+                .withStatorCurrentLimit(120)
             
         )
         .withMotorOutput(
@@ -50,10 +60,18 @@ import edu.wpi.first.math.util.Units;
                 .withInverted(InvertedValue.Clockwise_Positive)
             
         )
+        .withSlot1(
+            new Slot1Configs()
+                .withKP(1)
+                .withKD(0)
+                //.withKG(0.3)
+                //.withKV(4.06)
+        )
         .withFeedback(
             new FeedbackConfigs()
                 .withSensorToMechanismRatio(5.4)
         );
+    public static Object elevatorPullyRadiusDistances;
 
     
 }

@@ -7,8 +7,21 @@ package frc.robot.subsystems.Elevator;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Second;
+
+import edu.wpi.first.units.DistanceUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DutyCycle;
@@ -34,11 +47,11 @@ public class Elevator extends SubsystemBase {
           ElevatorConstants.elevatorPullyRadius,
           ElevatorConstants.elevatorMinHeightMeters,
           ElevatorConstants.elevatorMaxHeightMeters,
-          false,
-          ElevatorConstants.elevatorStartingHeightMeters,
-          0.005, 0.0);
+          true,
+          ElevatorConstants.elevatorStartingHeightMeters);
 
   private DutyCycleOut dutyCycleOutput = new DutyCycleOut(0);
+  private PositionVoltage posVoltage = new PositionVoltage(0).withSlot(1);
 
   /** Creates a new Elevator. */
   public Elevator() {
@@ -57,6 +70,7 @@ public class Elevator extends SubsystemBase {
     if(!status.isOK()) {
       System.out.println("Could not apply configs, error code: " + status.toString());
     }
+
     motorSim = motorL.getSimState();
   }
 
@@ -72,13 +86,14 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
     motorSim.setSupplyVoltage(RobotController.getBatteryVoltage());
 
+    ElevatorSim.setInput(motorSim.getMotorVoltage());
+
     ElevatorSim.update(0.02);
 
     RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(ElevatorSim.getCurrentDrawAmps()));
 
-    motorSim.addRotorPosition(ElevatorSim.getPositionMeters()/(ElevatorConstants.elevatorPullyCircum / ElevatorConstants.elevatorGearing));
-  
-    
+    motorSim.setRawRotorPosition(ElevatorSim.getPositionMeters() / ElevatorConstants.conversion);
+    motorSim.setRotorVelocity(ElevatorSim.getVelocityMetersPerSecond() / ElevatorConstants.conversion);
   }
 
   public boolean atGoal() {
@@ -86,11 +101,12 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getPositionMeters() {
-    return motorL.getPosition().getValueAsDouble()*ElevatorConstants.elevatorPullyCircum;
+    return motorL.getPosition().getValueAsDouble() * ElevatorConstants.elevatorPullyCircum;
   }
 
-  public void setPositionMeters() {
-
+  public void setPositionMeters(double height) {
+    posVoltage.withPosition(-height / ElevatorConstants.elevatorPullyCircum);
+    motorL.setControl(posVoltage);
   }
 
   public void setOpenLoop(double input){
@@ -105,6 +121,34 @@ public class Elevator extends SubsystemBase {
 
   public double getGoalPos(){
     return 0;
+  }
+
+  public static Distance rotationsToMeters(Angle rotations) {
+    /* Apply gear ratio to input rotations */
+    var gearedRadians = rotations.in(Radians) / ElevatorConstants.elevatorGearing;
+    /* Then multiply the wheel radius by radians of rotation to get distance */
+    return ElevatorConstants.elevatorPullyRadiusDistance.times(gearedRadians);
+  }
+
+  public static Angle metersToRotations(Distance meters) {
+    /* Divide the distance by the wheel radius to get radians */
+    var wheelRadians = meters.in(Meters) / ElevatorConstants.elevatorPullyRadiusDistance.in(Meters);
+    /* Then multiply by gear ratio to get rotor rotations */
+    return Radians.of(wheelRadians * ElevatorConstants.elevatorGearing);
+  }
+
+  public static  LinearVelocity rotationsToMetersVel(AngularVelocity rotations) {
+    /* Apply gear ratio to input rotations */
+    var gearedRotations = rotations.in(RadiansPerSecond) / ElevatorConstants.elevatorGearing;
+    /* Then multiply the wheel radius by radians of rotation to get distance */
+    return ElevatorConstants.elevatorPullyRadiusDistance.per(Second).times(gearedRotations);
+  }
+
+  public static  AngularVelocity metersToRotationsVel(LinearVelocity meters) {
+    /* Divide the distance by the wheel radius to get radians */
+    var wheelRadians = meters.in(MetersPerSecond) / ElevatorConstants.elevatorPullyRadiusDistance.in(Meters);
+    /* Then multiply by gear ratio to get rotor rotations */
+    return RadiansPerSecond.of(wheelRadians * ElevatorConstants.elevatorGearing);
   }
 
 }

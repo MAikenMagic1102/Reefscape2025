@@ -85,6 +85,8 @@ public class RobotContainer {
 
         operatorJoy.povUp().whileTrue(superstructure.runElevatorUp()).onFalse(superstructure.stopElevator());
         operatorJoy.povDown().whileTrue(superstructure.runElevatorDown()).onFalse(superstructure.stopElevator());
+        operatorJoy.povRight().whileTrue(superstructure.setMiddlePos()).onFalse(superstructure.stopElevator());
+        operatorJoy.povLeft().whileTrue(superstructure.setHighPos()).onFalse(superstructure.stopElevator());
 
         // operatorJoy.pov(0).whileTrue(new InstantCommand(() -> superstructure.elevator.setOpenLoop(0.1)));
         // operatorJoy.pov(0).onFalse(new InstantCommand(() -> superstructure.elevator.setOpenLoop(0)));
@@ -103,6 +105,7 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
