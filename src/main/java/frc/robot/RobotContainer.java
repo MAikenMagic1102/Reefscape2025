@@ -15,11 +15,13 @@ import choreo.auto.AutoFactory;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Intake.CoralIntake;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -37,6 +39,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController programmerJoystick = new CommandXboxController(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -44,6 +47,8 @@ public class RobotContainer {
     private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
+
+    private final CoralIntake coralIntake = new CoralIntake();
 
     public RobotContainer() {
         autoFactory = drivetrain.createAutoFactory();
@@ -90,6 +95,15 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+        
+        //Binds the roller intake to the right Bumper
+            joystick.rightBumper().whileTrue(coralIntake.setRollerOpenLoop(0.2)).onFalse(coralIntake.setRollerOpenLoop(0));
+            joystick.leftTrigger().whileTrue(coralIntake.setPivotOPenLoop(0.2)).onFalse(coralIntake.setPivotOPenLoop(0));
+        
+            programmerJoystick.povUp().whileTrue(coralIntake.setOpenLoopCommand(0.2));
+            programmerJoystick.povDown().whileTrue(coralIntake.setOpenLoopCommand(-0.2));
+
+        
     }
 
     public Command getAutonomousCommand() {
