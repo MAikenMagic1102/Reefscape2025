@@ -5,9 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.bobot_state.BobotState;
+import frc.robot.subsystems.vision.PoseObservation;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.util.VirtualSubsystem;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -22,15 +28,39 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    Threads.setCurrentThreadPriority(true, 99);
+    VirtualSubsystem.runPeriodically();
+
     CommandScheduler.getInstance().run();
 
     /*
-     * This example of adding Limelight is very simple and may not be sufficient for on-field use.
-     * Users typically need to provide a standard deviation that scales with the distance to target
+     * 
+     */
+    PoseObservation observation;
+    while ((observation = BobotState.getVisionObservations().poll()) != null) {
+      m_robotContainer.drivetrain.addVisionMeasurement(
+          // TODO: this is the pose combiney thing
+          observation.robotPose().toPose2d(), observation.timestampSeconds()
+      // ,observation.stdDevs()
+      );
+    }
+
+    BobotState.updateGlobalPose(m_robotContainer.drivetrain.getState().Pose);
+
+    // SmartDashboard.putNumber("BobotState/ReefTracker/AngleDeg", BobotState.getRotationToClosestReef().getDegrees());
+
+
+    /*
+     * This example of adding Limelight is very simple and may not be sufficient for
+     * on-field use.
+     * Users typically need to provide a standard deviation that scales with the
+     * distance to target
      * and changes with number of tags available.
      *
-     * This example is sufficient to show that vision integration is possible, though exact implementation
-     * of how to use vision should be tuned per-robot and to the team's specification.
+     * This example is sufficient to show that vision integration is possible,
+     * though exact implementation
+     * of how to use vision should be tuned per-robot and to the team's
+     * specification.
      */
     if (kUseLimelight) {
       var driveState = m_robotContainer.drivetrain.getState();
@@ -43,16 +73,20 @@ public class Robot extends TimedRobot {
         m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose, llMeasurement.timestampSeconds);
       }
     }
+    Threads.setCurrentThreadPriority(false, 10);
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+  }
 
   @Override
   public void autonomousInit() {
@@ -64,10 +98,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
@@ -77,10 +113,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   @Override
   public void testInit() {
@@ -88,11 +126,23 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+  }
 
+  /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationInit() {
+    VisionConstants.aprilTagSim.ifPresent(
+        aprilTagSim -> aprilTagSim.addAprilTags(VisionConstants.fieldLayout));
+  }
+
+  /** This function is called periodically whilst in simulation. */
+  @Override
+  public void simulationPeriodic() {
+    VirtualSubsystem.runSimulationPeriodically();
+  }
 }

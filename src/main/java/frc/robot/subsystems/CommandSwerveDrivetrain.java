@@ -26,9 +26,16 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
+import frc.robot.bobot_state.BobotState;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
-
+/* 
+ * #TODO: Make the commands to align the robot to a reef target!
+ * how to do
+ *  1: get absolute angle from getReefAngle (or whatever)
+ *  2: calculate bearing from odometry
+ *  3: calculate error
+ *  4: change the robot's angle by the error (when a button is pressed!)
+ */
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
  * Subsystem so it can easily be used in command-based projects.
@@ -300,6 +307,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
     }
 
     private void startSimThread() {

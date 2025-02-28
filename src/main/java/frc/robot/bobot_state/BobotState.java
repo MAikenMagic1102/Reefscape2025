@@ -2,6 +2,12 @@ package frc.robot.bobot_state;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.IntegerTopic;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.bobot_state.varc.BargeTagTracker;
@@ -28,6 +34,22 @@ public class BobotState extends VirtualSubsystem {
   private static ReefTagTracker reefTracker = new ReefTagTracker();
   private static HPSTagTracker hpsTracker = new HPSTagTracker();
   private static BargeTagTracker bargeTracker = new BargeTagTracker();
+
+  private final NetworkTable bobotStateTable = NetworkTableInstance.getDefault().getTable("BobotState");
+  
+  // Reef tag data
+  private final DoublePublisher reefAnglePublisher = bobotStateTable.getDoubleTopic("ReefTargetDegrees").publish();
+  private final DoublePublisher reefAnglePublisherRad = bobotStateTable.getDoubleTopic("ReefTargetRadians").publish();
+  private final IntegerPublisher reefTargetFiducialId = bobotStateTable.getIntegerTopic("ReefTagId").publish();
+  
+  // Barge tag data
+  private final DoublePublisher bargeAnglePublisher = bobotStateTable.getDoubleTopic("BargeTargetDegrees").publish();
+  private final DoublePublisher bargeAnglePublisherRad = bobotStateTable.getDoubleTopic("BargeTargetRadians").publish();
+  private final IntegerPublisher bargeTargetFiducialId = bobotStateTable.getIntegerTopic("BargeTagId").publish();
+
+  // HPS data
+  private final BooleanPublisher closeToHumanPlayer =  bobotStateTable.getBooleanTopic("CloseToHumanPlayer").publish();
+
 
   public static void offerVisionObservation(PoseObservation observation) {
     BobotState.poseObservations.offer(observation);
@@ -74,9 +96,30 @@ public class BobotState extends VirtualSubsystem {
   public void periodic() {
 
     {
+      // Update Trackers
       reefTracker.update();
+      bargeTracker.update();
 
-      String calcLogRoot = logRoot + "Reef/";
+      // Update Network Tables
+
+      // Reef Tag tracking
+      // Tag angle in Degrees
+      reefAnglePublisher.set(reefTracker.getRotationTarget().getDegrees());
+      // Tag angle in Radians
+      reefAnglePublisherRad.set(reefTracker.getRotationTarget().getRadians());
+      // Tag ID
+      reefTargetFiducialId.set(FieldUtils.getClosestReef().tag.fiducialId());
+
+      // Barge tag tracking
+      // Tag angle in Degrees
+      bargeAnglePublisher.set(bargeTracker.getRotationTarget().getDegrees());
+      // Tag angle in Radians
+      bargeAnglePublisherRad.set(bargeTracker.getRotationTarget().getRadians());
+      // Tag ID
+      bargeTargetFiducialId.set(FieldUtils.getBargeTag().fiducialId());
+
+      // Displays true when distance to HPS is less than 2 meters
+      closeToHumanPlayer.set(this.nearHumanPlayer().getAsBoolean());
     }
 
     {
