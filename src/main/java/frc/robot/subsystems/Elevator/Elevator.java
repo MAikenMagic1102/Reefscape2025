@@ -5,8 +5,10 @@
 package frc.robot.subsystems.Elevator;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -51,7 +53,13 @@ public class Elevator extends SubsystemBase {
           ElevatorConstants.elevatorStartingHeightMeters);
 
   private DutyCycleOut dutyCycleOutput = new DutyCycleOut(0);
-  private PositionVoltage posVoltage = new PositionVoltage(0).withSlot(1);
+  private PositionVoltage posVoltage = new PositionVoltage(0).withSlot(0);
+  private MotionMagicVoltage mmPosition = new MotionMagicVoltage(0).withSlot(1);
+
+  double kG;
+  double kV;
+  double kA;
+  double kP;
 
   /** Creates a new Elevator. */
   public Elevator() {
@@ -71,6 +79,14 @@ public class Elevator extends SubsystemBase {
       System.out.println("Could not apply configs, error code: " + status.toString());
     }
 
+    SmartDashboard.putNumber("elevatorKG", 0.0);
+
+    SmartDashboard.putNumber("elevatorKV", 0.0);
+
+    SmartDashboard.putNumber("elevatorKA", 0.0);
+   
+    SmartDashboard.putNumber("elevatorKP", 0.0);
+
     motorSim = motorL.getSimState();
   }
 
@@ -79,6 +95,14 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
     //SmartDashboard
     SmartDashboard.putNumber(getName() + "/PositionMeters", getPositionMeters());
+
+    kG = SmartDashboard.getNumber("elevatorKG", 0.0);
+
+    kV= SmartDashboard.getNumber("elevatorKV", 0.0);
+
+    kA = SmartDashboard.getNumber("elevatorKA", 0.0);
+   
+    kP = SmartDashboard.getNumber("elevatorKP", 0.0);
   }
 
   @Override
@@ -101,12 +125,17 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getPositionMeters() {
-    return motorL.getPosition().getValueAsDouble() * ElevatorConstants.elevatorPullyCircum;
+    return rotationsToMeters(motorL.getRotorPosition().getValue()).in(Meters);
   }
 
   public void setPositionMeters(double height) {
     posVoltage.withPosition(-height / ElevatorConstants.elevatorPullyCircum);
     motorL.setControl(posVoltage);
+  }
+
+  public void setPositionMetersMM(double height) {
+    mmPosition.withPosition(-height / ElevatorConstants.elevatorPullyCircum);
+    motorL.setControl(mmPosition);
   }
 
   public void setOpenLoop(double input){
@@ -122,6 +151,17 @@ public class Elevator extends SubsystemBase {
   public double getGoalPos(){
     return 0;
   }
+
+  public void setSlot1(){
+    var s1config = new Slot1Configs()
+    .withKG(kG)
+    .withKA(kA)
+    .withKV(kV)
+    .withKP(kP);
+
+    motorL.getConfigurator().refresh(s1config);
+  }
+
 
   public static Distance rotationsToMeters(Angle rotations) {
     /* Apply gear ratio to input rotations */

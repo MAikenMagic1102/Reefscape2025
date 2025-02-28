@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Inches;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
@@ -60,12 +61,25 @@ import edu.wpi.first.units.measure.Distance;
                 .withInverted(InvertedValue.Clockwise_Positive)
             
         )
+        .withSlot0(
+            new Slot0Configs()
+                .withKP(13.0)
+                .withKD(0.5)
+                .withKG(0.4)
+                .withKV(7.2)
+        )        
         .withSlot1(
             new Slot1Configs()
+                .withKG(0.15)
+                .withKV(7.22)
+                .withKA(0.02)
                 .withKP(1)
-                .withKD(0)
-                //.withKG(0.3)
-                //.withKV(4.06)
+               
+        )
+        .withMotionMagic(
+            new MotionMagicConfigs()
+                .withMotionMagicAcceleration(0.3)
+                .withMotionMagicCruiseVelocity(0.3)
         )
         .withFeedback(
             new FeedbackConfigs()

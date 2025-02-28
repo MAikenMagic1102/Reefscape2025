@@ -88,12 +88,7 @@ public class RobotContainer {
         operatorJoy.povRight().whileTrue(superstructure.setMiddlePos()).onFalse(superstructure.stopElevator());
         operatorJoy.povLeft().whileTrue(superstructure.setHighPos()).onFalse(superstructure.stopElevator());
 
-        // operatorJoy.pov(0).whileTrue(new InstantCommand(() -> superstructure.elevator.setOpenLoop(0.1)));
-        // operatorJoy.pov(0).onFalse(new InstantCommand(() -> superstructure.elevator.setOpenLoop(0)));
-
-        // operatorJoy.pov(180).whileTrue(new InstantCommand(() -> superstructure.elevator.setOpenLoop(-0.1)));
-        // operatorJoy.pov(180).onFalse(new InstantCommand(() -> superstructure.elevator.setOpenLoop(0)));
-
+        operatorJoy.start().onTrue(superstructure.setElevatorSlot1());
         
 
         // Run SysId routines when holding back/start and X/Y.
