@@ -54,7 +54,7 @@ public class Elevator extends SubsystemBase {
   
   private DutyCycleOut dutyOut = new DutyCycleOut(0);
   private PositionVoltage posVoltage = new PositionVoltage(0).withSlot(0);
-  //private MotionMagicVoltage mmVoltage = new MotionMagicVoltage(0).withSlot(0);
+  private MotionMagicVoltage mmVoltage = new MotionMagicVoltage(0).withSlot(0);
 
   /** Creates a new Elevator. */
   public Elevator() {
@@ -81,6 +81,9 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Elevator Velocity", motorL.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Elevator Rotor Velocity", motorL.getRotorVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Elevator Position", getPositionMeters());
+    SmartDashboard.putNumber("Elevator Voltage", motorL.getMotorVoltage().getValueAsDouble());
   }
 
 
@@ -118,8 +121,8 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setPositionMeters(double height){
-    posVoltage.withPosition(-height / ElevatorConstants.kElevatorDrumCircumfrence);
-    motorL.setControl(posVoltage);
+    mmVoltage.withPosition(height / ElevatorConstants.kElevatorDrumCircumfrence);
+    motorL.setControl(mmVoltage);
   }
 
   private Distance rotationsToMeters(Angle rotations) {

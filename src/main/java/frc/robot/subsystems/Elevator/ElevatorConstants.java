@@ -47,7 +47,7 @@ import edu.wpi.first.units.measure.Distance;
         .withMotorOutput(
             new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
-                .withInverted(InvertedValue.Clockwise_Positive)
+                .withInverted(InvertedValue.CounterClockwise_Positive)
         )
         .withFeedback(
             new FeedbackConfigs()
@@ -55,15 +55,15 @@ import edu.wpi.first.units.measure.Distance;
         )
         .withSlot0(
             new Slot0Configs()
-                .withKP(13.0)
-                .withKD(0.5)
-                .withKG(0.4)
-                .withKV(7.2)
+                .withKG(0.310)
+                .withKV(0.305)
+                .withKA(0.05)
+                .withKP(1)
+        )
+        .withMotionMagic(
+            new MotionMagicConfigs()
+                .withMotionMagicCruiseVelocity(0.3)
+                .withMotionMagicAcceleration(0.3)
         );
-        // .withMotionMagic(
-        //     new MotionMagicConfigs()
-        //         .withMotionMagicCruiseVelocity(2)
-        //         .withMotionMagicAcceleration(100)
-        // );
     
 }

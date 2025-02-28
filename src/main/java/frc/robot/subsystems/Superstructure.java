@@ -31,10 +31,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command runElevatorUp() {
-    return new InstantCommand(() -> elevator.setOpenLoop(-0.15));
+    return new InstantCommand(() -> elevator.setOpenLoop(0.15));
   }
   public Command runElevatorDown(){
-    return new InstantCommand(() -> elevator.setOpenLoop(0.15));
+    return new InstantCommand(() -> elevator.setOpenLoop(-0.15));
   }
 
   public Command stopElevator() {

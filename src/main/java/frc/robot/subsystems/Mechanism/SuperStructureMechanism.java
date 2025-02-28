@@ -48,7 +48,7 @@ public class SuperStructureMechanism {
    }
    
    public void updateElevator(double elevatorHeightMeters){
-        elevatorStage.setLength(-elevatorHeightMeters);
+        elevatorStage.setLength(elevatorHeightMeters);
    }
 
    public void updateArm(double armAngle){
