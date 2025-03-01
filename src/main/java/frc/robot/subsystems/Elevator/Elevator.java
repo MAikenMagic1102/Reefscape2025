@@ -61,6 +61,8 @@ public class Elevator extends SubsystemBase {
   double kA;
   double kP;
 
+  private double targetPosition = 0;
+
   /** Creates a new Elevator. */
   public Elevator() {
     motorL = new TalonFX(ElevatorConstants.motorLID);
@@ -94,15 +96,8 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     //SmartDashboard
-    SmartDashboard.putNumber(getName() + "/PositionMeters", getPositionMeters());
-
-    kG = SmartDashboard.getNumber("elevatorKG", 0.0);
-
-    kV= SmartDashboard.getNumber("elevatorKV", 0.0);
-
-    kA = SmartDashboard.getNumber("elevatorKA", 0.0);
-   
-    kP = SmartDashboard.getNumber("elevatorKP", 0.0);
+    SmartDashboard.putNumber("/PositionMeters", getPositionMeters());
+    SmartDashboard.putBoolean("/atGoal", atGoal());
   }
 
   @Override
@@ -121,7 +116,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean atGoal() {
-    return false;
+    return Math.abs(targetPosition - getPositionMeters()) < ElevatorConstants.elevatorTolerance;
   }
 
   public double getPositionMeters() {
@@ -129,12 +124,14 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setPositionMeters(double height) {
-    posVoltage.withPosition(-height / ElevatorConstants.elevatorPullyCircum);
+    targetPosition = height;
+    posVoltage.withPosition(height / ElevatorConstants.elevatorPullyCircum);
     motorL.setControl(posVoltage);
   }
 
   public void setPositionMetersMM(double height) {
-    mmPosition.withPosition(-height / ElevatorConstants.elevatorPullyCircum);
+    targetPosition = height;
+    mmPosition.withPosition(height / ElevatorConstants.elevatorPullyCircum);
     motorL.setControl(mmPosition);
   }
 
@@ -151,17 +148,6 @@ public class Elevator extends SubsystemBase {
   public double getGoalPos(){
     return 0;
   }
-
-  public void setSlot1(){
-    var s1config = new Slot1Configs()
-    .withKG(kG)
-    .withKA(kA)
-    .withKV(kV)
-    .withKP(kP);
-
-    motorL.getConfigurator().refresh(s1config);
-  }
-
 
   public static Distance rotationsToMeters(Angle rotations) {
     /* Apply gear ratio to input rotations */

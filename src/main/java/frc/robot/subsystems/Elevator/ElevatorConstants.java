@@ -31,14 +31,15 @@ import edu.wpi.first.units.measure.Distance;
     public static double elevatorMass = Units.lbsToKilograms(10);
     public static double elevatorPullyRadius = Units.inchesToMeters(1.125);
     public static double elevatorMinHeightMeters = Units.inchesToMeters(1);
-    public static double elevatorMaxHeightMeters = Units.inchesToMeters(40);
+    public static double elevatorMaxHeightMeters = Units.inchesToMeters(60);
     public static double elevatorStartingHeightMeters = Units.inchesToMeters(1);
     public static double elevatorPullyCircum = Math.PI*2*ElevatorConstants.elevatorPullyRadius;
 
     public static double conversion = (Math.PI * elevatorPullyRadius * 2) / elevatorGearing;
     public static Distance elevatorPullyRadiusDistance = Inches.of(1.128);
 
-
+    public static double elevatorTolerance = 0.05;
+    
     public static double setHome = 0;
     public static double hpLoad = 0;
     public static double reefL1 = 0;    
@@ -58,7 +59,7 @@ import edu.wpi.first.units.measure.Distance;
         .withMotorOutput(
             new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
-                .withInverted(InvertedValue.Clockwise_Positive)
+                .withInverted(InvertedValue.CounterClockwise_Positive)
             
         )
         .withSlot0(
@@ -71,15 +72,16 @@ import edu.wpi.first.units.measure.Distance;
         .withSlot1(
             new Slot1Configs()
                 .withKG(0.15)
-                .withKV(7.22)
-                .withKA(0.02)
-                .withKP(1)
+                .withKV(0.7)
+                .withKA(0.05)
+                .withKP(92)
                
         )
         .withMotionMagic(
             new MotionMagicConfigs()
-                .withMotionMagicAcceleration(0.3)
-                .withMotionMagicCruiseVelocity(0.3)
+                .withMotionMagicAcceleration(80)
+                .withMotionMagicCruiseVelocity(40)
+                .withMotionMagicJerk(700)
         )
         .withFeedback(
             new FeedbackConfigs()

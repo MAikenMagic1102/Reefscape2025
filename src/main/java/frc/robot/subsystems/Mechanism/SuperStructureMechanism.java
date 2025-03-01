@@ -40,6 +40,6 @@ public class SuperStructureMechanism {
    }
    
    public void update(double elevatorHeightMeters){
-        elevatorStage.setLength(-elevatorHeightMeters);
+        elevatorStage.setLength(elevatorHeightMeters);
    }
 }

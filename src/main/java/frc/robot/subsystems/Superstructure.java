@@ -28,11 +28,15 @@ public class Superstructure extends SubsystemBase {
     mech.update(elevator.getPositionMeters());
   }
 
+  public boolean elevatorAtGoal(){
+    return elevator.atGoal();
+  }
+
   public Command runElevatorUp() {
-    return new InstantCommand(() -> elevator.setOpenLoop(-0.25));
+    return new InstantCommand(() -> elevator.setOpenLoop(0.25));
   }
   public Command runElevatorDown(){
-    return new InstantCommand(() -> elevator.setOpenLoop(0.25));
+    return new InstantCommand(() -> elevator.setOpenLoop(-0.25));
   }
 
   public Command stopElevator() {
@@ -40,14 +44,25 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setMiddlePos() {
-     return new InstantCommand(() -> elevator.setPositionMetersMM(1.0));
+     return new InstantCommand(() -> elevator.setPositionMetersMM(0.5));
  }
 
  public Command setHighPos(){
   return new InstantCommand(() -> elevator.setPositionMeters(1));
  }  
-
- public Command setElevatorSlot1() {
-  return new InstantCommand(() -> elevator.setSlot1());
+ public Command setL1Pos() {
+  return new InstantCommand(() -> elevator.setPositionMeters(0.5));
  }
-}
+ public Command setL2Pos() {
+  return new InstantCommand(() -> elevator.setPositionMeters(1)); 
+ }
+ public Command setL3Pos() {
+  return new InstantCommand(() -> elevator.setPositionMeters(1.5));
+ }
+ public Command setL4Pos() {
+  return new InstantCommand(() -> elevator.setPositionMeters(2));
+ }
+ public Command setTestHome () {
+  return new InstantCommand(()-> elevator.setPositionMeters(0.1));
+ }
+ }
