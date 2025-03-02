@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.CoralGripper.CoralGripper;
 import frc.robot.subsystems.Intake.CoralIntake;
 
 public class RobotContainer {
@@ -49,6 +50,7 @@ public class RobotContainer {
     private final AutoChooser autoChooser = new AutoChooser();
 
     private final CoralIntake coralIntake = new CoralIntake();
+    private final CoralGripper coralGripper = new CoralGripper();
 
     public RobotContainer() {
         autoFactory = drivetrain.createAutoFactory();
@@ -97,12 +99,14 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
         
         //Binds the roller intake to the right Bumper
-            joystick.rightBumper().whileTrue(coralIntake.setRollerOpenLoop(0.2)).onFalse(coralIntake.setRollerOpenLoop(0));
-            joystick.leftTrigger().whileTrue(coralIntake.setPivotOPenLoop(0.2)).onFalse(coralIntake.setPivotOPenLoop(0));
+        programmerJoystick.leftBumper().whileTrue(coralIntake.setRollerOpenLoopCommand(0.5)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
+        programmerJoystick.leftTrigger().whileTrue(coralIntake.setRollerOpenLoopCommand(-0.5)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
 
+        programmerJoystick.rightBumper().whileTrue(coralGripper.setRollerOpenLoopCommand(0.25)).onFalse(coralGripper.setRollerOpenLoopCommand(0));
+        programmerJoystick.rightTrigger().whileTrue(coralGripper.setRollerOpenLoopCommand(-0.5)).onFalse(coralGripper.setRollerOpenLoopCommand(0));
         
-            programmerJoystick.povUp().whileTrue(coralIntake.setOpenLoopCommand(0.2));
-            programmerJoystick.povDown().whileTrue(coralIntake.setOpenLoopCommand(-0.2));
+        programmerJoystick.povUp().whileTrue(coralIntake.setPivotOpenLoopCommand(0.15)).onFalse(coralIntake.setPivotOpenLoopCommand(0));
+        programmerJoystick.povDown().whileTrue(coralIntake.setPivotOpenLoopCommand(-0.15)).onFalse(coralIntake.setPivotOpenLoopCommand(0));
 
         
     }

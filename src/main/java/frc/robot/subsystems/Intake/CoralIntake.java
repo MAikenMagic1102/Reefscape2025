@@ -15,6 +15,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
 import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj.DutyCycle;
@@ -29,44 +30,37 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Intake.CoralIntakeConstants;
 
 public class CoralIntake extends SubsystemBase {
- //The motor that controls rollers on the coral intake
+
   private TalonFX rollerMotor;
-  // The motor that controls the Pivot motor on the coral intake
   private TalonFX pivotMotor;
 
   private TalonFXSimState rollerSimState;
-  // private TalonFXSimState intakeSimState;
   private TalonFXSimState pivotSimState;
-  private DCMotor intakeGearbox = DCMotor.getKrakenX60Foc(30);
 
-
-  private DCMotorSim rollerSim =  new DCMotorSim(LinearSystemId.createDCMotorSystem(intakeGearbox, 0.001, 4.0), intakeGearbox);
-  
+  private DCMotor intakeGearbox = DCMotor.getKrakenX60Foc(1);
  
-  // private Sim CoralIntakeSim = 
-  // new CoralIntakeSim
-  //       cIntakeGearbox,
-  //       CoralIntakeConstants.cIntakeGearing,
-  //       CoralIntakeConstants.cIntakeMass,
-  //       CoralIntakeConstants.cIntakeMinHeightMeters,
-  //       CoralIntakeConstants.cIntakeMaxHeightMeters,
-  //       false,
-  //       CoralIntakeConstants.cIntakeStartingHeightMeters,
-  //       0.005, 0.0);
+  private SingleJointedArmSim CoralIntakeSim = 
+  new SingleJointedArmSim(
+        intakeGearbox,
+        CoralIntakeConstants.gearRatio,
+        SingleJointedArmSim.estimateMOI(CoralIntakeConstants.armLength, CoralIntakeConstants.armMass),
+        CoralIntakeConstants.armLength,
+        CoralIntakeConstants.armMinAngle,
+        CoralIntakeConstants.armMaxAngle,
+        false,
+        CoralIntakeConstants.armStartingAngle);
 
   private DutyCycleOut rollerOut = new DutyCycleOut(0);
   private DutyCycleOut pivotOut = new DutyCycleOut(0);
   private boolean isClosedLoop = false;
-
-
-  // SingleJointedArmSim
   
   
   /** Creates a new CoralIntake. */
   public CoralIntake() {
-    rollerMotor = new TalonFX(CoralIntakeConstants.rollerMotorID);
-    pivotMotor = new TalonFX(CoralIntakeConstants.pivotMotorID);
+    rollerMotor = new TalonFX(CoralIntakeConstants.rollerMotorID, CoralIntakeConstants.bus);
+    pivotMotor = new TalonFX(CoralIntakeConstants.pivotMotorID, CoralIntakeConstants.bus);
 
+    //Roller
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for ( int i = 0; i < 5; ++i){
       status = rollerMotor.getConfigurator().apply(CoralIntakeConstants.config);
@@ -77,6 +71,7 @@ public class CoralIntake extends SubsystemBase {
       System.out.println("Could not apply configs, error code: " + status.toString());
     }
 
+    //Pivot
     StatusCode status2 = StatusCode.StatusCodeNotInitialized;
     for ( int i = 0; i < 5; ++i){
       status2 = pivotMotor.getConfigurator().apply(CoralIntakeConstants.config);
@@ -87,17 +82,18 @@ public class CoralIntake extends SubsystemBase {
       System.out.println("Could not apply configs, error code: " + status2.toString());
     }
 
+    pivotMotor.setPosition(0);
+
     rollerSimState = rollerMotor.getSimState();
     pivotSimState = pivotMotor.getSimState();
 
   }
 
-   
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-        SmartDashboard.putNumber(getName() + "/RollerVoltageOut", rollerMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("RollerVoltageOut", rollerMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("PivotAngle", getPivotAngle());
         // SmartDashboard.putNumber(getName() + "/PivotMotor", pivotMotor.getMotorVoltage().getValueAsDouble());
 
   }
@@ -105,82 +101,40 @@ public class CoralIntake extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run
-    rollerSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
-
-    rollerSim.setInputVoltage(rollerSimState.getMotorVoltage());
-
-    
-    // pivotSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    // pivotSim.setInputVoltage(pivotSimState.getMotorVoltage());
-    
-    if(isClosedLoop){
-      SmartDashboard.putNumber("Pivot Motor Error", pivotMotor.getClosedLoopError().getValue());}
 
   }
   
 
-final boolean atGoal() {
-  return false;
+  final boolean atGoal() {
+    return false;
+  }
+
+  public double getPivotAngle(){
+    return Units.rotationsToDegrees(pivotMotor.getPosition().getValueAsDouble());
+  }
+
+  public void setAngle(){
+
+  }
+
+  //Controls the pivot and rollers 
+  public void setRollerOpenLoop(double input){
+    rollerOut.withOutput(input);
+    rollerMotor.setControl(rollerOut);
+  }
+
+  public Command setRollerOpenLoopCommand (double input) {
+    return Commands.runOnce(() -> setRollerOpenLoop(input));
+  }
+
+
+  public void setPivotOpenLoop(double input){
+    pivotOut.withOutput(input);
+    pivotMotor.setControl(pivotOut);
+  }
+
+  public Command setPivotOpenLoopCommand (double input) {
+    return Commands.runOnce(() -> setPivotOpenLoop(input));
+  }
 }
-
-public double getAngle(){
-  return 0.0;
-}
-
-public void setAngle(){
-
-}
-
-//Controls the pivot and rollers 
-public void setOpenLoop(double input){
-  // DutyCycleOut dutyCycleOutput;
-  //       dutyCycleOutput.withOutput(input);
-  rollerOut.withOutput(input);
-
-  rollerMotor.setControl(rollerOut);
-
-  // pivotOut.withOutput(input);
-
-  // pivotMotor.setControl(pivotOut);
-
-  // pivotMotor.setControl(new DutyCycleOut(input));
-
-}
-
-public Command setOpenLoopCommand (double input) {
-  return Commands.runEnd(() -> this.setOpenLoop(input), () -> this.setOpenLoopCommand(0), this);
-}
-  // return new RunCommand(() -> this.setOpenLoopCommand(input))
-// }
-//   public Command setClosedLoopCommand (double input) {
-
-//     return Commands.runEnd(() -> this.setClosedLoopCommand(input), () -> this.setClosedLoopCommand (input), this);
-
-
-
-  
-
-
-
-public void setHome(){}
-
-
-
-public Command setRollerOpenLoop(double outPut) {
-  return runOnce(() -> setOpenLoop(outPut));
-
-}
-public Command setPivotOPenLoop(double outPut) {
-  
-  return runOnce(() -> setOpenLoop(outPut));
-}
-
-// public Command SetPivotClosedLoop(double outPut){
-
-//  return runEnd(() -> setClosedLoopCommand(outPut), null);
-
-}
-
-
-
 

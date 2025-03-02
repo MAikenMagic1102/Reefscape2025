@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.InvertedValue;
 // import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -17,27 +18,17 @@ import edu.wpi.first.wpilibj.counter.UpDownCounter;
 
 /** Add your docs here. */
 public class CoralIntakeConstants {
-    public static String bus = "rio";
-    public static int pivotMotorID = 13;
-    public static int rollerMotorID = 14;
+    public static String bus = "can2";
+    public static int pivotMotorID = 42;
+    public static int rollerMotorID = 41;
     
-    public static double armLength = 0.0;
-    public static double gearRatio = 0.0;
-    public static double armMass = 0.0;
-    public static double armMinAngle = 0.0;
-    public static double armMaxAngle = 0.0;
-    public static double sartingAngle = 0.0;
-    public static double intakeOut = 0.0;
-    public static double intakeIn = 0.0;
-    public static double up = 0.0;
-    public static double down = 0.0;
-
-
-    public static double cIntakeGearing = 5.0;
-    public static double cIntakeMass = Units.lbsToKilograms(10);
-    public static double cIntakeMinHeightMeters = Units.inchesToMeters(1);
-    public static double cIntakeMaxHeightMeters = Units.inchesToMeters(10);
-    public static double cIntakeStartingHeightMeters = Units.inchesToMeters(1);
+    public static double gearRatio = 22.92;
+    public static double armGearingCANcoder = 3.5;
+    public static double armLength = Units.inchesToMeters(25);
+    public static double armMass = Units.lbsToKilograms(5.0);
+    public static double armMinAngle = Units.degreesToRadians(-5.0);
+    public static double armMaxAngle = Units.degreesToRadians(90.0);
+    public static double armStartingAngle = Units.degreesToRadians(90.0);
 
     public static double setHome = 0;
     public static double hpLoad = 0;
@@ -56,11 +47,11 @@ public class CoralIntakeConstants {
         .withMotorOutput(
             new MotorOutputConfigs()
             .withNeutralMode(NeutralModeValue.Brake)
-            // .withInverted(InvertedValue.Clockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
         )
         .withFeedback(
             new FeedbackConfigs()
-            .withSensorToMechanismRatio(cIntakeGearing)
+            .withSensorToMechanismRatio(gearRatio)
         )
         
         .withSlot0(
@@ -71,9 +62,6 @@ public class CoralIntakeConstants {
             .withKP(0.0)
             .withKI(0.0)
             .withKD(0.0)
-
-
-
         );
 
 
