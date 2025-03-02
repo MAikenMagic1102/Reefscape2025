@@ -99,6 +99,7 @@ public class RobotContainer {
         //Binds the roller intake to the right Bumper
             joystick.rightBumper().whileTrue(coralIntake.setRollerOpenLoop(0.2)).onFalse(coralIntake.setRollerOpenLoop(0));
             joystick.leftTrigger().whileTrue(coralIntake.setPivotOPenLoop(0.2)).onFalse(coralIntake.setPivotOPenLoop(0));
+
         
             programmerJoystick.povUp().whileTrue(coralIntake.setOpenLoopCommand(0.2));
             programmerJoystick.povDown().whileTrue(coralIntake.setOpenLoopCommand(-0.2));
