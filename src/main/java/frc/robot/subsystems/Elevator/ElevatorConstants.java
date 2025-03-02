@@ -40,12 +40,12 @@ import edu.wpi.first.units.measure.Distance;
 
     public static double elevatorTolerance = 0.05;
     
-    public static double setHome = 0;
+    public static double setHome = 0.01;
     public static double hpLoad = 0;
-    public static double reefL1 = 0;    
-    public static double reefL2 = 0;
-    public static double reefL3 = 0;
-    public static double reefL4 = 0;
+    public static double reefL1 = 0.25;    
+    public static double reefL2 = 0.5;
+    public static double reefL3 = 0.75;
+    public static double reefL4 = 1;
     public static double idle = 0;
     public static double safePos = 0;
 

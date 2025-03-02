@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Mechanism.SuperStructureMechanism;
 
 public class Superstructure extends SubsystemBase {
@@ -51,18 +52,20 @@ public class Superstructure extends SubsystemBase {
   return new InstantCommand(() -> elevator.setPositionMeters(1));
  }  
  public Command setL1Pos() {
-  return new InstantCommand(() -> elevator.setPositionMeters(0.5));
+  return new InstantCommand(() -> elevator.setPositionMeters(ElevatorConstants.reefL1));
  }
  public Command setL2Pos() {
-  return new InstantCommand(() -> elevator.setPositionMeters(1)); 
+  return new InstantCommand(() -> elevator.setPositionMeters(ElevatorConstants.reefL2)); 
  }
  public Command setL3Pos() {
-  return new InstantCommand(() -> elevator.setPositionMeters(1.5));
+  return new InstantCommand(() -> elevator.setPositionMeters(ElevatorConstants.reefL3));
  }
  public Command setL4Pos() {
-  return new InstantCommand(() -> elevator.setPositionMeters(2));
+  return new InstantCommand(() -> elevator.setPositionMeters(ElevatorConstants.reefL4));
  }
  public Command setTestHome () {
-  return new InstantCommand(()-> elevator.setPositionMeters(0.1));
+  return new InstantCommand(()-> elevator.setPositionMeters(ElevatorConstants.setHome));
+  
  }
+
  }
