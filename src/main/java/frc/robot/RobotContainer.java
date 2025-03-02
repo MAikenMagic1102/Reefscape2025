@@ -42,6 +42,7 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
     private final CommandXboxController operatorJoy = new CommandXboxController(1);
+    private final CommandXboxController armJoy = new CommandXboxController(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Superstructure superstructure = new Superstructure();
@@ -97,6 +98,9 @@ public class RobotContainer {
 
         operatorJoy.povUp().whileTrue(superstructure.runElevatorUp()).onFalse(superstructure.stopElevator());
         operatorJoy.povDown().whileTrue(superstructure.runElevatorDown()).onFalse(superstructure.stopElevator());
+
+        armJoy.povUp().whileTrue(superstructure.armUp()).onFalse(superstructure.armStop());
+        armJoy.povDown().whileTrue(superstructure.armDown()).onFalse(superstructure.armStop());
 
         operatorJoy.a().onTrue(superstructure.middlePosition());
 

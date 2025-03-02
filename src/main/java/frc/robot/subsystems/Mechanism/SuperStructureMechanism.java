@@ -52,6 +52,6 @@ public class SuperStructureMechanism {
    }
 
    public void updateArm(double armAngle){
-      arm.setAngle(armAngle);
+      arm.setAngle(armAngle - 90);
    }
 }
