@@ -15,6 +15,7 @@ import choreo.auto.AutoFactory;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -22,6 +23,8 @@ import frc.robot.commands.ElevatorTest;
 import frc.robot.commands.L4finalPos;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.CoralGripper.CoralGripper;
+import frc.robot.subsystems.Intake.CoralIntake;
 import frc.robot.subsystems.Superstructure;
 
 public class RobotContainer {
@@ -40,6 +43,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController programmerJoystick = new CommandXboxController(2);
     private final CommandXboxController operatorJoy = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -49,6 +53,9 @@ public class RobotContainer {
     private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
+
+    private final CoralIntake coralIntake = new CoralIntake();
+    private final CoralGripper coralGripper = new CoralGripper();
 
     public RobotContainer() {
         autoFactory = drivetrain.createAutoFactory();
@@ -103,6 +110,18 @@ public class RobotContainer {
     
 
         drivetrain.registerTelemetry(logger::telemeterize);
+        
+        //Binds the roller intake to the right Bumper
+        programmerJoystick.leftBumper().whileTrue(coralIntake.setRollerOpenLoopCommand(0.5)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
+        programmerJoystick.leftTrigger().whileTrue(coralIntake.setRollerOpenLoopCommand(-0.5)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
+
+        programmerJoystick.rightBumper().whileTrue(coralGripper.setRollerOpenLoopCommand(0.25)).onFalse(coralGripper.setRollerOpenLoopCommand(0));
+        programmerJoystick.rightTrigger().whileTrue(coralGripper.setRollerOpenLoopCommand(-0.5)).onFalse(coralGripper.setRollerOpenLoopCommand(0));
+        
+        programmerJoystick.povUp().whileTrue(coralIntake.setPivotOpenLoopCommand(0.15)).onFalse(coralIntake.setPivotOpenLoopCommand(0));
+        programmerJoystick.povDown().whileTrue(coralIntake.setPivotOpenLoopCommand(-0.15)).onFalse(coralIntake.setPivotOpenLoopCommand(0));
+
+        
     }
 
     public Command getAutonomousCommand() {
