@@ -9,12 +9,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Mechanism.SuperStructureMechanism;
 
 public class Superstructure extends SubsystemBase {
 
   private final Elevator elevator = new Elevator ();
+    private Arm arm = new Arm();
 
   private final SuperStructureMechanism mech = new SuperStructureMechanism();
   
@@ -25,6 +27,7 @@ public class Superstructure extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     elevator.periodic();
+    arm.periodic();
     mech.update(elevator.getPositionMeters());
   }
 
@@ -65,4 +68,21 @@ public class Superstructure extends SubsystemBase {
  public Command setTestHome () {
   return new InstantCommand(()-> elevator.setPositionMeters(0.1));
  }
+
+ public Command armUp() {
+  return runOnce(() -> arm.setOpenLoop(0.1));
+}
+
+public Command armDown() {
+  return runOnce(() -> arm.setOpenLoop(-0.1));
+}
+
+public Command armStop(){
+  return runOnce(() -> arm.setOpenLoop(0.0));
+}
+
+public Command setArmAngle(double angle){
+  return runOnce(() -> arm.setAnglePosition(angle));
+}
+
  }

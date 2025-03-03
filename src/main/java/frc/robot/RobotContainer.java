@@ -118,11 +118,14 @@ public class RobotContainer {
         programmerJoystick.rightBumper().whileTrue(coralGripper.setRollerOpenLoopCommand(0.25)).onFalse(coralGripper.setRollerOpenLoopCommand(0));
         programmerJoystick.rightTrigger().whileTrue(coralGripper.setRollerOpenLoopCommand(-0.5)).onFalse(coralGripper.setRollerOpenLoopCommand(0));
         
-        programmerJoystick.povUp().whileTrue(coralIntake.setPivotOpenLoopCommand(0.15)).onFalse(coralIntake.setPivotOpenLoopCommand(0));
-        programmerJoystick.povDown().whileTrue(coralIntake.setPivotOpenLoopCommand(-0.15)).onFalse(coralIntake.setPivotOpenLoopCommand(0));
+        programmerJoystick.povUp().whileTrue(superstructure.armUp()).onFalse(superstructure.armStop());
+        programmerJoystick.povDown().whileTrue(superstructure.armDown()).onFalse(superstructure.armStop());
 
         programmerJoystick.a().onTrue(coralIntake.setAngleCommand(-110));
         programmerJoystick.b().onTrue(coralIntake.setAngleCommand(-1));
+
+        programmerJoystick.y().onTrue(superstructure.setArmAngle(-140));
+        programmerJoystick.x().onTrue(superstructure.setArmAngle(0));
         
     }
 
