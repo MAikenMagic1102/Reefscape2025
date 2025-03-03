@@ -59,9 +59,9 @@ public class CoralIntakeConstants {
             .withKG(0.9)
             .withKV(0.0)
             .withKA(0.0)
-            .withKP(110.0)
+            .withKP(100.0)
             .withKI(0.0)
-            .withKD(9.0)
+            .withKD(8.0)
         );
 
 

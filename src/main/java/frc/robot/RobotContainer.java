@@ -93,7 +93,8 @@ public class RobotContainer {
 
         operatorJoy.povUp().whileTrue(superstructure.runElevatorUp()).onFalse(superstructure.stopElevator());
         operatorJoy.povDown().whileTrue(superstructure.runElevatorDown()).onFalse(superstructure.stopElevator());
-        operatorJoy.povRight().onTrue(superstructure.setMiddlePos());
+        programmerJoystick.povRight().onTrue(superstructure.setMiddlePos());
+        programmerJoystick.povLeft().onTrue(superstructure.setTestHome());
         //operatorJoy.povLeft().onTrue(new ElevatorTest(superstructure));
         //operatorJoy.rightBumper().onTrue(new L4finalPos(superstructure));
     

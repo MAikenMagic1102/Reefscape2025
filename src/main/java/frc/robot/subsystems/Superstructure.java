@@ -47,7 +47,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setMiddlePos() {
-     return new InstantCommand(() -> elevator.setPositionMetersMM(0.5));
+     return new InstantCommand(() -> elevator.setPositionMetersMM(0.85));
  }
 
  public Command setHighPos(){
@@ -66,15 +66,15 @@ public class Superstructure extends SubsystemBase {
   return new InstantCommand(() -> elevator.setPositionMeters(2));
  }
  public Command setTestHome () {
-  return new InstantCommand(()-> elevator.setPositionMeters(0.1));
+  return new InstantCommand(()-> elevator.setPositionMetersMM(0.01));
  }
 
  public Command armUp() {
-  return runOnce(() -> arm.setOpenLoop(0.1));
+  return runOnce(() -> arm.setOpenLoop(0.4));
 }
 
 public Command armDown() {
-  return runOnce(() -> arm.setOpenLoop(-0.1));
+  return runOnce(() -> arm.setOpenLoop(-0.4));
 }
 
 public Command armStop(){
