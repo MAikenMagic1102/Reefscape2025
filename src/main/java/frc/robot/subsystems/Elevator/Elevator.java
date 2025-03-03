@@ -65,8 +65,8 @@ public class Elevator extends SubsystemBase {
 
   /** Creates a new Elevator. */
   public Elevator() {
-    motorL = new TalonFX(ElevatorConstants.motorLID);
-    motorR = new TalonFX(ElevatorConstants.motorRID);
+    motorL = new TalonFX(ElevatorConstants.motorLID, ElevatorConstants.bus);
+    motorR = new TalonFX(ElevatorConstants.motorRID, ElevatorConstants.bus);
 
     motorR.setControl(new Follower(ElevatorConstants.motorLID, true)); 
 

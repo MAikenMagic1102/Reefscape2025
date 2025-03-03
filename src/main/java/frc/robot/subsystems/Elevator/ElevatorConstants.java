@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SlotConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -23,7 +24,7 @@ import edu.wpi.first.units.measure.Distance;
 
 /** Add your docs here. */
     public class ElevatorConstants {
-    public static String bus = "rio";
+    public static String bus = "can2";
     public static int motorLID = 21;
     public static int motorRID = 22;
 
@@ -52,15 +53,22 @@ import edu.wpi.first.units.measure.Distance;
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(70)
-                .withStatorCurrentLimit(120)
+                .withSupplyCurrentLimit(40)
+                .withStatorCurrentLimit(40)
             
         )
         .withMotorOutput(
             new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
-                .withInverted(InvertedValue.CounterClockwise_Positive)
+                .withInverted(InvertedValue.Clockwise_Positive)
             
+        )
+        .withSoftwareLimitSwitch(
+            new SoftwareLimitSwitchConfigs()
+                .withForwardSoftLimitThreshold(1.1 / elevatorPullyCircum)
+                .withForwardSoftLimitEnable(true)
+                .withReverseSoftLimitThreshold(0.0)
+                .withReverseSoftLimitEnable(true)
         )
         .withSlot0(
             new Slot0Configs()
@@ -71,8 +79,8 @@ import edu.wpi.first.units.measure.Distance;
         )        
         .withSlot1(
             new Slot1Configs()
-                .withKG(0.15)
-                .withKV(0.7)
+                .withKG(0.310)
+                .withKV(0.305)
                 .withKA(0.05)
                 .withKP(92)
                

@@ -93,9 +93,9 @@ public class RobotContainer {
 
         operatorJoy.povUp().whileTrue(superstructure.runElevatorUp()).onFalse(superstructure.stopElevator());
         operatorJoy.povDown().whileTrue(superstructure.runElevatorDown()).onFalse(superstructure.stopElevator());
-        operatorJoy.povRight().onTrue(superstructure.setMiddlePos()).onFalse(superstructure.stopElevator());
-        operatorJoy.povLeft().onTrue(new ElevatorTest(superstructure));
-        operatorJoy.rightBumper().onTrue(new L4finalPos(superstructure));
+        operatorJoy.povRight().onTrue(superstructure.setMiddlePos());
+        //operatorJoy.povLeft().onTrue(new ElevatorTest(superstructure));
+        //operatorJoy.rightBumper().onTrue(new L4finalPos(superstructure));
     
 
         // Run SysId routines when holding back/start and X/Y.
@@ -121,6 +121,8 @@ public class RobotContainer {
         programmerJoystick.povUp().whileTrue(coralIntake.setPivotOpenLoopCommand(0.15)).onFalse(coralIntake.setPivotOpenLoopCommand(0));
         programmerJoystick.povDown().whileTrue(coralIntake.setPivotOpenLoopCommand(-0.15)).onFalse(coralIntake.setPivotOpenLoopCommand(0));
 
+        programmerJoystick.a().onTrue(coralIntake.setAngleCommand(-110));
+        programmerJoystick.b().onTrue(coralIntake.setAngleCommand(-1));
         
     }
 

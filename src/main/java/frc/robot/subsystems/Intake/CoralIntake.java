@@ -9,6 +9,7 @@ import java.lang.ModuleLayer.Controller;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
@@ -51,7 +52,9 @@ public class CoralIntake extends SubsystemBase {
         CoralIntakeConstants.armStartingAngle);
 
   private DutyCycleOut rollerOut = new DutyCycleOut(0);
+
   private DutyCycleOut pivotOut = new DutyCycleOut(0);
+  private PositionVoltage posVoltage = new PositionVoltage(0).withSlot(0);
   private boolean isClosedLoop = false;
   
   
@@ -113,8 +116,13 @@ public class CoralIntake extends SubsystemBase {
     return Units.rotationsToDegrees(pivotMotor.getPosition().getValueAsDouble());
   }
 
-  public void setAngle(){
+  public void setAngle(double angle){
+    posVoltage.withPosition(Units.degreesToRotations(angle));
+    pivotMotor.setControl(posVoltage);
+  }
 
+  public Command  setAngleCommand(double angle){
+    return runOnce(() -> setAngle(angle));
   }
 
   //Controls the pivot and rollers 

@@ -27,7 +27,7 @@ public class CoralIntakeConstants {
     public static double armLength = Units.inchesToMeters(25);
     public static double armMass = Units.lbsToKilograms(5.0);
     public static double armMinAngle = Units.degreesToRadians(-5.0);
-    public static double armMaxAngle = Units.degreesToRadians(90.0);
+    public static double armMaxAngle = Units.degreesToRadians(110.0);
     public static double armStartingAngle = Units.degreesToRadians(90.0);
 
     public static double setHome = 0;
@@ -56,12 +56,12 @@ public class CoralIntakeConstants {
         
         .withSlot0(
             new Slot0Configs()
-            .withKG(0.0)
+            .withKG(0.9)
             .withKV(0.0)
             .withKA(0.0)
-            .withKP(0.0)
+            .withKP(110.0)
             .withKI(0.0)
-            .withKD(0.0)
+            .withKD(9.0)
         );
 
 
