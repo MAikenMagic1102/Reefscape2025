@@ -81,17 +81,17 @@ public class RobotContainer {
             )
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+        // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        // ));
 
-        joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(0.5).withVelocityY(0))
-        );
-        joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(-0.5).withVelocityY(0))
-        );
+        // joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
+        //     forwardStraight.withVelocityX(0.5).withVelocityY(0))
+        // );
+        // joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
+        //     forwardStraight.withVelocityX(-0.5).withVelocityY(0))
+        // );
 
         operatorJoy.povUp().whileTrue(superstructure.runElevatorUp()).onFalse(superstructure.stopElevator());
         operatorJoy.povDown().whileTrue(superstructure.runElevatorDown()).onFalse(superstructure.stopElevator());
@@ -111,7 +111,7 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
-        joystick.rightBumper()
+        joystick.leftBumper()
             .whileTrue(new IntakeDeploy(coralIntake)
             .andThen(coralIntake.setRollerOpenLoopCommand(-0.7)
             .alongWith(coralGripper.setRollerOpenLoopCommand(0.25))))
@@ -120,20 +120,27 @@ public class RobotContainer {
             .alongWith(coralGripper.setRollerOpenLoopCommand(0.05)));
         
         
-        joystick.rightBumper()
+        joystick.leftTrigger()
             .whileTrue(coralIntake.setRollerOpenLoopCommand(0.5))
 
             .onFalse(coralIntake.setRollerOpenLoopCommand(0)
             .alongWith(new IntakeRetract(coralIntake)));            
 
-        drivetrain.registerTelemetry(logger::telemeterize);
         
+        //joystick.rightBumper().toggleOnTrue()
+        //joystick.rightBumper().toggleOnFalse()
+        joystick.rightTrigger().whileTrue(coralGripper.setRollerOpenLoopCommand(-0.5)).onFalse(coralGripper.setRollerOpenLoopCommand(0));
+
+        joystick.b().onTrue(superstructure.setTargetL1());
+        joystick.a().onTrue(superstructure.setTargetL2());
+        joystick.x().onTrue(superstructure.setTargetL3());
+        joystick.y().onTrue(superstructure.setTargetL4());
+
         //Binds the roller intake to the right Bumper
         // programmerJoystick.leftBumper().whileTrue(coralIntake.setRollerOpenLoopCommand(0.5)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
         // programmerJoystick.leftTrigger().whileTrue(coralIntake.setRollerOpenLoopCommand(-0.7)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
 
         //programmerJoystick.rightBumper().whileTrue(coralGripper.setRollerOpenLoopCommand(0.25)).onFalse(coralGripper.setRollerOpenLoopCommand(0.05));
-        programmerJoystick.rightTrigger().whileTrue(coralGripper.setRollerOpenLoopCommand(-0.5)).onFalse(coralGripper.setRollerOpenLoopCommand(0));
         
         programmerJoystick.povUp().whileTrue(superstructure.armUp()).onFalse(superstructure.armStop());
         programmerJoystick.povDown().whileTrue(superstructure.armDown()).onFalse(superstructure.armStop());
@@ -141,8 +148,10 @@ public class RobotContainer {
         // programmerJoystick.a().onTrue(coralIntake.setAngleCommand(-115));
         // programmerJoystick.b().onTrue(coralIntake.setAngleCommand(-1));
 
-        programmerJoystick.y().onTrue(superstructure.setArmAngle(123));
-        programmerJoystick.x().onTrue(superstructure.setArmAngle(-1));
+        // programmerJoystick.y().onTrue(superstructure.setArmAngle(123));
+        // programmerJoystick.x().onTrue(superstructure.setArmAngle(-1));
+
+        drivetrain.registerTelemetry(logger::telemeterize);
         
     }
 

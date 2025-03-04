@@ -10,15 +10,26 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Arm.Arm;
+import frc.robot.subsystems.Arm.ArmConstants;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Mechanism.SuperStructureMechanism;
 
 public class Superstructure extends SubsystemBase {
 
   private final Elevator elevator = new Elevator ();
-    private Arm arm = new Arm();
+  private final Arm arm = new Arm();
 
   private final SuperStructureMechanism mech = new SuperStructureMechanism();
+
+  private enum scoreTarget{
+    L1,
+    L2,
+    L3,
+    L4
+  };
+
+  private scoreTarget currentTarget = scoreTarget.L1;
   
   /** Creates a new Superstructure. */
   public Superstructure() {}
@@ -33,6 +44,88 @@ public class Superstructure extends SubsystemBase {
 
   public boolean elevatorAtGoal(){
     return elevator.atGoal();
+  }
+
+  public Command setTargetL1(){
+    return runOnce(() -> currentTarget = scoreTarget.L1);
+  }
+
+  public Command setTargetL2(){
+    return runOnce(() -> currentTarget = scoreTarget.L2);
+  }
+
+  public Command setTargetL3(){
+    return runOnce(() -> currentTarget = scoreTarget.L3);
+  }
+
+  public Command setTargetL4(){
+    return runOnce(() -> currentTarget = scoreTarget.L4);
+  }
+
+  public double getScoreTargetElevatorPos(){
+    double scoreTarget = 0.0;
+
+    switch(currentTarget){
+      case L1:
+        scoreTarget = ElevatorConstants.reefL1;
+      break;
+      case L2:
+        scoreTarget = ElevatorConstants.reefL2;
+      break;
+      case L3:
+        scoreTarget = ElevatorConstants.reefL3;
+      break;
+      case L4:
+        scoreTarget = ElevatorConstants.reefL4;
+      break;                  
+    }
+    
+    return scoreTarget;
+  }
+
+  public Command setElevatorToScore(){
+    return elevator.setHeight(getScoreTargetElevatorPos());
+  }
+
+  public boolean isElevatorAtGoal(){
+    return elevator.atGoal();
+  }
+
+  public boolean isArmSafeNeeded(){
+    return currentTarget == scoreTarget.L4;
+  }
+
+  public Command setElevatorToScoreSafe(){
+    return elevator.setHeight(ElevatorConstants.safePos);
+  }
+
+  public double getScoreTargetArmAngle(){
+    double scoreTarget = 0.0;
+
+    switch(currentTarget){
+      case L1:
+        scoreTarget = ArmConstants.reefL1;
+      break;
+      case L2:
+        scoreTarget = ArmConstants.reefL2;
+      break;
+      case L3:
+        scoreTarget = ArmConstants.reefL3;
+      break;
+      case L4:
+        scoreTarget = ArmConstants.reefL4;
+      break;                  
+    }
+    
+    return scoreTarget;
+  }
+
+  public Command setArmToScore(){
+    return arm.setAngle(getScoreTargetArmAngle());
+  }
+
+  public boolean isArmAtGoal(){
+    return arm.atGoal();
   }
 
   public Command runElevatorUp() {
@@ -53,21 +146,10 @@ public class Superstructure extends SubsystemBase {
  public Command setHighPos(){
   return new InstantCommand(() -> elevator.setPositionMeters(1));
  }  
- public Command setL1Pos() {
-  return new InstantCommand(() -> elevator.setPositionMeters(0.5));
- }
- public Command setL2Pos() {
-  return new InstantCommand(() -> elevator.setPositionMeters(1)); 
- }
- public Command setL3Pos() {
-  return new InstantCommand(() -> elevator.setPositionMeters(1.5));
- }
- public Command setL4Pos() {
-  return new InstantCommand(() -> elevator.setPositionMeters(2));
- }
- public Command setTestHome () {
-  return new InstantCommand(()-> elevator.setPositionMetersMM(0.005));
- }
+
+ public Command setTestHome(){
+  return new InstantCommand(() -> elevator.setPositionMeters(0.001));
+ }  
 
  public Command armUp() {
   return runOnce(() -> arm.setOpenLoop(0.4));
@@ -81,8 +163,6 @@ public Command armStop(){
   return runOnce(() -> arm.setOpenLoop(0.0));
 }
 
-public Command setArmAngle(double angle){
-  return runOnce(() -> arm.setAnglePosition(angle));
-}
 
- }
+
+}

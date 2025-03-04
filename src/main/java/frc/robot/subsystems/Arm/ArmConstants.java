@@ -34,6 +34,11 @@ public class ArmConstants {
 
     public static double positionTolerence = 0.5;
 
+    public static double reefL1 = 0;
+    public static double reefL2 = 0;
+    public static double reefL3 = 0;
+    public static double reefL4 = 0;
+
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()

@@ -18,19 +18,19 @@ public class L4finalPos extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      struct.setL1Pos(),
-      new WaitUntilCommand(struct::elevatorAtGoal),
-      new WaitCommand(1),
-      struct.setL2Pos(),
-      new WaitUntilCommand(struct::elevatorAtGoal),
-      new WaitCommand(1),
-      struct.setL3Pos(),
-      new WaitUntilCommand(struct::elevatorAtGoal),
-      new WaitCommand(1),
-      struct.setL4Pos(),
-      new WaitUntilCommand(struct::elevatorAtGoal),
-      new WaitCommand(1),
-      struct.setTestHome()
+      // struct.setL1Pos(),
+      // new WaitUntilCommand(struct::elevatorAtGoal),
+      // new WaitCommand(1),
+      // struct.setL2Pos(),
+      // new WaitUntilCommand(struct::elevatorAtGoal),
+      // new WaitCommand(1),
+      // struct.setL3Pos(),
+      // new WaitUntilCommand(struct::elevatorAtGoal),
+      // new WaitCommand(1),
+      // struct.setL4Pos(),
+      // new WaitUntilCommand(struct::elevatorAtGoal),
+      // new WaitCommand(1),
+      // struct.setTestHome()
     );
   }
 }

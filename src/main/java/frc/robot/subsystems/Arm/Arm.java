@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
@@ -130,5 +131,9 @@ public class Arm extends SubsystemBase {
     posVoltage.withPosition(Units.degreesToRotations(angle));
     armMotor.setControl(posVoltage);
     closedLoop = true;
+  }
+
+  public Command setAngle(double angle){
+    return runOnce(() -> setAnglePosition(angle));
   }
 }
