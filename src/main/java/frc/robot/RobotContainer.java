@@ -141,7 +141,7 @@ public class RobotContainer {
         // programmerJoystick.a().onTrue(coralIntake.setAngleCommand(-115));
         // programmerJoystick.b().onTrue(coralIntake.setAngleCommand(-1));
 
-        programmerJoystick.y().onTrue(superstructure.setArmAngle(120));
+        programmerJoystick.y().onTrue(superstructure.setArmAngle(123));
         programmerJoystick.x().onTrue(superstructure.setArmAngle(-1));
         
     }
