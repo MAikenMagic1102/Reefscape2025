@@ -23,7 +23,7 @@ public class CoralGripper extends SubsystemBase {
     grippers.setMotorType(MotorType.MINION);
     grippers.setBrakeMode(true);
     grippers.setInverted(true);
-    grippers.setMaxCurrent(CurrentType.STATOR, 35);
+    grippers.setMaxCurrent(CurrentType.STATOR, 20);
     grippers.setMaxCurrent(CurrentType.SUPPLY, 35);
     
     // Iterate through errors and check them

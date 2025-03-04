@@ -46,6 +46,9 @@ public class Arm extends SubsystemBase {
   private PositionVoltage posVoltage = new PositionVoltage(0).withSlot(0);
   private MotionMagicVoltage mmVoltage = new MotionMagicVoltage(0).withSlot(0);
 
+  boolean closedLoop = false;
+
+  private double targetPosition = 0;
 /** Creates a new Arm. */
   public Arm() {
     armMotor = new TalonFX(ArmConstants.motorID, ArmConstants.busname);
@@ -74,7 +77,7 @@ public class Arm extends SubsystemBase {
     //armMotor.setPosition(armCaNcoder.getAbsolutePosition().getValueAsDouble() / ArmConstants.armRotorToSensor);
     motorSim = armMotor.getSimState();
     cancoderSim = armCaNcoder.getSimState();
-    
+    armCaNcoder.setPosition(0);
   }
 
   @Override
@@ -85,6 +88,10 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Motor Rotor Position", armMotor.getRotorPosition().getValueAsDouble());
     SmartDashboard.putNumber("CC Position", armCaNcoder.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("CC Position Absolute",armCaNcoder.getAbsolutePosition().getValueAsDouble());
+    SmartDashboard.getBoolean("ScoringArmAtGoal", atGoal());
+    if(closedLoop){
+      SmartDashboard.putNumber("Arm Setpoint", armMotor.getClosedLoopReference().getValueAsDouble());
+    }
   }
 
   @Override
@@ -105,20 +112,23 @@ public class Arm extends SubsystemBase {
   }
 
   public double getAngleDegrees(){
-    return Units.rotationsToDegrees(armMotor.getPosition().getValueAsDouble());
+    return Units.rotationsToDegrees(armCaNcoder.getPosition().getValueAsDouble() / ArmConstants.armGearingCANcoder);
   }
   
   public boolean atGoal(){
-    return false;
+    return Math.abs(targetPosition - getAngleDegrees()) < ArmConstants.positionTolerence;
   }
 
   public void setOpenLoop(double demand){
     dutyOut.withOutput(demand);
     armMotor.setControl(dutyOut);
+    closedLoop = false;
   }
 
   public void setAnglePosition(double angle){
+    targetPosition = angle;
     posVoltage.withPosition(Units.degreesToRotations(angle));
     armMotor.setControl(posVoltage);
+    closedLoop = true;
   }
 }

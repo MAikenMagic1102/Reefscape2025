@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorTest;
+import frc.robot.commands.IntakeDeploy;
+import frc.robot.commands.IntakeRetract;
 import frc.robot.commands.L4finalPos;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -101,32 +103,46 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-    
+        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        
+        joystick.rightBumper()
+            .whileTrue(new IntakeDeploy(coralIntake)
+            .andThen(coralIntake.setRollerOpenLoopCommand(-0.7)
+            .alongWith(coralGripper.setRollerOpenLoopCommand(0.25))))
+        
+            .onFalse(coralIntake.setRollerOpenLoopCommand(0)
+            .alongWith(coralGripper.setRollerOpenLoopCommand(0.05)));
+        
+        
+        joystick.rightBumper()
+            .whileTrue(coralIntake.setRollerOpenLoopCommand(0.5))
+
+            .onFalse(coralIntake.setRollerOpenLoopCommand(0)
+            .alongWith(new IntakeRetract(coralIntake)));            
 
         drivetrain.registerTelemetry(logger::telemeterize);
         
         //Binds the roller intake to the right Bumper
-        programmerJoystick.leftBumper().whileTrue(coralIntake.setRollerOpenLoopCommand(0.5)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
-        programmerJoystick.leftTrigger().whileTrue(coralIntake.setRollerOpenLoopCommand(-0.5)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
+        // programmerJoystick.leftBumper().whileTrue(coralIntake.setRollerOpenLoopCommand(0.5)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
+        // programmerJoystick.leftTrigger().whileTrue(coralIntake.setRollerOpenLoopCommand(-0.7)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
 
-        programmerJoystick.rightBumper().whileTrue(coralGripper.setRollerOpenLoopCommand(0.25)).onFalse(coralGripper.setRollerOpenLoopCommand(0));
+        //programmerJoystick.rightBumper().whileTrue(coralGripper.setRollerOpenLoopCommand(0.25)).onFalse(coralGripper.setRollerOpenLoopCommand(0.05));
         programmerJoystick.rightTrigger().whileTrue(coralGripper.setRollerOpenLoopCommand(-0.5)).onFalse(coralGripper.setRollerOpenLoopCommand(0));
         
         programmerJoystick.povUp().whileTrue(superstructure.armUp()).onFalse(superstructure.armStop());
         programmerJoystick.povDown().whileTrue(superstructure.armDown()).onFalse(superstructure.armStop());
 
-        programmerJoystick.a().onTrue(coralIntake.setAngleCommand(-110));
-        programmerJoystick.b().onTrue(coralIntake.setAngleCommand(-1));
+        // programmerJoystick.a().onTrue(coralIntake.setAngleCommand(-115));
+        // programmerJoystick.b().onTrue(coralIntake.setAngleCommand(-1));
 
-        programmerJoystick.y().onTrue(superstructure.setArmAngle(-140));
-        programmerJoystick.x().onTrue(superstructure.setArmAngle(0));
+        programmerJoystick.y().onTrue(superstructure.setArmAngle(120));
+        programmerJoystick.x().onTrue(superstructure.setArmAngle(-1));
         
     }
 

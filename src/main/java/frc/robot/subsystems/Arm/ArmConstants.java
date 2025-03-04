@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -31,6 +32,8 @@ public class ArmConstants {
     public static double armMaxAngle = Units.degreesToRadians(255.0);
     public static double armStartingAngle = Units.degreesToRadians(0.0);
 
+    public static double positionTolerence = 0.5;
+
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
@@ -50,15 +53,22 @@ public class ArmConstants {
                 .withFeedbackRemoteSensorID(cancoderID)
                 .withRotorToSensorRatio(25.67)
                 .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+        )
+        .withSlot0(
+            new Slot0Configs()
+                .withKG(0.38)
+                .withKD(0)
+                .withKP(60.0)
+                .withKV(0.5)
         );
 
     public static CANcoderConfiguration ccconfig = new CANcoderConfiguration()
         .withMagnetSensor(
             new MagnetSensorConfigs()
                 .withAbsoluteSensorDiscontinuityPoint(0.0)
-                .withMagnetOffset(0.31)
+                .withMagnetOffset(-0.87)
                 //.withMagnetOffset(1.32)
-                .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+                .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
         );
 
 }

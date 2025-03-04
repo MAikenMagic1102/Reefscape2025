@@ -54,7 +54,6 @@ import edu.wpi.first.units.measure.Distance;
         .withCurrentLimits(
             new CurrentLimitsConfigs()
                 .withSupplyCurrentLimit(40)
-                .withStatorCurrentLimit(40)
             
         )
         .withMotorOutput(
@@ -65,7 +64,7 @@ import edu.wpi.first.units.measure.Distance;
         )
         .withSoftwareLimitSwitch(
             new SoftwareLimitSwitchConfigs()
-                .withForwardSoftLimitThreshold(1.1 / elevatorPullyCircum)
+                .withForwardSoftLimitThreshold((1.15 / elevatorPullyCircum))
                 .withForwardSoftLimitEnable(true)
                 .withReverseSoftLimitThreshold(0.0)
                 .withReverseSoftLimitEnable(true)
@@ -87,9 +86,9 @@ import edu.wpi.first.units.measure.Distance;
         )
         .withMotionMagic(
             new MotionMagicConfigs()
-                .withMotionMagicAcceleration(80)
-                .withMotionMagicCruiseVelocity(40)
-                .withMotionMagicJerk(700)
+                .withMotionMagicAcceleration(60)
+                .withMotionMagicCruiseVelocity(50)
+                .withMotionMagicJerk(1000)
         )
         .withFeedback(
             new FeedbackConfigs()
