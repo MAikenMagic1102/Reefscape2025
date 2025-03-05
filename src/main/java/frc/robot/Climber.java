@@ -21,6 +21,10 @@ public class Climber extends SubsystemBase {
       status = climberMotor.getConfigurator().apply(ClimberConstants.config);
       if (status.isOK()) break;
     }
+
+    if (!status.isOK()){
+      System.out.println("Could not apply configs, error code: " + status.toString());
+    }
   }
 
   public void setAngle(double angleDeg){

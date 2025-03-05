@@ -46,6 +46,7 @@ public static double armMass = Units.lbsToKilograms(0);
 public static double armMinAngle = Units.degreesToRadians(0);
 public static double armMaxAngle = Units.degreesToRadians(0);
 public static double armStartingAngle = Units.degreesToRadians(0.0);
+public double angleDeg = Units.degreesToRadians(armGearing);
 
 public static double positionTolerence = 0;
 
