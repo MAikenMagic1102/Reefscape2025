@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.CoralGripper.CoralGripper;
+import frc.robot.subsystems.CoralGripper.CoralGripperConstants;
 import frc.robot.subsystems.Intake.CoralIntake;
 import frc.robot.subsystems.Intake.CoralIntakeConstants;
 
@@ -24,20 +25,17 @@ public class PrepScore extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      coralGripper.setRollerOpenLoopCommand(0.05),
-      new ConditionalCommand(coralIntake.setAngleCommand(CoralIntakeConstants.floorIntake).alongWith(superstructure.setElevatorToScoreSafe()),
-      //coral gripper hold peice 
-      new InstantCommand(),
-      superstructure::isArmSafeNeeded),
+      coralGripper.setRollerOpenLoopCommand(CoralGripperConstants.hold),
 
-      superstructure.setElevatorToScore(),
-      
+      coralIntake.setAngleCommand(CoralIntakeConstants.floorIntake).alongWith(superstructure.setElevatorToScoreSafe()),
+
       new WaitUntilCommand(superstructure::isElevatorSafe),
 
       superstructure.setArmToScore(), 
 
-      new WaitUntilCommand(superstructure::isArmAtGoal) 
+      new WaitUntilCommand(superstructure::isArmAtGoal), 
 
+      superstructure.setElevatorToScore()
     );
   }
 }

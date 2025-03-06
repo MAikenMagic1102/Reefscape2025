@@ -26,18 +26,16 @@ public class ReturnToHome extends SequentialCommandGroup {
     addCommands(
 
       gripper.setRollerOpenLoopCommand(CoralGripperConstants.eject),
-      new WaitCommand(0.25),
-      gripper.setRollerOpenLoopCommand(CoralGripperConstants.stop),
 
-      new ConditionalCommand(intake.setAngleCommand(CoralIntakeConstants.floorIntake),
-       new InstantCommand(),
-       superstructure::isArmSafeNeeded),
+      intake.setAngleCommand(CoralIntakeConstants.floorIntake).alongWith(superstructure.setElevatorToScoreSafe()),
 
-       superstructure.setArmToHome(),
+      new WaitUntilCommand(superstructure::isElevatorSafe),
 
-       new WaitUntilCommand(superstructure::isArmAtGoal),
+      superstructure.setArmToHome(),
 
-       superstructure.setElevatorHome()
+      new WaitUntilCommand(superstructure::isArmAtGoal),
+
+      superstructure.setElevatorHome()
 
     );
   }

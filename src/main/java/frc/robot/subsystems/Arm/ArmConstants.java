@@ -34,9 +34,9 @@ public class ArmConstants {
 
     public static double positionTolerence = 1.0;
 
-    public static double reefL1 = 85;
-    public static double reefL2 = 110;
-    public static double reefL3 = 142;
+    public static double reefL1 = -275; //85;
+    public static double reefL2 = -250; //110;
+    public static double reefL3 = -218; //142; 
     public static double reefL4 = -235;
 
     public static TalonFXConfiguration config = new TalonFXConfiguration()
@@ -48,7 +48,6 @@ public class ArmConstants {
         .withMotorOutput(
             new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
-
           )   
           //10:70 - 18:66 S - 10:35
         .withFeedback(

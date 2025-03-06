@@ -134,11 +134,12 @@ public class RobotContainer {
 
         
         joystick.rightBumper().onTrue(new ReturnToHome(superstructure, coralIntake, coralGripper));
-        joystick.rightTrigger().onTrue(new ScoreCoral(coralGripper)).onFalse(new InstantCommand(() -> coralGripper.setRollerOpenLoop(0)));
+        joystick.rightTrigger().onTrue(new InstantCommand(() -> coralGripper.setRollerOpenLoop(0.4)))
+        .onFalse(new ReturnToHome(superstructure, coralIntake, coralGripper));
 
-        joystick.b().onTrue(superstructure.setTargetL1().andThen(new PrepScoreL123(superstructure, coralGripper, coralIntake)));
-        joystick.a().onTrue(superstructure.setTargetL2().andThen(new PrepScoreL123(superstructure, coralGripper, coralIntake)));
-        joystick.x().onTrue(superstructure.setTargetL3().andThen(new PrepScoreL123(superstructure, coralGripper, coralIntake)));
+        joystick.b().onTrue(superstructure.setTargetL1().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
+        joystick.a().onTrue(superstructure.setTargetL2().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
+        joystick.x().onTrue(superstructure.setTargetL3().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
         joystick.y().onTrue(superstructure.setTargetL4().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
 
         //Binds the roller intake to the right Bumper
