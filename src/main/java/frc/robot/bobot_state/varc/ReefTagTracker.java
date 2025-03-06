@@ -8,7 +8,7 @@ public class ReefTagTracker extends TargetAngleTracker {
 
   public void update() {
     rotationTarget =
-        FieldUtils.getClosestReef().tag.pose().getRotation().toRotation2d().plus(Rotation2d.kPi);
+        FieldUtils.getClosestReef().tag.pose().getRotation().toRotation2d();//.plus(Rotation2d.kPi);
   }
 
   public Rotation2d getRotationTarget() {

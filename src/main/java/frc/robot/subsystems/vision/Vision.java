@@ -97,7 +97,7 @@ public class Vision extends VirtualSubsystem {
         BobotState.offerVisionObservation(observation);
       }
     }
-
+    
     // Logger.recordOutput(
     //     aggregateAprilTagLogRoot + "/ValidCorners", validCorners.toArray(Translation2d[]::new));
     // Logger.recordOutput(

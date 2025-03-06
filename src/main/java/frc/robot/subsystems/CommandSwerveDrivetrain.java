@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.subsystems.vision.PoseObservation;
 /* 
  * #TODO: Make the commands to align the robot to a reef target!
  * how to do
@@ -307,6 +308,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+      // AprilTag Cameras
+      PoseObservation observation;
+      while ((observation = BobotState.getVisionObservations().poll()) != null) {
+        addVisionMeasurement(
+            observation.robotPose().toPose2d(), observation.timestampSeconds()
+            // ,observation.stdDevs()
+            );
+      }
+
+      BobotState.updateGlobalPose(getState().Pose);
 
     }
 
