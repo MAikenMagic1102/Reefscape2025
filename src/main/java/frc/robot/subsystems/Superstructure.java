@@ -30,16 +30,26 @@ public class Superstructure extends SubsystemBase {
   };
 
   private scoreTarget currentTarget = scoreTarget.L1;
+
+  private double armTargetAngle = 0.0;
+  private double elevatorTargetHeight = 0.0;
   
   /** Creates a new Superstructure. */
   public Superstructure() {}
 
   @Override
   public void periodic() {
+    SmartDashboard.putString("Score Target", currentTarget.toString());
     // This method will be called once per scheduler run
     elevator.periodic();
     arm.periodic();
     mech.update(elevator.getPositionMeters());
+
+    armTargetAngle = getScoreTargetArmAngle();
+    elevatorTargetHeight = getScoreTargetElevatorPos();
+
+    SmartDashboard.putNumber("Elevator Target Height", elevatorTargetHeight);
+    SmartDashboard.putNumber("Arm Target Angle", armTargetAngle);
   }
 
   public boolean elevatorAtGoal(){
@@ -84,11 +94,15 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setElevatorToScore(){
-    return elevator.setHeight(getScoreTargetElevatorPos());
+    return new InstantCommand(() -> elevator.setPositionMetersMM(elevatorTargetHeight));
   }
 
   public boolean isElevatorAtGoal(){
     return elevator.atGoal();
+  }
+
+  public boolean isElevatorSafe(){
+    return elevator.aboveIntake();
   }
 
   public boolean isArmSafeNeeded(){
@@ -96,7 +110,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setElevatorToScoreSafe(){
-    return elevator.setHeight(ElevatorConstants.safePos);
+    return new InstantCommand(() -> elevator.setPositionMetersMM(ElevatorConstants.safePos));
   }
 
   public double getScoreTargetArmAngle(){
@@ -121,11 +135,15 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setArmToScore(){
-    return arm.setAngle(getScoreTargetArmAngle());
+    return new InstantCommand(() -> arm.setAnglePosition(armTargetAngle));
   }
 
   public boolean isArmAtGoal(){
     return arm.atGoal();
+  }
+
+  public Command setArmToHome() {
+    return new InstantCommand(() -> arm.setAnglePosition(0.0));
   }
 
   public Command runElevatorUp() {
@@ -147,8 +165,8 @@ public class Superstructure extends SubsystemBase {
   return new InstantCommand(() -> elevator.setPositionMeters(1));
  }  
 
- public Command setTestHome(){
-  return new InstantCommand(() -> elevator.setPositionMeters(0.001));
+ public Command setElevatorHome(){
+  return new InstantCommand(() -> elevator.setPositionMeters(0));
  }  
 
  public Command armUp() {

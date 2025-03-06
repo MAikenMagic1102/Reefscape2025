@@ -89,7 +89,7 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Motor Rotor Position", armMotor.getRotorPosition().getValueAsDouble());
     SmartDashboard.putNumber("CC Position", armCaNcoder.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("CC Position Absolute",armCaNcoder.getAbsolutePosition().getValueAsDouble());
-    SmartDashboard.getBoolean("ScoringArmAtGoal", atGoal());
+    SmartDashboard.getBoolean("Arm At Goal", atGoal());
     if(closedLoop){
       SmartDashboard.putNumber("Arm Setpoint", armMotor.getClosedLoopReference().getValueAsDouble());
     }

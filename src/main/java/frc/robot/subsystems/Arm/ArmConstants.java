@@ -32,18 +32,17 @@ public class ArmConstants {
     public static double armMaxAngle = Units.degreesToRadians(255.0);
     public static double armStartingAngle = Units.degreesToRadians(0.0);
 
-    public static double positionTolerence = 0.5;
+    public static double positionTolerence = 1.0;
 
-    public static double reefL1 = 0;
-    public static double reefL2 = 0;
-    public static double reefL3 = 0;
-    public static double reefL4 = 0;
+    public static double reefL1 = 85;
+    public static double reefL2 = 110;
+    public static double reefL3 = 142;
+    public static double reefL4 = -235;
 
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(70)
-                .withStatorCurrentLimit(120)
+                .withSupplyCurrentLimit(40)
 
         )  
         .withMotorOutput(

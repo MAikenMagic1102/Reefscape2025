@@ -109,6 +109,10 @@ public class CoralIntake extends SubsystemBase {
     // This method will be called once per scheduler run
 
   }
+
+  public void holdCurrentPosition(){
+    setAngle(targetPosition);
+  }
   
 
   public boolean atGoal() {

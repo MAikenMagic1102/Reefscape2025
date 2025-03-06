@@ -46,9 +46,11 @@ import edu.wpi.first.units.measure.Distance;
     public static double reefL1 = 0;    
     public static double reefL2 = 0;
     public static double reefL3 = 0;
-    public static double reefL4 = 0;
+    public static double reefL4 = 0.85;
     public static double idle = 0;
-    public static double safePos = 0;
+    public static double safePos = 0.1;
+
+    public static double driveSpeed = 1.0;
 
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(

@@ -30,11 +30,11 @@ public class CoralIntakeConstants {
     public static double armMaxAngle = Units.degreesToRadians(110.0);
     public static double armStartingAngle = Units.degreesToRadians(90.0);
 
-    public static double positionTolerance = 1.0;
+    public static double positionTolerance = 3.0;
 
-    public static double setHome = 0;
+    public static double setHome = -2;
     public static double hpLoad = 0;
-    public static double floorIntake = -110;
+    public static double floorIntake = -117;
     public static double stationIntake = 0;
     public static double stowedPos = 0;
     public static double idle = 0;
@@ -43,7 +43,7 @@ public class CoralIntakeConstants {
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
-            .withSupplyCurrentLimit(40)
+            .withSupplyCurrentLimit(70)
         )
         .withMotorOutput(
             new MotorOutputConfigs()

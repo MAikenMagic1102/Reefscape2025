@@ -95,10 +95,15 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if(aboveHalf()){
+      ElevatorConstants.driveSpeed = 0.3;
+    }else{
+      ElevatorConstants.driveSpeed = 1.0;
+    }
     // This method will be called once per scheduler run
     //SmartDashboard
     SmartDashboard.putNumber("/PositionMeters", getPositionMeters());
-    SmartDashboard.putBoolean("/atGoal", atGoal());
+    SmartDashboard.putBoolean("Elevator at Goal", atGoal());
   }
 
   @Override
@@ -118,6 +123,14 @@ public class Elevator extends SubsystemBase {
 
   public boolean atGoal() {
     return Math.abs(targetPosition - getPositionMeters()) < ElevatorConstants.elevatorTolerance;
+  }
+
+  public boolean aboveIntake(){
+    return getPositionMeters() > 0.2;
+  }
+
+  public boolean aboveHalf(){
+    return getPositionMeters() > 0.5;
   }
 
   public double getPositionMeters() {

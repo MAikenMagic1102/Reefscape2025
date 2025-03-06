@@ -4,24 +4,25 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.subsystems.Intake.CoralIntake;
-import frc.robot.subsystems.Intake.CoralIntakeConstants;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.subsystems.CoralGripper.CoralGripper;
+import frc.robot.subsystems.CoralGripper.CoralGripperConstants;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class IntakeRetract extends SequentialCommandGroup {
-  /** Creates a new IntakeDeploy. */
-  public IntakeRetract(CoralIntake intake) {
+public class ScoreCoral extends SequentialCommandGroup {
+  /** Creates a new ScoreCoral. */
+  public ScoreCoral(CoralGripper gripper) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      intake.setAngleCommand(CoralIntakeConstants.setHome),
-      new WaitUntilCommand(intake::atGoal)
-  
+      gripper.setRollerOpenLoopCommand(CoralGripperConstants.eject),
+      new WaitCommand(0.25),
+      gripper.setRollerOpenLoopCommand(CoralGripperConstants.stop)
+
+
     );
   }
 }

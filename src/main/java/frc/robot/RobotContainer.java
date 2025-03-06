@@ -23,9 +23,14 @@ import frc.robot.commands.ElevatorTest;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeRetract;
 import frc.robot.commands.L4finalPos;
+import frc.robot.commands.PrepScore;
+import frc.robot.commands.PrepScoreL123;
+import frc.robot.commands.ReturnToHome;
+import frc.robot.commands.ScoreCoral;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralGripper.CoralGripper;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Intake.CoralIntake;
 import frc.robot.subsystems.Superstructure;
 
@@ -75,11 +80,12 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * ElevatorConstants.driveSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed * ElevatorConstants.driveSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate * ElevatorConstants.driveSpeed) // Drive counterclockwise with negative X (left)
             )
         );
+
 
         // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         // joystick.b().whileTrue(drivetrain.applyRequest(() ->
@@ -96,7 +102,7 @@ public class RobotContainer {
         operatorJoy.povUp().whileTrue(superstructure.runElevatorUp()).onFalse(superstructure.stopElevator());
         operatorJoy.povDown().whileTrue(superstructure.runElevatorDown()).onFalse(superstructure.stopElevator());
         programmerJoystick.povRight().onTrue(superstructure.setMiddlePos());
-        programmerJoystick.povLeft().onTrue(superstructure.setTestHome());
+        programmerJoystick.povLeft().onTrue(superstructure.setElevatorHome());
         //operatorJoy.povLeft().onTrue(new ElevatorTest(superstructure));
         //operatorJoy.rightBumper().onTrue(new L4finalPos(superstructure));
     
@@ -113,11 +119,11 @@ public class RobotContainer {
         
         joystick.leftBumper()
             .whileTrue(new IntakeDeploy(coralIntake)
-            .andThen(coralIntake.setRollerOpenLoopCommand(-0.7)
-            .alongWith(coralGripper.setRollerOpenLoopCommand(0.25))))
+            .andThen(coralIntake.setRollerOpenLoopCommand(-0.9))
+            .alongWith(new InstantCommand(() -> coralGripper.setRollerOpenLoop(0.4))))
         
             .onFalse(coralIntake.setRollerOpenLoopCommand(0)
-            .alongWith(coralGripper.setRollerOpenLoopCommand(0.05)));
+            .alongWith(new InstantCommand(() -> coralGripper.setRollerOpenLoop(0))));
         
         
         joystick.leftTrigger()
@@ -127,14 +133,13 @@ public class RobotContainer {
             .alongWith(new IntakeRetract(coralIntake)));            
 
         
-        //joystick.rightBumper().toggleOnTrue()
-        //joystick.rightBumper().toggleOnFalse()
-        joystick.rightTrigger().whileTrue(coralGripper.setRollerOpenLoopCommand(-0.5)).onFalse(coralGripper.setRollerOpenLoopCommand(0));
+        joystick.rightBumper().onTrue(new ReturnToHome(superstructure, coralIntake, coralGripper));
+        joystick.rightTrigger().onTrue(new ScoreCoral(coralGripper)).onFalse(new InstantCommand(() -> coralGripper.setRollerOpenLoop(0)));
 
-        joystick.b().onTrue(superstructure.setTargetL1());
-        joystick.a().onTrue(superstructure.setTargetL2());
-        joystick.x().onTrue(superstructure.setTargetL3());
-        joystick.y().onTrue(superstructure.setTargetL4());
+        joystick.b().onTrue(superstructure.setTargetL1().andThen(new PrepScoreL123(superstructure, coralGripper, coralIntake)));
+        joystick.a().onTrue(superstructure.setTargetL2().andThen(new PrepScoreL123(superstructure, coralGripper, coralIntake)));
+        joystick.x().onTrue(superstructure.setTargetL3().andThen(new PrepScoreL123(superstructure, coralGripper, coralIntake)));
+        joystick.y().onTrue(superstructure.setTargetL4().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
 
         //Binds the roller intake to the right Bumper
         // programmerJoystick.leftBumper().whileTrue(coralIntake.setRollerOpenLoopCommand(0.5)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
@@ -158,5 +163,9 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         /* Run the routine selected from the auto chooser */
         return autoChooser.selectedCommand();
+    }
+
+    public Command setHome(){
+        return new IntakeRetract(coralIntake);
     }
 }
