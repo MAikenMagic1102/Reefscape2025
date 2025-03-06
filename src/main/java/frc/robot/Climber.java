@@ -4,16 +4,21 @@
 
 
 package frc.robot;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.StatusCode;
-import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+
 
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
   private TalonFX climberMotor;
+  private double targetPosition;
+  private PositionVoltage posVoltage = new PositionVoltage(0).withSlot(0);
   public Climber() {
     climberMotor = new TalonFX(ClimberConstants.motorID, ClimberConstants.rioBus);
     StatusCode status = StatusCode.StatusCodeNotInitialized;
@@ -27,24 +32,37 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public void setAngle(double angleDeg){
-  climberMotor.setAngle(angleDeg);
+  public void atAngle(double angleDeg){
+    climberMotor.setControl(new PositionVoltage(angleDeg));
   }
 
-  public double getAngle(){
-    return climberMotor.getAngle();
+  public void setClimberPosition(double angleDeg) {
+    // targetPosition = angleDeg;
+    new PositionVoltage(Units.degreesToRotations(angleDeg));
+    // PositionVoltage.withPosition(Units.degreesToRadians(angleDeg));
+    // posVoltage.withPosition(ClimberConstants.targetPosition.Units.degreesToRadians());
+    SmartDashboard.putNumber("ClimberVoltageOut", climberMotor.getMotorVoltage().getValueAsDouble());
+  }
+
+  public boolean atGoal(){
+    return false;
+  }
+
+  public double getClimberAngle(){
+    return Units.rotationsToDegrees(climberMotor.getPosition().getValueAsDouble());
   }
 
   public double getError(double targetPosition){
-    return Math.abs(getAngle() - targetPosition);
+    return Math.abs(getClimberAngle() - targetPosition);
   }
 
-  public void setOpenLoop(double climberOutput){
+  public void setOpenLoop(DutyCycleOut climberOutput){
     climberMotor.setControl(climberOutput);
   }
+
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("climberPosition", climberMotor.getAngle);
+    SmartDashboard.putNumber("isClimberAtGoal", getClimberAngle());
     // This method will be called once per scheduler run
   }
 }

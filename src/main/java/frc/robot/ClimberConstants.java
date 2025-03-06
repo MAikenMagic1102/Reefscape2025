@@ -20,24 +20,11 @@ import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
 public class ClimberConstants {
-     public static int motorID = 46;
+     public static final double climberTolerance = 0;
+    public static int motorID = 46;
      public static String rioBus = "rio";
 
-     
-//    TalonFX( 46 ,"rio")
-//    motor.apply(config);
-//     TalonFXConfiguration config = new TalonFXConfiguration()
-//     //                    .withMotorOutput(
-//    //                         new MotorOutputConfigs()
-//    //                         .withNeutralModel(NeutralMode.Brake)
-//    //                     );
-//    DutyCycleOutput(0)
-//     void setOpenLoop(90){
-//         DutyCycle.withOutput(90)
-//         motor.applyControl(Dutycycle);
-//     }
-
-
+    
 public static double armGearing = 0;
 public static double armGearingCANcoder = 0;
 public static double armRotorToSensor = 0;
@@ -70,9 +57,6 @@ public static TalonFXConfiguration config = new TalonFXConfiguration()
     .withFeedback(
         new FeedbackConfigs()
             .withSensorToMechanismRatio(0)
-            .withFeedbackRemoteSensorID(0)
-            .withRotorToSensorRatio(0)
-            .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
     )
     .withSlot0(
         new Slot0Configs()
@@ -81,14 +65,4 @@ public static TalonFXConfiguration config = new TalonFXConfiguration()
             .withKP(0)
             .withKV(0)
     );
-
-public static CANcoderConfiguration ccconfig = new CANcoderConfiguration()
-    .withMagnetSensor(
-        new MagnetSensorConfigs()
-            .withAbsoluteSensorDiscontinuityPoint(0.0)
-            .withMagnetOffset(0)
-            //.withMagnetOffset(1.32)
-            .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
-    );
 }
-
