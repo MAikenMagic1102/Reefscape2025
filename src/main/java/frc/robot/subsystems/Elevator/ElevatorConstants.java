@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SlotConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -23,7 +24,7 @@ import edu.wpi.first.units.measure.Distance;
 
 /** Add your docs here. */
     public class ElevatorConstants {
-    public static String bus = "rio";
+    public static String bus = "can2";
     public static int motorLID = 21;
     public static int motorRID = 22;
 
@@ -38,29 +39,38 @@ import edu.wpi.first.units.measure.Distance;
     public static double conversion = (Math.PI * elevatorPullyRadius * 2) / elevatorGearing;
     public static Distance elevatorPullyRadiusDistance = Inches.of(1.128);
 
-    public static double elevatorTolerance = 0.05;
+    public static double elevatorTolerance = 0.07;
     
     public static double setHome = 0;
     public static double hpLoad = 0;
     public static double reefL1 = 0;    
     public static double reefL2 = 0;
     public static double reefL3 = 0;
-    public static double reefL4 = 0;
+    public static double reefL4 = 0.83;
+    public static double ALGAE = 0.0;
     public static double idle = 0;
-    public static double safePos = 0;
+    public static double safePos = 0.35;
+
+    public static double driveSpeed = 1.0;
 
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(70)
-                .withStatorCurrentLimit(120)
+                .withSupplyCurrentLimit(40)
             
         )
         .withMotorOutput(
             new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
-                .withInverted(InvertedValue.CounterClockwise_Positive)
+                .withInverted(InvertedValue.Clockwise_Positive)
             
+        )
+        .withSoftwareLimitSwitch(
+            new SoftwareLimitSwitchConfigs()
+                .withForwardSoftLimitThreshold((1.15 / elevatorPullyCircum))
+                .withForwardSoftLimitEnable(true)
+                .withReverseSoftLimitThreshold(0.0)
+                .withReverseSoftLimitEnable(true)
         )
         .withSlot0(
             new Slot0Configs()
@@ -71,17 +81,17 @@ import edu.wpi.first.units.measure.Distance;
         )        
         .withSlot1(
             new Slot1Configs()
-                .withKG(0.15)
-                .withKV(0.7)
+                .withKG(0.310)
+                .withKV(0.305)
                 .withKA(0.05)
                 .withKP(92)
                
         )
         .withMotionMagic(
             new MotionMagicConfigs()
-                .withMotionMagicAcceleration(80)
-                .withMotionMagicCruiseVelocity(40)
-                .withMotionMagicJerk(700)
+                .withMotionMagicAcceleration(60)
+                .withMotionMagicCruiseVelocity(50)
+                .withMotionMagicJerk(1000)
         )
         .withFeedback(
             new FeedbackConfigs()

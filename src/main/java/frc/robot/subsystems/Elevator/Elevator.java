@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
@@ -65,8 +66,8 @@ public class Elevator extends SubsystemBase {
 
   /** Creates a new Elevator. */
   public Elevator() {
-    motorL = new TalonFX(ElevatorConstants.motorLID);
-    motorR = new TalonFX(ElevatorConstants.motorRID);
+    motorL = new TalonFX(ElevatorConstants.motorLID, ElevatorConstants.bus);
+    motorR = new TalonFX(ElevatorConstants.motorRID, ElevatorConstants.bus);
 
     motorR.setControl(new Follower(ElevatorConstants.motorLID, true)); 
 
@@ -94,10 +95,15 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if(aboveHalf()){
+      ElevatorConstants.driveSpeed = 0.3;
+    }else{
+      ElevatorConstants.driveSpeed = 1.0;
+    }
     // This method will be called once per scheduler run
     //SmartDashboard
     SmartDashboard.putNumber("/PositionMeters", getPositionMeters());
-    SmartDashboard.putBoolean("/atGoal", atGoal());
+    SmartDashboard.putBoolean("Elevator at Goal", atGoal());
   }
 
   @Override
@@ -119,6 +125,14 @@ public class Elevator extends SubsystemBase {
     return Math.abs(targetPosition - getPositionMeters()) < ElevatorConstants.elevatorTolerance;
   }
 
+  public boolean aboveIntake(){
+    return getPositionMeters() > 0.3;
+  }
+
+  public boolean aboveHalf(){
+    return getPositionMeters() > 0.5;
+  }
+
   public double getPositionMeters() {
     return rotationsToMeters(motorL.getRotorPosition().getValue()).in(Meters);
   }
@@ -133,6 +147,10 @@ public class Elevator extends SubsystemBase {
     targetPosition = height;
     mmPosition.withPosition(height / ElevatorConstants.elevatorPullyCircum);
     motorL.setControl(mmPosition);
+  }
+
+  public Command setHeight(double height){
+    return runOnce(() -> setPositionMetersMM(height));
   }
 
   public void setOpenLoop(double input){

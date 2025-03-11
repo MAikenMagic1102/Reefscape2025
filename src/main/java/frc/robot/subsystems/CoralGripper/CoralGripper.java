@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class CoralGripper extends SubsystemBase {
   private ThriftyNova grippers;
 
-
   /** Creates a new CoralGripper. */
   public CoralGripper() {
     grippers = new ThriftyNova(CoralGripperConstants.motorID, ThriftyNova.MotorType.MINION);
@@ -24,8 +23,8 @@ public class CoralGripper extends SubsystemBase {
     grippers.setMotorType(MotorType.MINION);
     grippers.setBrakeMode(true);
     grippers.setInverted(true);
-    grippers.setMaxCurrent(CurrentType.STATOR, 35);
     grippers.setMaxCurrent(CurrentType.SUPPLY, 35);
+    grippers.setTempThrottleEnable(false);
     
     // Iterate through errors and check them
     for (var err : grippers.getErrors()) {
@@ -48,4 +47,6 @@ public class CoralGripper extends SubsystemBase {
   public Command setRollerOpenLoopCommand(double input){
     return runOnce(() -> setRollerOpenLoop(input));
   }
+
+  
 }

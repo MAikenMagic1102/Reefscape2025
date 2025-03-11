@@ -9,6 +9,7 @@ import java.lang.ModuleLayer.Controller;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
@@ -51,8 +52,12 @@ public class CoralIntake extends SubsystemBase {
         CoralIntakeConstants.armStartingAngle);
 
   private DutyCycleOut rollerOut = new DutyCycleOut(0);
+
   private DutyCycleOut pivotOut = new DutyCycleOut(0);
+  private PositionVoltage posVoltage = new PositionVoltage(0).withSlot(0);
   private boolean isClosedLoop = false;
+
+  private double targetPosition = 0;
   
   
   /** Creates a new CoralIntake. */
@@ -94,6 +99,7 @@ public class CoralIntake extends SubsystemBase {
     // This method will be called once per scheduler run
         SmartDashboard.putNumber("RollerVoltageOut", rollerMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("PivotAngle", getPivotAngle());
+        SmartDashboard.putBoolean("Coral intake at Goal", atGoal());
         // SmartDashboard.putNumber(getName() + "/PivotMotor", pivotMotor.getMotorVoltage().getValueAsDouble());
 
   }
@@ -103,18 +109,28 @@ public class CoralIntake extends SubsystemBase {
     // This method will be called once per scheduler run
 
   }
+
+  public void holdCurrentPosition(){
+    setAngle(targetPosition);
+  }
   
 
-  final boolean atGoal() {
-    return false;
+  public boolean atGoal() {
+    return Math.abs(targetPosition - getPivotAngle()) < CoralIntakeConstants.positionTolerance;
   }
 
   public double getPivotAngle(){
     return Units.rotationsToDegrees(pivotMotor.getPosition().getValueAsDouble());
   }
 
-  public void setAngle(){
+  public void setAngle(double angle){
+    targetPosition = angle;
+    posVoltage.withPosition(Units.degreesToRotations(angle));
+    pivotMotor.setControl(posVoltage);
+  }
 
+  public Command  setAngleCommand(double angle){
+    return runOnce(() -> setAngle(angle));
   }
 
   //Controls the pivot and rollers 
