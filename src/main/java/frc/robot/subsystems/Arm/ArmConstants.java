@@ -32,12 +32,15 @@ public class ArmConstants {
     public static double armMaxAngle = Units.degreesToRadians(255.0);
     public static double armStartingAngle = Units.degreesToRadians(0.0);
 
-    public static double positionTolerence = 1.0;
+    public static double positionTolerence = 7.0;
+
+    public static double driveSpeed = 1.0;
 
     public static double reefL1 = -275; //85;
     public static double reefL2 = -250; //110;
     public static double reefL3 = -218; //142; 
     public static double reefL4 = -235;
+    public static double ALGAE = -270;
 
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(

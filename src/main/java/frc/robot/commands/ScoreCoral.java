@@ -19,7 +19,7 @@ public class ScoreCoral extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       gripper.setRollerOpenLoopCommand(CoralGripperConstants.eject),
-      new WaitCommand(0.25),
+      new WaitCommand(0.5),
       gripper.setRollerOpenLoopCommand(CoralGripperConstants.stop)
 
 

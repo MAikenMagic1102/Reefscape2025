@@ -39,16 +39,17 @@ import edu.wpi.first.units.measure.Distance;
     public static double conversion = (Math.PI * elevatorPullyRadius * 2) / elevatorGearing;
     public static Distance elevatorPullyRadiusDistance = Inches.of(1.128);
 
-    public static double elevatorTolerance = 0.05;
+    public static double elevatorTolerance = 0.07;
     
     public static double setHome = 0;
     public static double hpLoad = 0;
     public static double reefL1 = 0;    
     public static double reefL2 = 0;
     public static double reefL3 = 0;
-    public static double reefL4 = 0.85;
+    public static double reefL4 = 0.83;
+    public static double ALGAE = 0.0;
     public static double idle = 0;
-    public static double safePos = 0.1;
+    public static double safePos = 0.35;
 
     public static double driveSpeed = 1.0;
 

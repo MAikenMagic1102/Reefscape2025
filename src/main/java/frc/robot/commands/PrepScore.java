@@ -33,7 +33,7 @@ public class PrepScore extends SequentialCommandGroup {
 
       superstructure.setArmToScore(), 
 
-      new WaitUntilCommand(superstructure::isArmAtGoal), 
+      new WaitUntilCommand(superstructure::armHalfScored), 
 
       superstructure.setElevatorToScore()
     );

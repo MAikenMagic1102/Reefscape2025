@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Elevator.ElevatorConstants;
 
 public class Arm extends SubsystemBase {
   private TalonFX armMotor;
@@ -83,16 +84,22 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    if(armAtScoring()){
+      ArmConstants.driveSpeed = 0.3;
+    }else{
+      ArmConstants.driveSpeed = 1.0;
+    }
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Arm Angle", getAngleDegrees());
-    SmartDashboard.putNumber("Motor Position", armMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Motor Rotor Position", armMotor.getRotorPosition().getValueAsDouble());
-    SmartDashboard.putNumber("CC Position", armCaNcoder.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("CC Position Absolute",armCaNcoder.getAbsolutePosition().getValueAsDouble());
     SmartDashboard.getBoolean("Arm At Goal", atGoal());
     if(closedLoop){
       SmartDashboard.putNumber("Arm Setpoint", armMotor.getClosedLoopReference().getValueAsDouble());
     }
+  }
+
+  public boolean armHalfScored(){
+    return getAngleDegrees() < -100;
   }
 
   @Override
@@ -114,6 +121,10 @@ public class Arm extends SubsystemBase {
 
   public double getAngleDegrees(){
     return Units.rotationsToDegrees(armCaNcoder.getPosition().getValueAsDouble() / ArmConstants.armGearingCANcoder);
+  }
+
+  public boolean armAtScoring(){
+    return getAngleDegrees() < -180;
   }
   
   public boolean atGoal(){

@@ -25,7 +25,7 @@ public class ReturnToHome extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
 
-      gripper.setRollerOpenLoopCommand(CoralGripperConstants.eject),
+      new InstantCommand(() -> gripper.setRollerOpenLoop(CoralGripperConstants.eject)),
 
       intake.setAngleCommand(CoralIntakeConstants.floorIntake).alongWith(superstructure.setElevatorToScoreSafe()),
 
@@ -35,7 +35,9 @@ public class ReturnToHome extends SequentialCommandGroup {
 
       new WaitUntilCommand(superstructure::isArmAtGoal),
 
-      superstructure.setElevatorHome()
+      superstructure.setElevatorHome(),
+
+      new InstantCommand(() -> gripper.setRollerOpenLoop(CoralGripperConstants.stop))
 
     );
   }

@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 // import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -30,11 +31,11 @@ public class CoralIntakeConstants {
     public static double armMaxAngle = Units.degreesToRadians(110.0);
     public static double armStartingAngle = Units.degreesToRadians(90.0);
 
-    public static double positionTolerance = 3.0;
+    public static double positionTolerance = 7.0;
 
     public static double setHome = -2;
     public static double hpLoad = 0;
-    public static double floorIntake = -117;
+    public static double floorIntake = -109;
     public static double stationIntake = 0;
     public static double stowedPos = 0;
     public static double idle = 0;
@@ -62,7 +63,8 @@ public class CoralIntakeConstants {
             .withKA(0.0)
             .withKP(75.0)
             .withKI(0.0)
-            .withKD(8.0)
+            .withKD(7.0)
+            .withGravityType(GravityTypeValue.Arm_Cosine)
         );
 
 

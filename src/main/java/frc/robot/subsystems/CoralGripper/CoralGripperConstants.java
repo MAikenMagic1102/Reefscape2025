@@ -9,7 +9,7 @@ public class CoralGripperConstants {
     public static int motorID = 33;
 
     public static double intake = 0.25;
-    public static double hold = 0.05;
+    public static double hold = 0.1;
     public static double eject = -0.25;
     public static double stop = 0;
 

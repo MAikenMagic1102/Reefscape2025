@@ -9,6 +9,7 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.jni.SwerveJNI;
 
 import choreo.Choreo.TrajectoryLogger;
 import choreo.auto.AutoFactory;
@@ -26,8 +27,9 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
+import frc.robot.bobot_state.BobotState;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.subsystems.vision.PoseObservation;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -300,6 +302,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+    // AprilTag Cameras
+      PoseObservation observation;
+      while ((observation = BobotState.getVisionObservations().poll()) != null) {
+        addVisionMeasurement(
+            observation.robotPose().toPose2d(), observation.timestampSeconds()
+            // ,observation.stdDevs()
+            );
+      }
+
+       BobotState.updateGlobalPose(getState().Pose);
     }
 
     private void startSimThread() {
@@ -327,6 +340,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+
+    public void addVisionMeasurementMagic(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+            SwerveJNI.JNI_AddVisionMeasurement(m_drivetrainId, visionRobotPoseMeters.getX(), visionRobotPoseMeters.getY(),
+                getState().Pose.getRotation().getRadians(), timestampSeconds);
     }
 
     /**

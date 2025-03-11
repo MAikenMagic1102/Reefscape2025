@@ -26,7 +26,8 @@ public class Superstructure extends SubsystemBase {
     L1,
     L2,
     L3,
-    L4
+    L4,
+    ALGAE
   };
 
   private scoreTarget currentTarget = scoreTarget.L1;
@@ -72,6 +73,11 @@ public class Superstructure extends SubsystemBase {
     return runOnce(() -> currentTarget = scoreTarget.L4);
   }
 
+  public Command setTargetAlgae(){
+    return runOnce(() -> currentTarget = scoreTarget.ALGAE);
+  }
+
+
   public double getScoreTargetElevatorPos(){
     double scoreTarget = 0.0;
 
@@ -87,6 +93,9 @@ public class Superstructure extends SubsystemBase {
       break;
       case L4:
         scoreTarget = ElevatorConstants.reefL4;
+      break;
+      case ALGAE:
+      scoreTarget = ElevatorConstants.ALGAE;
       break;                  
     }
     
@@ -128,7 +137,10 @@ public class Superstructure extends SubsystemBase {
       break;
       case L4:
         scoreTarget = ArmConstants.reefL4;
-      break;                  
+      break;      
+      case ALGAE:
+      scoreTarget = ArmConstants.ALGAE;
+      break;                              
     }
     
     return scoreTarget;
@@ -142,8 +154,12 @@ public class Superstructure extends SubsystemBase {
     return arm.atGoal();
   }
 
+  public boolean armHalfScored(){
+    return arm.armHalfScored();
+  }
+
   public Command setArmToHome() {
-    return new InstantCommand(() -> arm.setAnglePosition(0.0));
+    return new InstantCommand(() -> arm.setAnglePosition(-2.0));
   }
 
   public Command runElevatorUp() {
@@ -166,7 +182,7 @@ public class Superstructure extends SubsystemBase {
  }  
 
  public Command setElevatorHome(){
-  return new InstantCommand(() -> elevator.setPositionMeters(0));
+  return new InstantCommand(() -> elevator.setPositionMetersMM(-0.003));
  }  
 
  public Command armUp() {
