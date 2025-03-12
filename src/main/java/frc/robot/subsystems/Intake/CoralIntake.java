@@ -104,12 +104,14 @@ public class CoralIntake extends SubsystemBase {
        // Logger.recordOutput("RollerVoltageOut", rollerMotor.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput("PivotAngle", getPivotAngle());
         Logger.recordOutput("Coral intake at Goal", atGoal());
+
         Logger.recordOutput("Pivot Motor Voltage",pivotMotor.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput("Pivot Stator Current", pivotMotor.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("Pivot Device Temp", pivotMotor.getDeviceTemp().getValueAsDouble());
-        Logger.recordOutput("RollerVoltageOut", rollerMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput("Pivot Motor Temp", pivotMotor.getDeviceTemp().getValueAsDouble());
+
+        Logger.recordOutput("Roller Motor Voltage", rollerMotor.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput("Roller Stator Current", rollerMotor.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("Roller Device Temp", rollerMotor.getDeviceTemp().getValueAsDouble() );
+        Logger.recordOutput("Roller Motor Temp", rollerMotor.getDeviceTemp().getValueAsDouble() );
 
         // SmartDashboard.putNumber(getName() + "/PivotMotor", pivotMotor.getMotorVoltage().getValueAsDouble());
 
