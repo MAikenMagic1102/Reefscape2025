@@ -86,7 +86,7 @@ public class Arm extends SubsystemBase {
   public void periodic() {
 
     if(armAtScoring()){
-      ArmConstants.driveSpeed = 0.3;
+      ArmConstants.driveSpeed = 0.15;
     }else{
       ArmConstants.driveSpeed = 1.0;
     }

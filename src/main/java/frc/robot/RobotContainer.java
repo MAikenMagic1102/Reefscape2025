@@ -37,6 +37,7 @@ import frc.robot.subsystems.Intake.CoralIntake;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Arm.ArmConstants;
+import frc.robot.subsystems.Climber.Climber;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -70,6 +71,7 @@ public class RobotContainer {
 
     private final CoralIntake coralIntake = new CoralIntake();
     private final CoralGripper coralGripper = new CoralGripper();
+    private final Climber climber = new Climber();
 
     private final Vision vision = new Vision();
 
@@ -155,7 +157,12 @@ public class RobotContainer {
         joystick.a().onTrue(superstructure.setTargetL2().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
         joystick.x().onTrue(superstructure.setTargetL3().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
         joystick.y().onTrue(superstructure.setTargetL4().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
-        joystick.povUp().onTrue(superstructure.setTargetAlgae().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
+        
+        
+        //joystick.povUp().onTrue(superstructure.setTargetAlgae().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
+
+        joystick.povUp().whileTrue(new InstantCommand(() -> climber.setOpenLoop(-0.6))).onFalse(new InstantCommand(() -> climber.setOpenLoop(0.0)));
+        joystick.povDown().whileTrue(new InstantCommand(() -> climber.setOpenLoop(0.6))).onFalse(new InstantCommand(() -> climber.setOpenLoop(0.0)));
 
         //Binds the roller intake to the right Bumper
         // programmerJoystick.leftBumper().whileTrue(coralIntake.setRollerOpenLoopCommand(0.5)).onFalse(coralIntake.setRollerOpenLoopCommand(0));
