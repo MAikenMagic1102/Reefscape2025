@@ -16,7 +16,7 @@ import frc.robot.bobot_state.varc.HPSTagTracker;
 import frc.robot.bobot_state.varc.ReefTagTracker;
 import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.vision.PoseObservation;
-import frc.robot.util.MagicVirtualSubsystem;
+import frc.robot.Util.MagicVirtualSubsystem;
 
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
