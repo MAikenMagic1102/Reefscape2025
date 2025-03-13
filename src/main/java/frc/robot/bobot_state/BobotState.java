@@ -9,17 +9,24 @@ import edu.wpi.first.networktables.IntegerTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.bobot_state.varc.BargeTagTracker;
 import frc.robot.bobot_state.varc.HPSTagTracker;
 import frc.robot.bobot_state.varc.ReefTagTracker;
+import frc.robot.bobot_state.varc.TargetAngleTracker;
+import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.vision.PoseObservation;
 import frc.robot.util.MagicVirtualSubsystem;
+import frc.robot.util.PoseUtils;
 
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.littletonrobotics.junction.Logger;
   
 /**
  * Class full of static variables and methods that store robot state we'd need across mulitple
@@ -37,24 +44,8 @@ public class BobotState extends MagicVirtualSubsystem {
   private static HPSTagTracker hpsTracker = new HPSTagTracker();
   private static BargeTagTracker bargeTracker = new BargeTagTracker();
 
-  private final NetworkTable bobotStateTable = NetworkTableInstance.getDefault().getTable("BobotState");
-  
-  // Reef tag data
-  private final DoublePublisher reefAnglePublisher = bobotStateTable.getDoubleTopic("ReefTargetDegrees").publish();
-  private final DoublePublisher reefAnglePublisherRad = bobotStateTable.getDoubleTopic("ReefTargetRadians").publish();
-  private final IntegerPublisher reefTargetFiducialId = bobotStateTable.getIntegerTopic("ReefTagId").publish();
-  
-  // Barge tag data
-  private final DoublePublisher bargeAnglePublisher = bobotStateTable.getDoubleTopic("BargeTargetDegrees").publish();
-  private final DoublePublisher bargeAnglePublisherRad = bobotStateTable.getDoubleTopic("BargeTargetRadians").publish();
-  private final IntegerPublisher bargeTargetFiducialId = bobotStateTable.getIntegerTopic("BargeTagId").publish();
-
-  // HPS data
-  private final BooleanPublisher closeToHumanPlayer =  bobotStateTable.getBooleanTopic("CloseToHumanPlayer").publish();
-  
-  private final StructPublisher<Pose2d> drivePose = bobotStateTable.getStructTopic("Pose", Pose2d.struct).publish();
-
-  // Camera Pose Estimates
+  private static List<TargetAngleTracker> autoAlignmentTrackers =
+      List.of(BobotState.hpsTracker, BobotState.reefTracker);
 
   public static void offerVisionObservation(PoseObservation observation) {
     BobotState.poseObservations.offer(observation);
@@ -64,13 +55,20 @@ public class BobotState extends MagicVirtualSubsystem {
     return BobotState.poseObservations;
   }
 
-
   public static void updateGlobalPose(Pose2d pose) {
     BobotState.globalPose = pose;
   }
 
   public static Pose2d getGlobalPose() {
     return BobotState.globalPose;
+  }
+
+  public static Trigger onTeamSide() {
+    return new Trigger(
+        () ->
+            FieldUtils.getAlliance() == Alliance.Blue
+                ? getGlobalPose().getX() < FieldConstants.fieldLength / 2.0
+                : getGlobalPose().getX() > FieldConstants.fieldLength / 2.0);
   }
 
   public static Rotation2d getRotationToClosestReef() {
@@ -89,57 +87,63 @@ public class BobotState extends MagicVirtualSubsystem {
     return BobotState.hpsTracker.getDistanceMeters();
   }
 
-  public static Trigger nearHumanPlayer() {
-    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 2);
+  public static Trigger humanPlayerShouldThrow() {
+    return new Trigger(
+        () ->
+            PoseUtils.getPerpendicularError(
+                    BobotState.getGlobalPose(), FieldUtils.getClosestHPSTag().pose().toPose2d())
+                < 0.5);
   }
 
-  public static Trigger humanPlayerShouldReady() {
-    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 0.5);
+  public static TargetAngleTracker getClosestAlignmentTracker() {
+    return autoAlignmentTrackers.stream()
+        .reduce((a, b) -> a.getDistanceMeters() < b.getDistanceMeters() ? a : b)
+        .get();
   }
 
   @Override
   public void periodic() {
+    Logger.recordOutput("Robot Pose", getGlobalPose());
 
     {
-      // Update Trackers
       reefTracker.update();
-      bargeTracker.update();
 
-      // Update Network Tables
-
-      // Reef Tag tracking
-      // Tag angle in Degrees
-      reefAnglePublisher.set(reefTracker.getRotationTarget().getDegrees());
-      // Tag angle in Radians
-      reefAnglePublisherRad.set(reefTracker.getRotationTarget().getRadians());
-      // Tag ID
-      reefTargetFiducialId.set(FieldUtils.getClosestReef().tag.fiducialId());
-
-      // Barge tag tracking
-      // Tag angle in Degrees
-      bargeAnglePublisher.set(bargeTracker.getRotationTarget().getDegrees());
-      // Tag angle in Radians
-      bargeAnglePublisherRad.set(bargeTracker.getRotationTarget().getRadians());
-      // Tag ID
-      bargeTargetFiducialId.set(FieldUtils.getBargeTag().fiducialId());
-
-      // Displays true when distance to HPS is less than 2 meters
-      closeToHumanPlayer.set(this.nearHumanPlayer().getAsBoolean());
-
-      drivePose.set(getGlobalPose());
+      String calcLogRoot = logRoot + "Reef/";
+      Logger.recordOutput(calcLogRoot + "ClosestTag", FieldUtils.getClosestReef().tag);
+      Logger.recordOutput(
+          calcLogRoot + "TargetAngleDeg", reefTracker.getRotationTarget().getDegrees());
+      Logger.recordOutput(
+          calcLogRoot + "TargetAngleRad", reefTracker.getRotationTarget().getRadians());
+      Logger.recordOutput(calcLogRoot + "Left Pole", FieldUtils.getClosestReef().leftPole);
+      Logger.recordOutput(calcLogRoot + "Right Pole", FieldUtils.getClosestReef().rightPole);
     }
 
     {
       hpsTracker.update();
 
       String calcLogRoot = logRoot + "HPS/";
-      SmartDashboard.putNumber(logRoot + "Something?", 0.0);
+      Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestHPSTag());
+      Logger.recordOutput(calcLogRoot + "Distance", BobotState.hpsTracker.getDistanceMeters());
+      Logger.recordOutput(
+          calcLogRoot + "TargetAngleDeg", hpsTracker.getRotationTarget().getDegrees());
+      Logger.recordOutput(
+          calcLogRoot + "TargetAngleRad", hpsTracker.getRotationTarget().getRadians());
     }
 
     {
       bargeTracker.update();
 
       String calcLogRoot = logRoot + "Barge/";
+      Logger.recordOutput(
+          calcLogRoot + "TargetAngleDeg", hpsTracker.getRotationTarget().getDegrees());
+      Logger.recordOutput(
+          calcLogRoot + "TargetAngleRad", hpsTracker.getRotationTarget().getRadians());
+    }
+
+    {
+      String calcLogRoot = logRoot + "ClosestAlignment/";
+      Logger.recordOutput(
+          calcLogRoot + "Type", getClosestAlignmentTracker().getClass().getSimpleName());
     }
   }
 

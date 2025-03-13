@@ -109,8 +109,8 @@ public class RobotContainer {
         );
 
         joystick.rightBumper().whileTrue(drivetrain.applyRequest(() ->
-            facingAngle.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                       .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)0
+            facingAngle.withVelocityX(-joystick.getLeftY() * MaxSpeed * ArmConstants.driveSpeed) // Drive forward with negative Y (forward)
+                       .withVelocityY(-joystick.getLeftX() * MaxSpeed * ArmConstants.driveSpeed) // Drive left with negative X (left)0
                        .withTargetDirection(BobotState.getRotationToClosestReef())
         ));
 
@@ -136,10 +136,10 @@ public class RobotContainer {
         joystick.leftBumper()
             .whileTrue(new IntakeDeploy(coralIntake)
             .andThen(coralIntake.setRollerOpenLoopCommand(-0.75)
-            .alongWith(new RepeatCommand(new InstantCommand(() -> coralGripper.setRollerOpenLoop(0.5))))))
+            .alongWith(new RepeatCommand(new InstantCommand(() -> coralGripper.setIntake())))))
         
             .onFalse(coralIntake.setRollerOpenLoopCommand(0)
-            .alongWith(new InstantCommand(() -> coralGripper.setRollerOpenLoop(0))));
+            .alongWith(new InstantCommand(() -> coralGripper.setStop())));
         
         
         joystick.leftTrigger()
@@ -150,7 +150,7 @@ public class RobotContainer {
 
         
         //joystick.rightBumper().onTrue(new ReturnToHome(superstructure, coralIntake, coralGripper));
-        joystick.rightTrigger().onTrue(new InstantCommand(() -> coralGripper.setRollerOpenLoop(-0.4)))
+        joystick.rightTrigger().onTrue(new InstantCommand(() -> coralGripper.setEject()))
         .onFalse(new ReturnToHome(superstructure, coralIntake, coralGripper));
 
         joystick.b().onTrue(superstructure.setTargetL1().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));

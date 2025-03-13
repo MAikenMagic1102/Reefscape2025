@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Arm;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -15,6 +17,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
@@ -91,10 +94,15 @@ public class Arm extends SubsystemBase {
       ArmConstants.driveSpeed = 1.0;
     }
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Arm Angle", getAngleDegrees());
-    SmartDashboard.getBoolean("Arm At Goal", atGoal());
+    Logger.recordOutput("Arm Angle", getAngleDegrees());
+    Logger.recordOutput("Arm At Goal", atGoal());
+
+    Logger.recordOutput("Arm Motor Voltage", armMotor.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput("Arm Stator Current", armMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Arm Motor Temp", armMotor.getDeviceTemp().getValueAsDouble());
+    
     if(closedLoop){
-      SmartDashboard.putNumber("Arm Setpoint", armMotor.getClosedLoopReference().getValueAsDouble());
+      Logger.recordOutput("Arm Setpoint", armMotor.getClosedLoopReference().getValueAsDouble());
     }
   }
 
@@ -147,4 +155,6 @@ public class Arm extends SubsystemBase {
   public Command setAngle(double angle){
     return runOnce(() -> setAnglePosition(angle));
   }
+  
+
 }
