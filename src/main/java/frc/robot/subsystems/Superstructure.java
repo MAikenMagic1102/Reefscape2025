@@ -182,7 +182,7 @@ public class Superstructure extends SubsystemBase {
  }  
 
  public Command setElevatorHome(){
-  return new InstantCommand(() -> elevator.setPositionMetersMM(-0.003));
+  return new InstantCommand(() -> elevator.setPositionMetersMM(0.001));
  }  
 
  public Command armUp() {
