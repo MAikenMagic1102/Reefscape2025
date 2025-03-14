@@ -2,8 +2,10 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface AprilTagIO {
+  @AutoLog
   public static class AprilTagIOInputs {
     public boolean connected = false;
 

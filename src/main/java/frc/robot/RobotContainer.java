@@ -15,12 +15,14 @@ import choreo.auto.AutoFactory;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.bobot_state.BobotState;
+import frc.robot.commands.DrivePerpendicularToPoseCommand;
 import frc.robot.commands.ElevatorTest;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeRetract;
@@ -29,12 +31,14 @@ import frc.robot.commands.PrepScore;
 import frc.robot.commands.PrepScoreL123;
 import frc.robot.commands.ReturnToHome;
 import frc.robot.commands.ScoreCoral;
+import frc.robot.field.FieldUtils;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralGripper.CoralGripper;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Intake.CoralIntake;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.CommandCustomXboxController;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Arm.ArmConstants;
 import frc.robot.subsystems.Climber.Climber;
@@ -57,7 +61,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandCustomXboxController joystick = new CommandCustomXboxController(0);
     // private final CommandXboxController programmerJoystick = new CommandXboxController(2);
     // private final CommandXboxController operatorJoy = new CommandXboxController(1);
 
@@ -108,11 +112,59 @@ public class RobotContainer {
             )
         );
 
-        joystick.rightBumper().whileTrue(drivetrain.applyRequest(() ->
-            facingAngle.withVelocityX(-joystick.getLeftY() * MaxSpeed * ArmConstants.driveSpeed) // Drive forward with negative Y (forward)
-                       .withVelocityY(-joystick.getLeftX() * MaxSpeed * ArmConstants.driveSpeed) // Drive left with negative X (left)0
-                       .withTargetDirection(BobotState.getRotationToClosestReef())
-        ));
+        joystick
+        .rightBumper()
+        .whileTrue(
+            DrivePerpendicularToPoseCommand.withJoystickRumble(
+                drivetrain,
+                () -> FieldUtils.getClosestReef().leftPole.getPose(),
+                () -> -joystick.getLeftYSquared(),
+                () ->
+                    superstructure.isL4Coral()
+                        ? 0.2
+                        : 0.2,
+                Commands.parallel(
+                    joystick.rumbleOnOff(1, 0.25, 0.25, 2),
+                    joystick.rumbleOnOff(1, 0.25, 0.25, 2))));
+
+        joystick
+        .rightBumper()
+        .whileTrue(
+            DrivePerpendicularToPoseCommand.withJoystickRumble(
+                drivetrain,
+                () -> FieldUtils.getClosestReef().rightPole.getPose(),
+                () -> -joystick.getLeftYSquared(),
+                () ->
+                    superstructure.isL4Coral()
+                    //#TODO: find the offsets and put them here
+                        ? 0.2
+                        : 0.2,
+                Commands.parallel(
+                    joystick.rumbleOnOff(1, 0.25, 0.25, 2),
+                    joystick.rumbleOnOff(1, 0.25, 0.25, 2))));
+        
+        joystick
+        .leftBumper()
+        .whileTrue(
+            DrivePerpendicularToPoseCommand.withJoystickRumble(
+                drivetrain,
+                () -> FieldUtils.getClosestReef().leftPole.getPose(),
+                () -> -joystick.getLeftYSquared(),
+                () ->
+                    superstructure.isL4Coral()
+                    //#TODO: find the offsets and put them here
+                        ? 0.2
+                        : 0.2,
+                Commands.parallel(
+                    joystick.rumbleOnOff(1, 0.25, 0.25, 2),
+                    joystick.rumbleOnOff(1, 0.25, 0.25, 2))));
+
+        // joystick.rightBumper().whileTrue(drivetrain.applyRequest(() ->
+        //     facingAngle.withVelocityX(-joystick.getLeftY() * MaxSpeed * ArmConstants.driveSpeed) // Drive forward with negative Y (forward)
+        //                .withVelocityY(-joystick.getLeftX() * MaxSpeed * ArmConstants.driveSpeed) // Drive left with negative X (left)0
+        //                .withTargetDirection(BobotState.getRotationToClosestReef())
+        // ));
+        
 
 
         // operatorJoy.povUp().whileTrue(superstructure.runElevatorUp()).onFalse(superstructure.stopElevator());
@@ -133,7 +185,7 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
-        joystick.leftBumper()
+        joystick.leftTrigger()
             .whileTrue(new IntakeDeploy(coralIntake)
             .andThen(coralIntake.setRollerOpenLoopCommand(-0.75)
             .alongWith(new RepeatCommand(new InstantCommand(() -> coralGripper.setIntake())))))
@@ -142,11 +194,11 @@ public class RobotContainer {
             .alongWith(new InstantCommand(() -> coralGripper.setStop())));
         
         
-        joystick.leftTrigger()
-            .whileTrue(coralIntake.setRollerOpenLoopCommand(0.75))
+        // joystick.leftTrigger()
+        //     .whileTrue(coralIntake.setRollerOpenLoopCommand(0.75))
 
-            .onFalse(coralIntake.setRollerOpenLoopCommand(0)
-            .alongWith(new IntakeRetract(coralIntake)));            
+        //     .onFalse(coralIntake.setRollerOpenLoopCommand(0)
+        //     .alongWith(new IntakeRetract(coralIntake)));            
 
         
         //joystick.rightBumper().onTrue(new ReturnToHome(superstructure, coralIntake, coralGripper));

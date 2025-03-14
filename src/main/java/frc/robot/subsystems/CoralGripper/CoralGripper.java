@@ -36,6 +36,7 @@ public class CoralGripper extends SubsystemBase {
     grippers.setInverted(true);
     grippers.setMaxCurrent(CurrentType.SUPPLY, 35);
     grippers.setTempThrottleEnable(false);
+    grippers.setNTLogging(false);
     
     // Iterate through errors and check them
     for (var err : grippers.getErrors()) {
