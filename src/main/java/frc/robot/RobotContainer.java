@@ -11,7 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
-
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -149,6 +149,7 @@ public class RobotContainer {
             DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drivetrain,
                 () -> FieldUtils.getClosestReef().leftPole.getPose(),
+                // () -> new Pose2d(FieldUtils.getClosestReef().leftPole.getPose().getX(), FieldUtils.getClosestReef().leftPole.getPose().getY(), FieldUtils.getClosestReef().leftPole.getPose().getRotation().plus(Rotation2d.kPi)),
                 () -> -joystick.getLeftYSquared(),
                 () ->
                     superstructure.isL4Coral()
@@ -188,7 +189,7 @@ public class RobotContainer {
         joystick.leftTrigger()
             .whileTrue(new IntakeDeploy(coralIntake)
             .andThen(coralIntake.setRollerOpenLoopCommand(-0.75)
-            .alongWith(new RepeatCommand(new InstantCommand(() -> coralGripper.setIntake())))))
+            .alongWith(new InstantCommand(() -> coralGripper.setIntake()))))
         
             .onFalse(coralIntake.setRollerOpenLoopCommand(0)
             .alongWith(new InstantCommand(() -> coralGripper.setStop())));

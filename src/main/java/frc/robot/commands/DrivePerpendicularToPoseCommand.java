@@ -4,7 +4,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -65,8 +67,11 @@ public class DrivePerpendicularToPoseCommand extends Command {
 
   @Override
   public void execute() {
-    Pose2d robotPose = drive.getState().Pose;
-    Pose2d targetPose = targetPoseSupplier.get();
+    Pose2d robotPoseOriginal = drive.getState().Pose;
+    Pose2d robotPose = robotPoseOriginal.plus(new Transform2d(0.0, Units.inchesToMeters(3.0), Rotation2d.kZero));
+    Pose2d originalPose2d = targetPoseSupplier.get();
+    Pose2d targetPose = originalPose2d.rotateAround(originalPose2d.getTranslation(), Rotation2d.kPi);
+
     Logger.recordOutput("Commands/" + getName() + "/targetPose", targetPose);
 
     Rotation2d desiredTheta = targetPose.getRotation().plus(Rotation2d.kPi);
