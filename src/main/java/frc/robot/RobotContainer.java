@@ -95,6 +95,22 @@ public class RobotContainer {
         autoChooser.addRoutine("Middle Cross+1", autoRoutines::MiddleCross);
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
+        autoChooser.addRoutine("Right to Reef", autoRoutines::RightToReef);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+  
+        
+        autoChooser.addRoutine("Left to Reef", autoRoutines::LeftToReef);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        autoChooser.addRoutine("Right to Push", autoRoutines::RightToPush);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        autoChooser.addRoutine("Left to Push", autoRoutines::LeftToPush);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        autoChooser.addRoutine("Left to One", autoRoutines::LeftToOne);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
         configureBindings();
     }
 
