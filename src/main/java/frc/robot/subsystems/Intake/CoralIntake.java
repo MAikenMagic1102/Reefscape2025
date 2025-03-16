@@ -6,6 +6,10 @@ package frc.robot.subsystems.Intake;
 
 import java.lang.ModuleLayer.Controller;
 
+import javax.security.auth.login.LoginException;
+
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
@@ -97,9 +101,19 @@ public class CoralIntake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-        SmartDashboard.putNumber("RollerVoltageOut", rollerMotor.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("PivotAngle", getPivotAngle());
-        SmartDashboard.putBoolean("Coral intake at Goal", atGoal());
+       // Logger.recordOutput("RollerVoltageOut", rollerMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput("PivotAngle", getPivotAngle());
+        Logger.recordOutput("Coral intake at Goal", atGoal());
+        Logger.recordOutput("Roller Motor Velocity", rollerMotor.getVelocity().getValueAsDouble());
+
+        Logger.recordOutput("Pivot Motor Voltage",pivotMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput("Pivot Stator Current", pivotMotor.getStatorCurrent().getValueAsDouble());
+        Logger.recordOutput("Pivot Motor Temp", pivotMotor.getDeviceTemp().getValueAsDouble());
+
+        Logger.recordOutput("Roller Motor Voltage", rollerMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput("Roller Stator Current", rollerMotor.getStatorCurrent().getValueAsDouble());
+        Logger.recordOutput("Roller Motor Temp", rollerMotor.getDeviceTemp().getValueAsDouble() );
+
         // SmartDashboard.putNumber(getName() + "/PivotMotor", pivotMotor.getMotorVoltage().getValueAsDouble());
 
   }

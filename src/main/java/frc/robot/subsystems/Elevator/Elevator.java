@@ -19,6 +19,8 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Second;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.units.DistanceUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -91,6 +93,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("elevatorKP", 0.0);
 
     motorSim = motorL.getSimState();
+    motorL.setPosition(0);
   }
 
   @Override
@@ -102,8 +105,20 @@ public class Elevator extends SubsystemBase {
     }
     // This method will be called once per scheduler run
     //SmartDashboard
-    SmartDashboard.putNumber("/PositionMeters", getPositionMeters());
-    SmartDashboard.putBoolean("Elevator at Goal", atGoal());
+    Logger.recordOutput("Elevator at Goal", atGoal());
+    Logger.recordOutput("Elevator above Intake", aboveIntake());
+    Logger.recordOutput("Elevator above Half", aboveHalf());
+    Logger.recordOutput("Elevator Position Meters", getPositionMeters());
+    
+    Logger.recordOutput("Elevator motorL Velocity", motorL.getVelocity().getValueAsDouble());
+    Logger.recordOutput("Elevator motorL Acceleration", motorL.getAcceleration().getValueAsDouble());
+
+    Logger.recordOutput("Elevator motorL Voltage", motorL.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput("Elevator motorL Stator Current", motorL.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Elevator motorL Temp", motorL.getDeviceTemp().getValueAsDouble());
+    Logger.recordOutput("Elevator motorR Voltage", motorR.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput("Elevator motorR Stator Current", motorR.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Elevator motorR Temp", motorR.getDeviceTemp().getValueAsDouble());
   }
 
   @Override
@@ -126,7 +141,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean aboveIntake(){
-    return getPositionMeters() > 0.3;
+    return getPositionMeters() > 0.24;
   }
 
   public boolean aboveHalf(){
