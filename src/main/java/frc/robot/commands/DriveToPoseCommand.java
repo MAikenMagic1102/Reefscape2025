@@ -26,45 +26,33 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.jni.SwerveJNI.DriveState;
 
-public class DrivePerpendicularToPoseCommand extends Command {
+public class DriveToPoseCommand extends Command {
   private final PIDController parallelController =
       DriveCommandConstants.makeTranslationController();
 
   private final ProfiledPIDController angleController = DriveCommandConstants.makeAngleController();
 
+  private final PIDController perpendicularController = DriveCommandConstants.makeTranslationController();
+
   private final CommandSwerveDrivetrain drive;
   private final Supplier<Pose2d> targetPoseSupplier;
-  private final DoubleSupplier perpendicularInput;
+ 
 
   private final SwerveRequest.ApplyRobotSpeeds robotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
 
-  private double perpendicularError = 0;
-
-  public DrivePerpendicularToPoseCommand(
-      CommandSwerveDrivetrain drive, Supplier<Pose2d> targetPoseSupplier, DoubleSupplier perpendicularInput) {
+  public DriveToPoseCommand(
+      CommandSwerveDrivetrain drive, Supplier<Pose2d> targetPoseSupplier) {
     addRequirements(drive);
 
     this.drive = drive;
     this.targetPoseSupplier = targetPoseSupplier;
-    this.perpendicularInput = perpendicularInput;
+   
   }
 
-  public static DrivePerpendicularToPoseCommand withJoystickRumble(
-      CommandSwerveDrivetrain drive,
-      Supplier<Pose2d> targetPoseSupplier,
-      DoubleSupplier perpendicularInput,
-      DoubleSupplier rumbleDistance,
-      Command rumbleCommand) {
-    DrivePerpendicularToPoseCommand command =
-        new DrivePerpendicularToPoseCommand(drive, targetPoseSupplier, perpendicularInput);
-
-    command.atSetpoint(rumbleDistance).onTrue(Commands.deferredProxy(() -> rumbleCommand));
-
-    return command;
-  }
+  
 
   @Override
   public void execute() {
@@ -77,7 +65,7 @@ public class DrivePerpendicularToPoseCommand extends Command {
 
     Rotation2d desiredTheta = targetPose.getRotation().plus(Rotation2d.kPi);
 
-    perpendicularError = PoseUtils.getPerpendicularError(robotPose, targetPose);
+    double perpendicularError = PoseUtils.getPerpendicularError(robotPose, targetPose);
     Logger.recordOutput("Commands/" + getName() + "/PerpendicularError", perpendicularError);
 
     double parallelError = PoseUtils.getParallelError(robotPose, targetPose);
@@ -89,12 +77,15 @@ public class DrivePerpendicularToPoseCommand extends Command {
     double parallelSpeed = parallelController.calculate(-parallelError, 0);
     parallelSpeed = !parallelController.atSetpoint() ? parallelSpeed : 0;
 
+   double perpendicularSpeed = perpendicularController.calculate(-perpendicularError, 0);
+    perpendicularSpeed = !perpendicularController.atSetpoint() ? perpendicularSpeed : 0;
+
     double angularSpeed = angleController.calculate(thetaError, 0);
     angularSpeed = !angleController.atSetpoint() ? angularSpeed : 0;
 
     ChassisSpeeds speeds =
         new ChassisSpeeds(
-            perpendicularInput.getAsDouble(),
+            perpendicularSpeed,
             parallelSpeed,
             angularSpeed);
 
@@ -107,11 +98,11 @@ public class DrivePerpendicularToPoseCommand extends Command {
     angleController.reset(0);
   }
 
-  public Trigger atSetpoint(DoubleSupplier distance) {
+  public Trigger atSetpoint() {
     return new Trigger(
         () ->
-            parallelController.atSetpoint()
-                && angleController.atSetpoint()
-                && perpendicularError < distance.getAsDouble());
+            perpendicularController.atSetpoint()
+                && parallelController.atSetpoint()
+                && angleController.atSetpoint());
   }
 }

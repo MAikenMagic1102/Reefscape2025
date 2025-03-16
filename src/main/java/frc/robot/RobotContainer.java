@@ -69,7 +69,6 @@ public class RobotContainer {
     public final Superstructure superstructure = new Superstructure();
 
     /* Path follower */
-    private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
 
@@ -81,8 +80,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         new BobotState(); // no-op
-        autoFactory = drivetrain.createAutoFactory();
-        autoRoutines = new AutoRoutines(autoFactory, coralGripper, coralIntake, superstructure);
+        autoRoutines = new AutoRoutines(drivetrain, coralGripper, coralIntake, superstructure);
         
 
         autoChooser.addRoutine("SimplePath", autoRoutines::simplePathAuto);
@@ -111,21 +109,6 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate * ArmConstants.driveSpeed) // Drive counterclockwise with negative X (left)
             )
         );
-
-        joystick
-        .rightBumper()
-        .whileTrue(
-            DrivePerpendicularToPoseCommand.withJoystickRumble(
-                drivetrain,
-                () -> FieldUtils.getClosestReef().leftPole.getPose(),
-                () -> -joystick.getLeftYSquared(),
-                () ->
-                    superstructure.isL4Coral()
-                        ? 0.2
-                        : 0.2,
-                Commands.parallel(
-                    joystick.rumbleOnOff(1, 0.25, 0.25, 2),
-                    joystick.rumbleOnOff(1, 0.25, 0.25, 2))));
 
         joystick
         .rightBumper()
@@ -188,7 +171,7 @@ public class RobotContainer {
         
         joystick.leftTrigger()
             .whileTrue(new IntakeDeploy(coralIntake)
-            .andThen(coralIntake.setRollerOpenLoopCommand(-0.75)
+            .andThen(coralIntake.setRollerOpenLoopCommand(-0.55)
             .alongWith(new InstantCommand(() -> coralGripper.setIntake()))))
         
             .onFalse(coralIntake.setRollerOpenLoopCommand(0)

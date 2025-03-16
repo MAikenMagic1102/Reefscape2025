@@ -23,5 +23,5 @@ public class Constants {
 
       public static final double controllerDeadband = 0.15;
 
-      public static double robotArmCenterOffset = Units.inchesToMeters(2.25);
+      public static double robotArmCenterOffset = Units.inchesToMeters(1.75);
 }

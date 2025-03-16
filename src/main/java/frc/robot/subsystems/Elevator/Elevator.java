@@ -141,7 +141,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean aboveIntake(){
-    return getPositionMeters() > 0.3;
+    return getPositionMeters() > 0.24;
   }
 
   public boolean aboveHalf(){

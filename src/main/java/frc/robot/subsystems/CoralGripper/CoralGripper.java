@@ -87,12 +87,12 @@ public class CoralGripper extends SubsystemBase {
   }
 
   public void setIntake(){
-    coralSpeed = 0.5;
+    coralSpeed = CoralGripperConstants.intake;
     delayTimer.start();
   }
 
   public void setEject(){
-    coralSpeed = -0.4;
+    coralSpeed = CoralGripperConstants.eject;
     hasCoral = false;
   }
 
