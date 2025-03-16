@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public class Constants {
@@ -22,5 +23,5 @@ public class Constants {
 
       public static final double controllerDeadband = 0.15;
 
-
+      public static double robotArmCenterOffset = Units.inchesToMeters(1.75);
 }

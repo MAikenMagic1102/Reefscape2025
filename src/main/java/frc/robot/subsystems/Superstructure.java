@@ -158,6 +158,10 @@ public class Superstructure extends SubsystemBase {
     return arm.armHalfScored();
   }
 
+  public boolean isL4Coral(){
+    return currentTarget == scoreTarget.L4;
+  }
+
   public Command setArmToHome() {
     return new InstantCommand(() -> arm.setAnglePosition(-2.0));
   }
@@ -182,7 +186,7 @@ public class Superstructure extends SubsystemBase {
  }  
 
  public Command setElevatorHome(){
-  return new InstantCommand(() -> elevator.setPositionMetersMM(0.001));
+  return new InstantCommand(() -> elevator.setPositionMetersMM(0.01));
  }  
 
  public Command armUp() {
