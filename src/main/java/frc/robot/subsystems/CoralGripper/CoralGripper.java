@@ -36,6 +36,7 @@ public class CoralGripper extends SubsystemBase {
     grippers.setInverted(true);
     grippers.setMaxCurrent(CurrentType.SUPPLY, 35);
     grippers.setTempThrottleEnable(false);
+    grippers.setNTLogging(false);
     
     // Iterate through errors and check them
     for (var err : grippers.getErrors()) {
@@ -86,12 +87,12 @@ public class CoralGripper extends SubsystemBase {
   }
 
   public void setIntake(){
-    coralSpeed = 0.5;
+    coralSpeed = CoralGripperConstants.intake;
     delayTimer.start();
   }
 
   public void setEject(){
-    coralSpeed = -0.4;
+    coralSpeed = CoralGripperConstants.eject;
     hasCoral = false;
   }
 
