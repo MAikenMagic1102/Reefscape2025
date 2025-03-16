@@ -95,7 +95,16 @@ public class DriveToPoseCommand extends Command {
   @Override
   public void end(boolean interrupt) {
     parallelController.reset();
+    perpendicularController.reset();
     angleController.reset(0);
+  }
+
+    // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return perpendicularController.atSetpoint()
+    && parallelController.atSetpoint()
+    && angleController.atSetpoint();
   }
 
   public Trigger atSetpoint() {
