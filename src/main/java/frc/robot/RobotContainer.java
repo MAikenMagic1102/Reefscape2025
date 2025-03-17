@@ -111,6 +111,16 @@ public class RobotContainer {
         autoChooser.addRoutine("Left to One", autoRoutines::LeftToOne);
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
+        autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        autoChooser.addRoutine("ThreeMeters", autoRoutines::ThreeMeters);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        autoChooser.addRoutine("FiveMeters", autoRoutines::FiveMeters);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+
+
         configureBindings();
     }
 

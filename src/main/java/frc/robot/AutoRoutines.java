@@ -106,6 +106,43 @@ public class AutoRoutines {
             return routine;
     }
 
+    public AutoRoutine TwoMeters(){
+        final AutoRoutine routine = m_factory.newRoutine("TwoMeters");
+        final AutoTrajectory TwoMeters = routine.trajectory("TwoMeters");
+
+        routine.active().onTrue(
+            TwoMeters.resetOdometry()
+                .andThen(TwoMeters.cmd())
+        );
+
+        return routine;
+    }
+
+    public AutoRoutine ThreeMeters(){
+        final AutoRoutine routine = m_factory.newRoutine("ThreeMeters");
+        final AutoTrajectory ThreeMeters = routine.trajectory("ThreeMeters");
+
+        routine.active().onTrue(
+            ThreeMeters.resetOdometry()
+                .andThen(ThreeMeters.cmd())
+        );
+
+        return routine;
+    }
+
+
+    public AutoRoutine FiveMeters(){
+        final AutoRoutine routine = m_factory.newRoutine("FiveMeters");
+        final AutoTrajectory FiveMeters = routine.trajectory("FiveMeters");
+
+        routine.active().onTrue(
+            FiveMeters.resetOdometry()
+                .andThen(FiveMeters.cmd())
+        );
+
+        return routine;
+    }
+
 
     public AutoRoutine RightToReef(){
         final AutoRoutine routine = m_factory.newRoutine("Right to Reef");
