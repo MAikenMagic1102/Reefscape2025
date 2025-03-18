@@ -14,7 +14,7 @@ import frc.robot.Constants;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.subsystems.vision.AprilTagIO.AprilTagIOInputs;
 import frc.robot.subsystems.vision.VisionConstants.AprilTagCameraConfig;
-import frc.robot.util.MagicVirtualSubsystem;
+import frc.robot.Util.MagicVirtualSubsystem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
