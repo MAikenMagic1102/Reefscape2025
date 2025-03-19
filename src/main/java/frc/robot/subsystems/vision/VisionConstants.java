@@ -6,12 +6,16 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.bobot_state.BobotState;
+
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Optional;
 import org.photonvision.simulation.VisionSystemSim;
@@ -120,6 +124,7 @@ public class VisionConstants {
                           0, Units.degreesToRadians(-27.5), Units.degreesToRadians(-30)))),
               SimCameraConfig.THRIFTY_CAM_80));
 
+  public static final List<Integer> goodIds = List.of(6,7,8,9,10,11,17,18,19,20,21,22);  
   public static final List<AprilTagCameraConfig> aprilTagCamerasConfigs = magicConfig;
 
   public static final double ambiguityCutoff = 0.05;

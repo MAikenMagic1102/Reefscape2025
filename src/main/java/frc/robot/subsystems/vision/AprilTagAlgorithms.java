@@ -7,6 +7,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import java.util.List;
 import org.photonvision.targeting.PhotonTrackedTarget;
+import java.util.Arrays;
+
 
 public class AprilTagAlgorithms {
 
@@ -15,7 +17,8 @@ public class AprilTagAlgorithms {
   // for the ambiguity cutoff
   public static boolean isValid(PhotonTrackedTarget target) {
     return target.getFiducialId() != -1
-        && target.getPoseAmbiguity() < VisionConstants.ambiguityCutoff;
+        && target.getPoseAmbiguity() < VisionConstants.ambiguityCutoff
+        && VisionConstants.goodIds.indexOf(target.getFiducialId()) != -1;
   }
 
   /**

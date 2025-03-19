@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Util.PoseUtils;
 import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.PrepScore;
@@ -20,7 +21,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.CoralGripper.CoralGripper;
 import frc.robot.subsystems.Intake.CoralIntake;
-import frc.robot.util.PoseUtils;
 
 public class AutoRoutines {
     private final AutoFactory m_factory;
