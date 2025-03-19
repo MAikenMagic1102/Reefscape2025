@@ -42,7 +42,7 @@ public class CoralIntakeConstants {
     public static double idle = 0;
     public static double safePos = 0;
 
-    public static double intakeFast = -0.6;
+    public static double intakeFast = -0.675;
     public static double intakeSlow = -0.20;
     public static double eject = 0.5;
 

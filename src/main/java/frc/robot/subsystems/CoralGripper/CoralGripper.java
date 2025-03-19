@@ -117,6 +117,10 @@ public class CoralGripper extends SubsystemBase {
     coralSpeed = 0;
   }
 
+  public void setHold(){
+    coralSpeed = 0.05;
+  }
+
   public boolean hasCoral(){
     return coralDetect.getIsDetected().getValue();
   }

@@ -193,7 +193,7 @@ public class CoralIntake extends SubsystemBase {
   public void setEject(){
     intakeSpeed = CoralIntakeConstants.eject;
   }
-
+  
   public void stopRoller(){
     intakeSpeed = 0;
   }

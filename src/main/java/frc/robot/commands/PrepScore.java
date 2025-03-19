@@ -25,7 +25,7 @@ public class PrepScore extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      coralGripper.setRollerOpenLoopCommand(CoralGripperConstants.hold),
+      new InstantCommand(() -> coralGripper.setHold()),
 
       coralIntake.setAngleCommand(CoralIntakeConstants.floorIntake).alongWith(superstructure.setElevatorToScoreSafe()),
 
