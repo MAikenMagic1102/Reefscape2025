@@ -16,8 +16,7 @@ public class AprilTagAlgorithms {
   // VisionConstant
   // for the ambiguity cutoff
   public static boolean isValid(PhotonTrackedTarget target) {
-    return target.getFiducialId() != -1
-        && target.getPoseAmbiguity() < VisionConstants.ambiguityCutoff
+    return target.getPoseAmbiguity() < VisionConstants.ambiguityCutoff
         && VisionConstants.goodIds.indexOf(target.getFiducialId()) != -1;
   }
 
