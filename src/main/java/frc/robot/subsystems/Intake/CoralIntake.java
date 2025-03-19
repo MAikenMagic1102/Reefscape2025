@@ -33,6 +33,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Intake.CoralIntakeConstants;
+import frc.robot.subsystems.can_range.CanRange;
+import frc.robot.subsystems.can_range.CanRangeIO;
+import frc.robot.subsystems.can_range.CanRangeIOReal;
 
 public class CoralIntake extends SubsystemBase {
 
@@ -43,6 +46,10 @@ public class CoralIntake extends SubsystemBase {
   private TalonFXSimState pivotSimState;
 
   private DCMotor intakeGearbox = DCMotor.getKrakenX60Foc(1);
+
+  private CanRange coralSensor;
+
+  private CanRangeIO canRangeIO = new CanRangeIOReal(43, false);
  
   private SingleJointedArmSim CoralIntakeSim = 
   new SingleJointedArmSim(
@@ -62,12 +69,15 @@ public class CoralIntake extends SubsystemBase {
   private boolean isClosedLoop = false;
 
   private double targetPosition = 0;
+
+  private double intakeSpeed = 0;
   
   
   /** Creates a new CoralIntake. */
   public CoralIntake() {
     rollerMotor = new TalonFX(CoralIntakeConstants.rollerMotorID, CoralIntakeConstants.bus);
     pivotMotor = new TalonFX(CoralIntakeConstants.pivotMotorID, CoralIntakeConstants.bus);
+    coralSensor = new CanRange("CoralSensor", canRangeIO);
 
     //Roller
     StatusCode status = StatusCode.StatusCodeNotInitialized;
@@ -101,6 +111,7 @@ public class CoralIntake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+        coralSensor.periodic();
        // Logger.recordOutput("RollerVoltageOut", rollerMotor.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput("PivotAngle", getPivotAngle());
         Logger.recordOutput("Coral intake at Goal", atGoal());
@@ -115,7 +126,15 @@ public class CoralIntake extends SubsystemBase {
         Logger.recordOutput("Roller Motor Temp", rollerMotor.getDeviceTemp().getValueAsDouble() );
 
         // SmartDashboard.putNumber(getName() + "/PivotMotor", pivotMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput("CoralSensor", coralSensor.isDetected());
 
+        if(intakeSpeed < -0.74){
+          if(coralSensor.isDetected()){
+            intakeSpeed = CoralIntakeConstants.intakeSlow;
+          }
+        }
+        
+        setRollerOpenLoop(intakeSpeed);
   }
 
   @Override
@@ -165,6 +184,18 @@ public class CoralIntake extends SubsystemBase {
 
   public Command setPivotOpenLoopCommand (double input) {
     return Commands.runOnce(() -> setPivotOpenLoop(input));
+  }
+
+  public void setIntake(){
+    intakeSpeed = CoralIntakeConstants.intakeFast;
+  }
+
+  public void setEject(){
+    intakeSpeed = CoralIntakeConstants.eject;
+  }
+  
+  public void stopRoller(){
+    intakeSpeed = 0;
   }
 }
 

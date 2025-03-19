@@ -23,5 +23,6 @@ public class Constants {
 
       public static final double controllerDeadband = 0.15;
 
+      public static final String canivore = "can2";
       public static double robotArmCenterOffset = Units.inchesToMeters(1.75);
 }

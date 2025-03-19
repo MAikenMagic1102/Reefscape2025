@@ -4,11 +4,10 @@
 
 package frc.robot.commands;
 
-import java.util.concurrent.locks.Condition;
-
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.CoralGripper.CoralGripper;
@@ -19,23 +18,24 @@ import frc.robot.subsystems.Intake.CoralIntakeConstants;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PrepScore extends SequentialCommandGroup {
-  /** Creates a new PrepScore. */
-  public PrepScore(Superstructure superstructure, CoralGripper coralGripper, CoralIntake coralIntake) {
+public class IntakeHome extends SequentialCommandGroup {
+  /** Creates a new ReturnToHome. */
+  public IntakeHome(Superstructure  superstructure, CoralIntake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> coralGripper.setHold()),
 
-      coralIntake.setAngleCommand(CoralIntakeConstants.floorIntake).alongWith(superstructure.setElevatorToScoreSafe()),
+      intake.setAngleCommand(CoralIntakeConstants.floorIntake),
 
-      new WaitUntilCommand(superstructure::isElevatorSafe),
+      new ConditionalCommand(superstructure.setElevatorHome(), superstructure.setElevatorToScoreSafe(), superstructure::isArmHome),
+      
+      new WaitUntilCommand(superstructure::isElevatorAtGoal),
 
-      superstructure.setArmToScore(), 
+      superstructure.setArmToHome(),
 
-      new WaitUntilCommand(superstructure::armHalfScored), 
+      new WaitUntilCommand(superstructure::isArmAtGoal),
 
-      superstructure.setElevatorToScore()
+      superstructure.setElevatorHome()
     );
   }
 }

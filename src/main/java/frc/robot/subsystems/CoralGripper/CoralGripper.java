@@ -6,6 +6,9 @@ package frc.robot.subsystems.CoralGripper;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
+import com.ctre.phoenix6.hardware.CANrange;
+import com.ctre.phoenix6.signals.UpdateModeValue;
 import com.thethriftybot.ThriftyNova;
 import com.thethriftybot.ThriftyNova.CurrentType;
 import com.thethriftybot.ThriftyNova.MotorType;
@@ -17,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class CoralGripper extends SubsystemBase {
   private ThriftyNova grippers;
+  private CANrange coralDetect;
 
   private double coralSpeed = 0.0;
 
@@ -28,6 +32,7 @@ public class CoralGripper extends SubsystemBase {
   /** Creates a new CoralGripper. */
   public CoralGripper() {
     grippers = new ThriftyNova(CoralGripperConstants.motorID, ThriftyNova.MotorType.MINION);
+    coralDetect = new CANrange(33, "rio");
 
     grippers.factoryReset();
 
@@ -43,6 +48,14 @@ public class CoralGripper extends SubsystemBase {
     // The user can handle the errors
       System.out.println("Error " + err.toString());
     }
+
+    CANrangeConfiguration cfg = new CANrangeConfiguration();
+    cfg.ToFParams.withUpdateMode(UpdateModeValue.ShortRangeUserFreq);
+    cfg.FovParams.withFOVRangeX(27);
+    cfg.FovParams.withFOVRangeY(27);
+    cfg.ProximityParams.withProximityThreshold(0.075);
+    coralDetect.getConfigurator().apply(cfg);
+
     // Clear errors here
     grippers.clearErrors();
   }
@@ -53,28 +66,32 @@ public class CoralGripper extends SubsystemBase {
     Logger.recordOutput("CoralGripper Voltage", grippers.getVoltage());
     Logger.recordOutput("CoralGripper Stator Current", grippers.getStatorCurrent());
 
-    SmartDashboard.putBoolean("Has Coral", hasCoral);
+    Logger.recordOutput("CoralDetect", coralDetect.getIsDetected().getValue());
 
-    if (coralSpeed > 0.49) {
+  //   if (coralSpeed > 0.49) {
 
-      // Wait to scan current until after 0.25s to clear ramp up current spike
-      if (delayTimer.hasElapsed(0.75)) {
-          if (grippers.getStatorCurrent() < 25) {
-              currentTimer.reset();
-              currentTimer.stop();
-          } else {
-              currentTimer.start();
-          }
+  //     // Wait to scan current until after 0.25s to clear ramp up current spike
+  //     // if (delayTimer.hasElapsed(0.75)) {
+  //     //     if (grippers.getStatorCurrent() < 25) {
+  //     //         currentTimer.reset();
+  //     //         currentTimer.stop();
+  //     //     } else {
+  //     //         currentTimer.start();
+  //     //     }
 
-          // Current spike of .25s reasonable to assume picked up game piece
-          if (currentTimer.hasElapsed(0.25)) {
-              coralSpeed = 0.0;
-              hasCoral = true;
-          }
-      }
-  }
+  //     //     // Current spike of .25s reasonable to assume picked up game piece
+  //     //     if (currentTimer.hasElapsed(0.25)) {
+  //     //         coralSpeed = 0.0;
+  //     //         hasCoral = true;
+  //     //     }
+  //     // }
+  // }
 
-  grippers.setPercent(coralSpeed);
+    if(hasCoral() && coralSpeed == 0.65){
+      coralSpeed = 0.03;
+    }
+
+    grippers.setPercent(coralSpeed);
 
   }
 
@@ -100,8 +117,12 @@ public class CoralGripper extends SubsystemBase {
     coralSpeed = 0;
   }
 
+  public void setHold(){
+    coralSpeed = 0.05;
+  }
+
   public boolean hasCoral(){
-    return hasCoral;
+    return coralDetect.getIsDetected().getValue();
   }
 
 }
