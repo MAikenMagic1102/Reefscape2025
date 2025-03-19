@@ -22,6 +22,7 @@ public class CoralIntakeConstants {
     public static String bus = "can2";
     public static int pivotMotorID = 42;
     public static int rollerMotorID = 41;
+    public static int canRangeID = 43;
     
     public static double gearRatio = 22.92;
     public static double armGearingCANcoder = 3.5;
@@ -35,11 +36,15 @@ public class CoralIntakeConstants {
 
     public static double setHome = -2;
     public static double hpLoad = 0;
-    public static double floorIntake = -109;
+    public static double floorIntake = -110;
     public static double stationIntake = 0;
     public static double stowedPos = 0;
     public static double idle = 0;
     public static double safePos = 0;
+
+    public static double intakeFast = -0.6;
+    public static double intakeSlow = -0.20;
+    public static double eject = 0.5;
 
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(

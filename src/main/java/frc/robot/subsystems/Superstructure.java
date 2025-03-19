@@ -150,6 +150,10 @@ public class Superstructure extends SubsystemBase {
     return new InstantCommand(() -> arm.setAnglePosition(armTargetAngle));
   }
 
+  public boolean isArmHome(){
+    return arm.armAtHome();
+  }
+
   public boolean isArmAtGoal(){
     return arm.atGoal();
   }
@@ -163,7 +167,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setArmToHome() {
-    return new InstantCommand(() -> arm.setAnglePosition(-2.0));
+    return new InstantCommand(() -> arm.setAnglePosition(-3.0));
   }
 
   public Command runElevatorUp() {
@@ -186,7 +190,7 @@ public class Superstructure extends SubsystemBase {
  }  
 
  public Command setElevatorHome(){
-  return new InstantCommand(() -> elevator.setPositionMetersMM(0.01));
+  return new InstantCommand(() -> elevator.setPositionMetersMM(0.005));
  }  
 
  public Command armUp() {

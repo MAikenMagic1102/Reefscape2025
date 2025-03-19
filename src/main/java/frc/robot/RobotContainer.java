@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -25,6 +26,7 @@ import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DrivePerpendicularToPoseCommand;
 import frc.robot.commands.ElevatorTest;
 import frc.robot.commands.IntakeDeploy;
+import frc.robot.commands.IntakeHome;
 import frc.robot.commands.IntakeRetract;
 import frc.robot.commands.L4finalPos;
 import frc.robot.commands.PrepScore;
@@ -170,19 +172,24 @@ public class RobotContainer {
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
         joystick.leftTrigger()
-            .whileTrue(new IntakeDeploy(coralIntake)
-            .andThen(coralIntake.setRollerOpenLoopCommand(-0.55)
+            .whileTrue(new IntakeDeploy(coralIntake).andThen(new IntakeHome(superstructure, coralIntake))
+            .andThen(new InstantCommand(() -> coralIntake.setIntake())
             .alongWith(new InstantCommand(() -> coralGripper.setIntake()))))
         
-            .onFalse(coralIntake.setRollerOpenLoopCommand(0)
-            .alongWith(new InstantCommand(() -> coralGripper.setStop())));
+            .onFalse(new InstantCommand(() -> coralIntake.stopRoller())
+            .alongWith(new InstantCommand(() -> coralGripper.setStop()))
+            .alongWith(new ConditionalCommand(
+                superstructure.setTargetL3().andThen(new PrepScore(superstructure, coralGripper, coralIntake)), 
+                new InstantCommand(), 
+                coralGripper::hasCoral))
+            );
         
         
-        // joystick.leftTrigger()
-        //     .whileTrue(coralIntake.setRollerOpenLoopCommand(0.75))
+        joystick.back()
+            .whileTrue(new InstantCommand(() -> coralIntake.setEject()))
 
-        //     .onFalse(coralIntake.setRollerOpenLoopCommand(0)
-        //     .alongWith(new IntakeRetract(coralIntake)));            
+            .onFalse(new InstantCommand(() -> coralIntake.stopRoller())
+            .alongWith(new IntakeRetract(coralIntake)));            
 
         
         //joystick.rightBumper().onTrue(new ReturnToHome(superstructure, coralIntake, coralGripper));

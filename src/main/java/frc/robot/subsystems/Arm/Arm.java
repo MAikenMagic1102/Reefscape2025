@@ -134,6 +134,10 @@ public class Arm extends SubsystemBase {
   public boolean armAtScoring(){
     return getAngleDegrees() < -180;
   }
+
+  public boolean armAtHome(){
+    return getAngleDegrees() > -8 && getAngleDegrees() < 8;
+  }
   
   public boolean atGoal(){
     return Math.abs(targetPosition - getAngleDegrees()) < ArmConstants.positionTolerence;

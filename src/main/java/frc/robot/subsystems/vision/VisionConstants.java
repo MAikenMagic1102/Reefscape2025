@@ -43,7 +43,7 @@ public class VisionConstants {
                               Units.inchesToMeters(-11.0), // forward+
                               Units.inchesToMeters(10.5), // left+
                               Units.inchesToMeters(7.5)), // up+
-                          new Rotation3d(0, Units.degreesToRadians(-20.0), Units.degreesToRadians(180)))),
+                          new Rotation3d(0, Units.degreesToRadians(-20.0), Units.degreesToRadians(190)))),
                   SimCameraConfig.THRIFTY_CAM_90),
                   //Right
                   new AprilTagCameraConfig(
@@ -54,7 +54,7 @@ public class VisionConstants {
                                 Units.inchesToMeters(-11.0), // forward+
                                 Units.inchesToMeters(-10.5), // left+
                                 Units.inchesToMeters(7.5)), // up+
-                            new Rotation3d(0, Units.degreesToRadians(-20.0), Units.degreesToRadians(180)))),
+                            new Rotation3d(0, Units.degreesToRadians(-20.0), Units.degreesToRadians(170)))),
                     SimCameraConfig.THRIFTY_CAM_90) 
                   );          
 
