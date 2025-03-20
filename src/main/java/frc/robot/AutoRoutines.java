@@ -8,6 +8,8 @@ import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.commands.IntakeDeploy;
@@ -378,15 +380,57 @@ public class AutoRoutines {
 
         routine.active().onTrue(
             Commands.sequence(
-                LeftToReef1.resetOdometry(),
-                // m_superstructure.setTargetL4(),
-                // new IntakeDeploy(m_coralIntake), 
-                LeftToReef1.cmd(),
-                // .alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
-                positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.5)
-                // new WaitCommand(1.5),
-                // new ScoreCoral(m_coralGripper),
-                // new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper)
+                //LeftToReef1.resetOdometry(),
+                m_superstructure.setTargetL3(),
+                new IntakeDeploy(m_coralIntake), 
+                LeftToReef1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                m_superstructure.setTargetL4(),
+                new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
+                new WaitCommand(0.25),
+                positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.58),
+                new WaitCommand(0.25),
+                new ScoreCoral(m_coralGripper),
+                new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper)
+                
+         ) );
+
+            return routine;
+    }
+
+    public AutoRoutine LeftToOnePlus(){
+        final AutoRoutine routine = m_factory.newRoutine("Left to One Plus");
+        final AutoTrajectory LeftToReef1 = routine.trajectory("Left to Reef+1");
+        final AutoTrajectory LeftToHPSPlus2 = routine.trajectory("LHPS to Reef+2");
+        final AutoTrajectory RightToReef3 = routine.trajectory("RHPS to Reef +3");
+
+        routine.active().onTrue(
+            Commands.sequence(
+                //LeftToReef1.resetOdometry(),
+                m_superstructure.setTargetL3(),
+                new IntakeDeploy(m_coralIntake), 
+                LeftToReef1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                m_superstructure.setTargetL4(),
+                new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
+                new WaitCommand(0.25),
+                positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.58),
+                new WaitCommand(0.25),
+                new ScoreCoral(m_coralGripper),
+                new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
+                new InstantCommand(() -> m_coralIntake.setIntake()).alongWith(new InstantCommand(() -> m_coralGripper.setIntake())),
+                LeftToHPSPlus2.cmd(),
+                new WaitCommand(0.5),
+                new InstantCommand(() -> m_coralIntake.stopRoller()),
+                new ConditionalCommand(
+                    m_superstructure.setTargetL3().andThen(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)), 
+                new InstantCommand(), 
+                m_coralGripper::hasCoral),
+                LeftToHPSPlus2.cmd(),
+                m_superstructure.setTargetL4(),
+                new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
+                new WaitCommand(0.25),
+                positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.58),
+                new WaitCommand(0.25),
+                new ScoreCoral(m_coralGripper)
                 
          ) );
 

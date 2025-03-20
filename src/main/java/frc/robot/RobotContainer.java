@@ -84,44 +84,14 @@ public class RobotContainer {
         new BobotState(); // no-op
         autoRoutines = new AutoRoutines(drivetrain, coralGripper, coralIntake, superstructure);
         
-
-        autoChooser.addRoutine("SimplePath", autoRoutines::simplePathAuto);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        autoChooser.addRoutine("Left Side Cross+1", autoRoutines::LeftSideCross);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        autoChooser.addRoutine("Rigth Side Cross+1", autoRoutines::RightSideCross);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        autoChooser.addRoutine("Middle Cross+1", autoRoutines::MiddleCross);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        autoChooser.addRoutine("Right to Reef", autoRoutines::RightToReef);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-  
-        
-        autoChooser.addRoutine("Left to Reef", autoRoutines::LeftToReef);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        autoChooser.addRoutine("Right to Push", autoRoutines::RightToPush);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        autoChooser.addRoutine("Left to Push", autoRoutines::LeftToPush);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-
         autoChooser.addRoutine("Left to One", autoRoutines::LeftToOne);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
+        autoChooser.addRoutine("Left to One Plus", autoRoutines::LeftToOnePlus);
 
-        autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        autoChooser.addRoutine("ThreeMeters", autoRoutines::ThreeMeters);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        autoChooser.addRoutine("FiveMeters", autoRoutines::FiveMeters);
-        SmartDashboard.putData("Auto Chooser", autoChooser);
 
+
+        SmartDashboard.putData("Auto Chooser", autoChooser);
 
         configureBindings();
     }
@@ -228,7 +198,8 @@ public class RobotContainer {
         joystick.y().onTrue(superstructure.setTargetL4().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
         
         
-        //joystick.povUp().onTrue(superstructure.setTargetAlgae().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
+        joystick.povUp().onTrue(superstructure.setTargetAlgae().andThen(new PrepScore(superstructure, coralGripper, coralIntake))
+        .andThen(new InstantCommand(() -> coralGripper.setIntake())));
 
         // joystick.povUp().whileTrue(new InstantCommand(() -> climber.setOpenLoop(-0.6))).onFalse(new InstantCommand(() -> climber.setOpenLoop(0.0)));
         // joystick.povDown().whileTrue(new InstantCommand(() -> climber.setOpenLoop(0.6))).onFalse(new InstantCommand(() -> climber.setOpenLoop(0.0)));

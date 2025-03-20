@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.CoralGripper.CoralGripper;
@@ -18,11 +19,9 @@ public class ScoreCoral extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      gripper.setRollerOpenLoopCommand(CoralGripperConstants.eject),
+      new InstantCommand(() -> gripper.setEject()),
       new WaitCommand(0.5),
-      gripper.setRollerOpenLoopCommand(CoralGripperConstants.stop)
-
-
+      new InstantCommand(() -> gripper.setStop())
     );
   }
 }

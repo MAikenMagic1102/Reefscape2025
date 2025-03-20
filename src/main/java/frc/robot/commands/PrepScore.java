@@ -27,9 +27,13 @@ public class PrepScore extends SequentialCommandGroup {
     addCommands(
       new InstantCommand(() -> coralGripper.setHold()),
 
-      coralIntake.setAngleCommand(CoralIntakeConstants.floorIntake).alongWith(superstructure.setElevatorToScoreSafe()),
-
-      new WaitUntilCommand(superstructure::isElevatorSafe),
+      new ConditionalCommand(new InstantCommand(), 
+      
+      coralIntake.setAngleCommand(CoralIntakeConstants.floorIntake)
+      .alongWith(superstructure.setElevatorToScoreSafe())
+      .andThen(new WaitUntilCommand(superstructure::isElevatorSafe)), 
+      
+      superstructure::armHalfScored),
 
       superstructure.setArmToScore(), 
 

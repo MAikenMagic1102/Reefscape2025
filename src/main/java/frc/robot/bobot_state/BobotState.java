@@ -19,8 +19,8 @@ import frc.robot.bobot_state.varc.TargetAngleTracker;
 import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.vision.PoseObservation;
-import frc.robot.Util.MagicVirtualSubsystem;
-import frc.robot.Util.PoseUtils;
+import frc.robot.util.MagicVirtualSubsystem;
+import frc.robot.util.PoseUtils;
 
 import java.util.List;
 import java.util.Queue;

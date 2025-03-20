@@ -8,7 +8,7 @@ import edu.wpi.first.math.util.Units;
 public class DriveCommandConstants {
   public static ProfiledPIDController makeAngleController() {
     ProfiledPIDController angleController =
-        new ProfiledPIDController(5.0, 0.0, 0.4, new TrapezoidProfile.Constraints(8.0, 20.0));
+        new ProfiledPIDController(4.5, 0.0, 0.4, new TrapezoidProfile.Constraints(8.0, 20.0));
 
     angleController.enableContinuousInput(-Math.PI, Math.PI);
     angleController.setTolerance(Units.degreesToRadians(1));
@@ -17,7 +17,7 @@ public class DriveCommandConstants {
   }
 
   public static PIDController makeTranslationController() {
-    PIDController translationController = new PIDController(5.0, 0.0, 0.1);
+    PIDController translationController = new PIDController(7.0, 0.0, 0.1);
     translationController.setTolerance(Units.inchesToMeters(0.5));
 
     return translationController;
