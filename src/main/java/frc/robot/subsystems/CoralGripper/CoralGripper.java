@@ -13,6 +13,7 @@ import com.thethriftybot.ThriftyNova;
 import com.thethriftybot.ThriftyNova.CurrentType;
 import com.thethriftybot.ThriftyNova.MotorType;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class CoralGripper extends SubsystemBase {
   private ThriftyNova grippers;
   private CANrange coralDetect;
+  private Debouncer gripDebouncer;
 
   private double coralSpeed = 0.0;
 
@@ -33,6 +35,7 @@ public class CoralGripper extends SubsystemBase {
   public CoralGripper() {
     grippers = new ThriftyNova(CoralGripperConstants.motorID, ThriftyNova.MotorType.MINION);
     coralDetect = new CANrange(33, "rio");
+    gripDebouncer = new Debouncer(0.);
 
     grippers.factoryReset();
 
@@ -63,10 +66,10 @@ public class CoralGripper extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("CoralGripper Voltage", grippers.getVoltage());
-    Logger.recordOutput("CoralGripper Stator Current", grippers.getStatorCurrent());
+    Logger.recordOutput("CoralGripper/ Voltage", grippers.getVoltage());
+    Logger.recordOutput("CoralGripper/ Stator Current", grippers.getStatorCurrent());
 
-    Logger.recordOutput("CoralDetect", coralDetect.getIsDetected().getValue());
+    Logger.recordOutput("CoralGripper/ CoralDetect", coralDetect.getIsDetected().getValue());
 
   //   if (coralSpeed > 0.49) {
 
@@ -88,7 +91,7 @@ public class CoralGripper extends SubsystemBase {
   // }
 
     if(hasCoral() && coralSpeed == 0.65){
-      coralSpeed = 0.03;
+      coralSpeed = 0.08;
     }
 
     grippers.setPercent(coralSpeed);
@@ -118,11 +121,12 @@ public class CoralGripper extends SubsystemBase {
   }
 
   public void setHold(){
-    coralSpeed = 0.05;
+    coralSpeed = 0.08;
   }
 
   public boolean hasCoral(){
-    return coralDetect.getIsDetected().getValue();
+
+    return gripDebouncer.calculate(coralDetect.getIsDetected().getValue());
   }
 
 }

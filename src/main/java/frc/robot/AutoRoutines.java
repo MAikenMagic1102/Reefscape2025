@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.commands.IntakeDeploy;
+import frc.robot.commands.IntakeRetract;
+import frc.robot.commands.IntakeRollersOn;
 import frc.robot.commands.PrepScore;
 import frc.robot.commands.ReturnToHome;
 import frc.robot.commands.ScoreCoral;
@@ -53,7 +55,7 @@ public class AutoRoutines {
 
     public AutoRoutine LeftSideCross(){
         final AutoRoutine routine = m_factory.newRoutine("Left Sdie Cross+1");
-         final AutoTrajectory LeftSideCross = routine.trajectory("Left Side Cross+1");
+         final AutoTrajectory LeftSideCross = routine.trajectory("Left Side Cross");
 
          routine.active().onTrue(
             Commands.sequence(
@@ -72,7 +74,7 @@ public class AutoRoutines {
 
     public AutoRoutine RightSideCross(){
         final AutoRoutine routine = m_factory.newRoutine("Right Sdie Cross+1");
-         final AutoTrajectory RightSideCross = routine.trajectory("Right Side Cross+1");
+         final AutoTrajectory RightSideCross = routine.trajectory("Right Side Cross");
 
          routine.active().onTrue(
             Commands.sequence(
@@ -88,20 +90,22 @@ public class AutoRoutines {
             return routine;
     }
     public AutoRoutine MiddleCross(){
-        final AutoRoutine routine = m_factory.newRoutine("Middle Cross+1");
+        final AutoRoutine routine = m_factory.newRoutine("Middle Cross");
          final AutoTrajectory MiddleCross = routine.trajectory("Middle Cross+1");
 
          routine.active().onTrue(
             Commands.sequence(
-                MiddleCross.resetOdometry(),
-                //m_superstructure.setTargetL4(),
-                //new IntakeDeploy(m_coralIntake),
-                MiddleCross.cmd(),//.alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
-                //Add PositionToPole
-                positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.5),
-                new WaitCommand(1.5)
-                //new ScoreCoral(m_coralGripper),
-                //new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper)
+                //MiddleCross.resetOdometry(),
+                m_superstructure.setTargetL3(),
+                new IntakeDeploy(m_coralIntake), 
+                MiddleCross.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                m_superstructure.setTargetL4(),
+                new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
+                new WaitCommand(0.25),
+                positionToPole(() -> FieldUtils.getClosestReef().rightPole, Constants.robotToReefOffset),
+                new WaitCommand(0.25),
+                new ScoreCoral(m_coralGripper),
+                new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper)
             )
 
          );
@@ -113,8 +117,11 @@ public class AutoRoutines {
         final AutoTrajectory TwoMeters = routine.trajectory("TwoMeters");
 
         routine.active().onTrue(
-            TwoMeters.resetOdometry()
-                .andThen(TwoMeters.cmd())
+            Commands.sequence(
+                TwoMeters.resetOdometry(),
+                new IntakeRetract(m_coralIntake),
+                TwoMeters.cmd()
+            )
         );
 
         return routine;
@@ -147,50 +154,56 @@ public class AutoRoutines {
 
 
     public AutoRoutine RightToReef(){
+        //"RR" Right reef, robot is at the reef going to RHPS
+        //"RHPSR" Right human player station, robot is at the HPS going to the reef
         final AutoRoutine routine = m_factory.newRoutine("Right to Reef");
-        final AutoTrajectory RightToReef1 = routine.trajectory("Right to Reef+1");
-        final AutoTrajectory RightToReef2 = routine.trajectory("RHPS to Reef+2");
-        final AutoTrajectory RightToReef3 = routine.trajectory("RHPS to Reef +3");
-        final AutoTrajectory RightToReef4 = routine.trajectory("RHPS to Reef +4");
-        final AutoTrajectory RightToReef5 = routine.trajectory("RHPS to Reef+5");
-        final AutoTrajectory ReefToRHPS = routine.trajectory("Reef to RHPS");
-        final AutoTrajectory RightToReef6 = routine.trajectory("RHPS to Reef+6");
-        final AutoTrajectory ReefToRHPS2 = routine.trajectory("Reef to RHPS+2");
+        final AutoTrajectory RR1 = routine.trajectory("RR+1");
+        final AutoTrajectory RR2 = routine.trajectory("RR+2");
+        final AutoTrajectory RHPSR3 = routine.trajectory("RHPSR+3");
+        final AutoTrajectory RR4 = routine.trajectory("RR+4");
+        final AutoTrajectory RHPSR5 = routine.trajectory("RHPSR+5");
+        final AutoTrajectory RR6 = routine.trajectory("RR+6");
+        final AutoTrajectory RHPSR7 = routine.trajectory("RHPSR+7");
+        final AutoTrajectory RR8 = routine.trajectory("RR+8");
         routine.active().onTrue(
             Commands.sequence(
-                RightToReef1.resetOdometry(),
-                m_superstructure.setTargetL4(),
-                new IntakeDeploy(m_coralIntake), 
-                RightToReef1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                RR1.resetOdometry(),
+                // m_superstructure.setTargetL4(),
+                // new IntakeDeploy(m_coralIntake), 
+                RR1.cmd(),
+                // .alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                 positionToPole(() -> FieldUtils.getClosestReef().leftPole, 0.5),
-                new WaitCommand(1.5),
-                new ScoreCoral(m_coralGripper),
-                new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                    RightToReef2.cmd(),
-                    new IntakeDeploy(m_coralIntake),
-                    m_superstructure.setTargetL4(),
-                        RightToReef3.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                // new WaitCommand(1.5),
+                // new ScoreCoral(m_coralGripper),
+                // new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
+                    RR2.cmd(),
+                    // new IntakeDeploy(m_coralIntake),
+                    // m_superstructure.setTargetL4(),
+                        RHPSR3.cmd(),
+                        // .alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                         positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.5),
-                        new WaitCommand(1.5),
-                        new ScoreCoral(m_coralGripper),
-                        new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                            RightToReef4.cmd(),
-                            new IntakeDeploy(m_coralIntake),
-                            m_superstructure.setTargetL4(),
-                                RightToReef5.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                        // new WaitCommand(1.5),
+                        // new ScoreCoral(m_coralGripper),
+                        // new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
+                            RR4.cmd(),
+                            // new IntakeDeploy(m_coralIntake),
+                            // m_superstructure.setTargetL4(),
+                                RHPSR5.cmd(),
+                                // .alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                                 positionToPole(() -> FieldUtils.getClosestReef().leftPole, 0.5),
-                                new WaitCommand(1.5),
-                                new ScoreCoral(m_coralGripper),
-                                new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                                    ReefToRHPS.cmd(),
-                                    new IntakeDeploy(m_coralIntake),
-                                    m_superstructure.setTargetL4(),
-                                        RightToReef6.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                                // new WaitCommand(1.5),
+                                // new ScoreCoral(m_coralGripper),
+                                // new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
+                                    RR6.cmd(),
+                                    // new IntakeDeploy(m_coralIntake),
+                                    // m_superstructure.setTargetL4(),
+                                        RHPSR7.cmd(),
+                                        // .alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                                         positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.5),
-                                        new WaitCommand(1.5),
-                                        new ScoreCoral(m_coralGripper),
-                                        new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                                            ReefToRHPS2.cmd()
+                                        // new WaitCommand(1.5),
+                                        // new ScoreCoral(m_coralGripper),
+                                        // new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
+                                            RR8.cmd()
                      
 
             )
@@ -203,50 +216,50 @@ public class AutoRoutines {
 
     public AutoRoutine LeftToReef(){
         final AutoRoutine routine = m_factory.newRoutine("Left to Reef");
-        final AutoTrajectory LeftToReef1 = routine.trajectory("Left to Reef+1");
-        final AutoTrajectory LeftToReef2 = routine.trajectory("LHPS to Reef+2");
-        final AutoTrajectory LeftToReef3 = routine.trajectory("LHPS to Reef+3");
-        final AutoTrajectory LeftToReef4 = routine.trajectory("LHPS to Reef+4");
-        final AutoTrajectory LeftToReef5 = routine.trajectory("LHPS to Reef+5");
-        final AutoTrajectory ReefToLHPS = routine.trajectory("Reef to LHPS");
-        final AutoTrajectory LeftToReef6 = routine.trajectory("LHPS to Reef+6");
-        final AutoTrajectory ReefToLHPS2 = routine.trajectory("Reef to LHPS+2");
+        final AutoTrajectory LR1 = routine.trajectory("LR+1");
+        final AutoTrajectory LR2 = routine.trajectory("LR+2");
+        final AutoTrajectory LHPSR3 = routine.trajectory("LHPSR+3");
+        final AutoTrajectory LR4 = routine.trajectory("LR+4");
+        final AutoTrajectory LHPSR5 = routine.trajectory("LHPSR+5");
+        final AutoTrajectory LR6 = routine.trajectory("LR+6");
+        final AutoTrajectory LHPSR7 = routine.trajectory("LHPSR+7");
+        final AutoTrajectory LR8 = routine.trajectory("LR+8");
 
         routine.active().onTrue(
             Commands.sequence(
-                LeftToReef1.resetOdometry(),
+                LR1.resetOdometry(),
                 m_superstructure.setTargetL4(),
                 new IntakeDeploy(m_coralIntake), 
-                LeftToReef1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                LR1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                 positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.5),
                 new WaitCommand(1.5),
                 new ScoreCoral(m_coralGripper),
                 new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                    LeftToReef2.cmd(),
+                    LR2.cmd(),
                     new IntakeDeploy(m_coralIntake),
                     m_superstructure.setTargetL4(),
-                        LeftToReef3.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                        LHPSR3.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                         positionToPole(() -> FieldUtils.getClosestReef().leftPole, 0.5),
                         new WaitCommand(1.5),
                         new ScoreCoral(m_coralGripper),
                         new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                            LeftToReef4.cmd(),
+                            LR4.cmd(),
                             new IntakeDeploy(m_coralIntake),
                             m_superstructure.setTargetL4(),
-                                LeftToReef5.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                                LHPSR5.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                                 positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.5),
                                 new WaitCommand(1.5),
                                 new ScoreCoral(m_coralGripper),
                                 new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                                    ReefToLHPS.cmd(),
+                                    LR6.cmd(),
                                     new IntakeDeploy(m_coralIntake),
                                     m_superstructure.setTargetL4(),
-                                        LeftToReef6.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                                        LHPSR7.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                                         positionToPole(() -> FieldUtils.getClosestReef().leftPole, 0.5),
                                         new WaitCommand(1.5),
                                         new ScoreCoral(m_coralGripper),
                                         new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                                            ReefToLHPS2.cmd()
+                                            LR8.cmd()
                  
                      
 
@@ -260,50 +273,51 @@ public class AutoRoutines {
 
     public AutoRoutine LeftToPush(){
         final AutoRoutine routine = m_factory.newRoutine("Left to Push");
-        final AutoTrajectory LeftToReef1 = routine.trajectory("Left to Push");
-        final AutoTrajectory LeftToReef2 = routine.trajectory("LHPS to Reef+2");
-        final AutoTrajectory LeftToReef3 = routine.trajectory("LHPS to Reef+3");
-        final AutoTrajectory LeftToReef4 = routine.trajectory("LHPS to Reef+4");
-        final AutoTrajectory LeftToReef5 = routine.trajectory("LHPS to Reef+5");
-        final AutoTrajectory ReefToLHPS = routine.trajectory("Reef to LHPS");
-        final AutoTrajectory LeftToReef6 = routine.trajectory("LHPS to Reef+6");
-        final AutoTrajectory ReefToLHPS2 = routine.trajectory("Reef to LHPS+2");
+        final AutoTrajectory LeftPush = routine.trajectory("Left Push");
+        final AutoTrajectory LR2 = routine.trajectory("LR+2");
+        final AutoTrajectory LHPSR3 = routine.trajectory("LHPSR+3");
+        final AutoTrajectory LR4 = routine.trajectory("LR+4");
+        final AutoTrajectory LHPSR5 = routine.trajectory("LHPSR+5");
+        final AutoTrajectory LR6 = routine.trajectory("LR+6");
+        final AutoTrajectory LHPSR7 = routine.trajectory("LHPSR+7");
+        final AutoTrajectory LR8 = routine.trajectory("LR+8");
+
 
         routine.active().onTrue(
             Commands.sequence(
-                LeftToReef1.resetOdometry(),
+                LeftPush.resetOdometry(),
                 m_superstructure.setTargetL4(),
                 new IntakeDeploy(m_coralIntake), 
-                LeftToReef1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                LeftPush.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                 positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.5),
                 new WaitCommand(1.5),
                 new ScoreCoral(m_coralGripper),
                 new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                    LeftToReef2.cmd(),
+                    LR2.cmd(),
                     new IntakeDeploy(m_coralIntake),
                     m_superstructure.setTargetL4(),
-                        LeftToReef3.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                        LHPSR3.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                         positionToPole(() -> FieldUtils.getClosestReef().leftPole, 0.5),
                         new WaitCommand(1.5),
                         new ScoreCoral(m_coralGripper),
                         new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                            LeftToReef4.cmd(),
+                            LR4.cmd(),
                             new IntakeDeploy(m_coralIntake),
                             m_superstructure.setTargetL4(),
-                                LeftToReef5.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                                LHPSR5.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                                 positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.5),
                                 new WaitCommand(1.5),
                                 new ScoreCoral(m_coralGripper),
                                 new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                                    ReefToLHPS.cmd(),
+                                    LR6.cmd(),
                                     new IntakeDeploy(m_coralIntake),
                                     m_superstructure.setTargetL4(),
-                                        LeftToReef6.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                                        LHPSR7.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                                         positionToPole(() -> FieldUtils.getClosestReef().leftPole, 0.5),
                                         new WaitCommand(1.5),
                                         new ScoreCoral(m_coralGripper),
                                         new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                                            ReefToLHPS2.cmd()
+                                            LR8.cmd()
                  
                      
 
@@ -317,53 +331,53 @@ public class AutoRoutines {
 
     public AutoRoutine RightToPush(){
         final AutoRoutine routine = m_factory.newRoutine("Right to Push");
-        final AutoTrajectory RightToReef1 = routine.trajectory("Right to Push");
-        final AutoTrajectory RightToReef2 = routine.trajectory("RHPS to Reef+2");
-        final AutoTrajectory RightToReef3 = routine.trajectory("RHPS to Reef +3");
-        final AutoTrajectory RightToReef4 = routine.trajectory("RHPS to Reef +4");
-        final AutoTrajectory RightToReef5 = routine.trajectory("RHPS to Reef+5");
-        final AutoTrajectory ReefToRHPS = routine.trajectory("Reef to RHPS");
-        final AutoTrajectory RightToReef6 = routine.trajectory("RHPS to Reef+6");
-        final AutoTrajectory ReefToRHPS2 = routine.trajectory("Reef to RHPS+2");
+        final AutoTrajectory RightPush = routine.trajectory("Right Push");
+        final AutoTrajectory RR2 = routine.trajectory("RR+2");
+        final AutoTrajectory RHPSR3 = routine.trajectory("RHPSR+3");
+        final AutoTrajectory RR4 = routine.trajectory("RR+4");
+        final AutoTrajectory RHPSR5 = routine.trajectory("RHPSR+5");
+        final AutoTrajectory RR6 = routine.trajectory("RR+6");
+        final AutoTrajectory RHPSR7 = routine.trajectory("RHPSR+7");
+        final AutoTrajectory RR8 = routine.trajectory("RR+8");
         routine.active().onTrue(
             Commands.sequence(
-                RightToReef1.resetOdometry(),
+                RightPush.resetOdometry(),
                 // m_superstructure.setTargetL4(),
                 // new IntakeDeploy(m_coralIntake), 
-                RightToReef1.cmd(),
+                RightPush.cmd(),
                 // .alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                 positionToPole(() -> FieldUtils.getClosestReef().leftPole, 0.5),
                 // new WaitCommand(1.5),
                 // new ScoreCoral(m_coralGripper),
                 // new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                    RightToReef2.cmd(),
+                    RR2.cmd(),
                     // new IntakeDeploy(m_coralIntake),
                     // m_superstructure.setTargetL4(),
-                        RightToReef3.cmd(),
+                        RHPSR3.cmd(),
                         // .alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                         positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.5),
                         // new WaitCommand(1.5),
                         // new ScoreCoral(m_coralGripper),
                         // new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                            RightToReef4.cmd(),
+                            RR4.cmd(),
                             // new IntakeDeploy(m_coralIntake),
                             // m_superstructure.setTargetL4(),
-                                RightToReef5.cmd(),
+                                RHPSR5.cmd(),
                                 // .alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                                 positionToPole(() -> FieldUtils.getClosestReef().leftPole, 0.5),
                                 // new WaitCommand(1.5),
                                 // new ScoreCoral(m_coralGripper),
                                 // new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                                    ReefToRHPS.cmd(),
+                                    RR6.cmd(),
                                     // new IntakeDeploy(m_coralIntake),
                                     // m_superstructure.setTargetL4(),
-                                        RightToReef6.cmd(),
+                                        RHPSR7.cmd(),
                                         // .alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                                         positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.5),
                                         // new WaitCommand(1.5),
                                         // new ScoreCoral(m_coralGripper),
                                         // new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                                            ReefToRHPS2.cmd()
+                                            RR8.cmd()
                      
 
             )
@@ -376,18 +390,18 @@ public class AutoRoutines {
 
     public AutoRoutine LeftToOne(){
         final AutoRoutine routine = m_factory.newRoutine("Left to One");
-        final AutoTrajectory LeftToReef1 = routine.trajectory("Left to Reef+1");
+        final AutoTrajectory LR1 = routine.trajectory("LR+1");
 
         routine.active().onTrue(
             Commands.sequence(
                 //LeftToReef1.resetOdometry(),
                 m_superstructure.setTargetL3(),
                 new IntakeDeploy(m_coralIntake), 
-                LeftToReef1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                LR1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                 m_superstructure.setTargetL4(),
                 new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
                 new WaitCommand(0.25),
-                positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.58),
+                positionToPole(() -> FieldUtils.getClosestReef().rightPole, Constants.robotToReefOffset),
                 new WaitCommand(0.25),
                 new ScoreCoral(m_coralGripper),
                 new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper)
@@ -399,39 +413,83 @@ public class AutoRoutines {
 
     public AutoRoutine LeftToOnePlus(){
         final AutoRoutine routine = m_factory.newRoutine("Left to One Plus");
-        final AutoTrajectory LeftToReef1 = routine.trajectory("Left to Reef+1");
-        final AutoTrajectory LeftToHPSPlus2 = routine.trajectory("LHPS to Reef+2");
-        final AutoTrajectory RightToReef3 = routine.trajectory("RHPS to Reef +3");
+        final AutoTrajectory LR1 = routine.trajectory("LR+1");
+        final AutoTrajectory LR2 = routine.trajectory("LR+2");
+        final AutoTrajectory LHPSR3 = routine.trajectory("LHPSR+3");
+        final AutoTrajectory RetryL = routine.trajectory("RetryL");
+        final AutoTrajectory LR4 = routine.trajectory("LR+4");
+        final AutoTrajectory LHPSR5 = routine.trajectory("LHPSR+5");
 
         routine.active().onTrue(
             Commands.sequence(
                 //LeftToReef1.resetOdometry(),
                 m_superstructure.setTargetL3(),
                 new IntakeDeploy(m_coralIntake), 
-                LeftToReef1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                LR1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                 m_superstructure.setTargetL4(),
                 new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
                 new WaitCommand(0.25),
-                positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.58),
+                positionToPole(() -> FieldUtils.getClosestReef().rightPole, Constants.robotToReefOffset),
                 new WaitCommand(0.25),
                 new ScoreCoral(m_coralGripper),
                 new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                new InstantCommand(() -> m_coralIntake.setIntake()).alongWith(new InstantCommand(() -> m_coralGripper.setIntake())),
-                LeftToHPSPlus2.cmd(),
+                new IntakeRollersOn(m_coralIntake, m_coralGripper),
+                LR2.cmd(),
+                new WaitCommand(0.5),
+
+                new InstantCommand(() -> m_coralIntake.stopRoller()),
+
+                new ConditionalCommand(
+                //Has Coral
+                Commands.sequence(
+                    m_superstructure.setTargetL3().andThen(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                    LHPSR3.cmd(),
+                    m_superstructure.setTargetL4(),
+                    new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
+                    new WaitCommand(0.25),
+                    positionToPole(() -> FieldUtils.getClosestReef().leftPole, Constants.robotToReefOffset),
+                    new WaitCommand(0.25),
+                    new ScoreCoral(m_coralGripper),
+                    new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
+                    new IntakeRollersOn(m_coralIntake, m_coralGripper),
+                    LR4.cmd()
+                ),
+
+                //Does Not Have Coral
+                Commands.sequence(
+                    new IntakeRollersOn(m_coralIntake, m_coralGripper),
+                    RetryL.cmd()
+                ), 
+
+                m_coralGripper::hasCoral),
+
                 new WaitCommand(0.5),
                 new InstantCommand(() -> m_coralIntake.stopRoller()),
+
                 new ConditionalCommand(
-                    m_superstructure.setTargetL3().andThen(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)), 
-                new InstantCommand(), 
-                m_coralGripper::hasCoral),
-                LeftToHPSPlus2.cmd(),
-                m_superstructure.setTargetL4(),
-                new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
-                new WaitCommand(0.25),
-                positionToPole(() -> FieldUtils.getClosestReef().rightPole, 0.58),
-                new WaitCommand(0.25),
-                new ScoreCoral(m_coralGripper)
-                
+                    //Has Coral
+                    Commands.sequence(
+                        m_superstructure.setTargetL3().andThen(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                        LHPSR5.cmd(),
+                        m_superstructure.setTargetL4(),
+                        new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
+                        new WaitCommand(0.25),
+                        positionToPole(() -> FieldUtils.getClosestReef().rightPole, Constants.robotToReefOffset),
+                        new WaitCommand(0.25),
+                        new ScoreCoral(m_coralGripper),
+                        new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper)
+                    ),
+    
+                    //Does Not Have Coral
+                    Commands.sequence(
+                        new IntakeRollersOn(m_coralIntake, m_coralGripper),
+                        RetryL.cmd()
+                    ), 
+    
+                    m_coralGripper::hasCoral),
+
+                    new InstantCommand(() -> m_coralIntake.stopRoller())
+
          ) );
 
             return routine;
@@ -440,7 +498,7 @@ public class AutoRoutines {
 
     public Command positionToPole(Supplier<ReefPole> pole, double offsetMeters){
         return new DriveToPoseCommand(drive, 
-        () -> PoseUtils.getPerpendicularOffsetPose(pole.get().getPose(), offsetMeters));
+        () -> PoseUtils.getPerpendicularOffsetPose(pole.get().getPose(), offsetMeters)).withTimeout(1.0);
     }
     
    

@@ -86,9 +86,7 @@ public class RobotContainer {
         
         autoChooser.addRoutine("Left to One", autoRoutines::LeftToOne);
         autoChooser.addRoutine("Left to One Plus", autoRoutines::LeftToOnePlus);
-
-
-
+        autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters);
 
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -187,6 +185,8 @@ public class RobotContainer {
             .onFalse(new InstantCommand(() -> coralIntake.stopRoller())
             .alongWith(new IntakeRetract(coralIntake)));            
 
+        joystick.rightStick().whileTrue(new InstantCommand(() -> coralGripper.setIntake()));
+        joystick.rightStick().onFalse(new InstantCommand(() -> coralGripper.setHold()));
         
         //joystick.rightBumper().onTrue(new ReturnToHome(superstructure, coralIntake, coralGripper));
         joystick.rightTrigger().onTrue(new InstantCommand(() -> coralGripper.setEject()))

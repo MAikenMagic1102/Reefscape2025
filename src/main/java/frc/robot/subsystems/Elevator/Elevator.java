@@ -105,20 +105,20 @@ public class Elevator extends SubsystemBase {
     }
     // This method will be called once per scheduler run
     //SmartDashboard
-    Logger.recordOutput("Elevator at Goal", atGoal());
-    Logger.recordOutput("Elevator above Intake", aboveIntake());
-    Logger.recordOutput("Elevator above Half", aboveHalf());
-    Logger.recordOutput("Elevator Position Meters", getPositionMeters());
+    Logger.recordOutput("Elevator/ at Goal", atGoal());
+    Logger.recordOutput("Elevator/ above Intake", aboveIntake());
+    Logger.recordOutput("Elevator/ above Half", aboveHalf());
+    Logger.recordOutput("Elevator/ Position Meters", getPositionMeters());
     
-    Logger.recordOutput("Elevator motorL Velocity", motorL.getVelocity().getValueAsDouble());
-    Logger.recordOutput("Elevator motorL Acceleration", motorL.getAcceleration().getValueAsDouble());
+    Logger.recordOutput("Elevator/ Motors/ LeftMotor/ Velocity", motorL.getVelocity().getValueAsDouble());
+    Logger.recordOutput("Elevator/ Motors/ LeftMotor/ Acceleration", motorL.getAcceleration().getValueAsDouble());
 
-    Logger.recordOutput("Elevator motorL Voltage", motorL.getMotorVoltage().getValueAsDouble());
-    Logger.recordOutput("Elevator motorL Stator Current", motorL.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput("Elevator motorL Temp", motorL.getDeviceTemp().getValueAsDouble());
-    Logger.recordOutput("Elevator motorR Voltage", motorR.getMotorVoltage().getValueAsDouble());
-    Logger.recordOutput("Elevator motorR Stator Current", motorR.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput("Elevator motorR Temp", motorR.getDeviceTemp().getValueAsDouble());
+    Logger.recordOutput("Elevator/ Motors/ LeftMotor/ Voltage", motorL.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput("Elevator/ Motors/ LeftMotor/ Stator Current", motorL.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Elevator/ Motors/ LeftMotor/ Temp", motorL.getDeviceTemp().getValueAsDouble());
+    Logger.recordOutput("Elevator/ Motors/ RightMotor/ Voltage", motorR.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput("Elevator/ Motors/ RightMotor/ Stator Current", motorR.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Elevator/ Motors/ RightMotor/ Temp", motorR.getDeviceTemp().getValueAsDouble());
   }
 
   @Override

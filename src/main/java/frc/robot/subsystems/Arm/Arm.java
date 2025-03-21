@@ -94,15 +94,15 @@ public class Arm extends SubsystemBase {
       ArmConstants.driveSpeed = 1.0;
     }
     // This method will be called once per scheduler run
-    Logger.recordOutput("Arm Angle", getAngleDegrees());
-    Logger.recordOutput("Arm At Goal", atGoal());
+    Logger.recordOutput("Arm/ Angle", getAngleDegrees());
+    Logger.recordOutput("Arm/ At Goal", atGoal());
 
-    Logger.recordOutput("Arm Motor Voltage", armMotor.getMotorVoltage().getValueAsDouble());
-    Logger.recordOutput("Arm Stator Current", armMotor.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput("Arm Motor Temp", armMotor.getDeviceTemp().getValueAsDouble());
+    Logger.recordOutput("Arm/ Motor Voltage", armMotor.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput("Arm/ Stator Current", armMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Arm/ Motor Temp", armMotor.getDeviceTemp().getValueAsDouble());
     
     if(closedLoop){
-      Logger.recordOutput("Arm Setpoint", armMotor.getClosedLoopReference().getValueAsDouble());
+      Logger.recordOutput("Arm/ Setpoint", armMotor.getClosedLoopReference().getValueAsDouble());
     }
   }
 

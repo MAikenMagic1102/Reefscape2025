@@ -3,7 +3,22 @@
  "version":1,
  "type":"Swerve",
  "variables":{
-  "expressions":{},
+  "expressions":{
+   "MAXA":{
+    "dimension":"LinAcc",
+    "var":{
+     "exp":"5 m / s ^ 2",
+     "val":5.0
+    }
+   },
+   "MAXV":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"2 m / s",
+     "val":2.0
+    }
+   }
+  },
   "poses":{}
  },
  "config":{
@@ -40,8 +55,8 @@
    "val":7.363636364
   },
   "radius":{
-   "exp":"2 in",
-   "val":0.0508
+   "exp":"1.9 in",
+   "val":0.04826
   },
   "vmax":{
    "exp":"485.89966375522135 rad / s",

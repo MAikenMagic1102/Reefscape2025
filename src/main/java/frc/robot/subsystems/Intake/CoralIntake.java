@@ -113,20 +113,20 @@ public class CoralIntake extends SubsystemBase {
     // This method will be called once per scheduler run
         coralSensor.periodic();
        // Logger.recordOutput("RollerVoltageOut", rollerMotor.getMotorVoltage().getValueAsDouble());
-        Logger.recordOutput("PivotAngle", getPivotAngle());
-        Logger.recordOutput("Coral intake at Goal", atGoal());
-        Logger.recordOutput("Roller Motor Velocity", rollerMotor.getVelocity().getValueAsDouble());
+        Logger.recordOutput("Intake/ PivotAngle", getPivotAngle());
+        Logger.recordOutput("Intake/ CoralSensor/ Coral intake at Goal", atGoal());
+        Logger.recordOutput("Intake/ Roller Motor/ Velocity", rollerMotor.getVelocity().getValueAsDouble());
 
-        Logger.recordOutput("Pivot Motor Voltage",pivotMotor.getMotorVoltage().getValueAsDouble());
-        Logger.recordOutput("Pivot Stator Current", pivotMotor.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("Pivot Motor Temp", pivotMotor.getDeviceTemp().getValueAsDouble());
+        Logger.recordOutput("Intake/ Pivot Motor/ Voltage",pivotMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput("Intake/ Pivot Motor/ Pivot Stator Current", pivotMotor.getStatorCurrent().getValueAsDouble());
+        Logger.recordOutput("Intake/ Pivot Motor/ Temp", pivotMotor.getDeviceTemp().getValueAsDouble());
 
-        Logger.recordOutput("Roller Motor Voltage", rollerMotor.getMotorVoltage().getValueAsDouble());
-        Logger.recordOutput("Roller Stator Current", rollerMotor.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("Roller Motor Temp", rollerMotor.getDeviceTemp().getValueAsDouble() );
+        Logger.recordOutput("Intake/ Roller Motor/ Voltage", rollerMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput("Intake/ Roller Motor/ Stator Current", rollerMotor.getStatorCurrent().getValueAsDouble());
+        Logger.recordOutput("Intake/ Roller Motor/ Temp", rollerMotor.getDeviceTemp().getValueAsDouble() );
 
         // SmartDashboard.putNumber(getName() + "/PivotMotor", pivotMotor.getMotorVoltage().getValueAsDouble());
-        Logger.recordOutput("CoralSensor", coralSensor.isDetected());
+        Logger.recordOutput("Intake/ CoralSensor/ IsDetected?", coralSensor.isDetected());
 
         if(intakeSpeed < -0.74){
           if(coralSensor.isDetected()){
