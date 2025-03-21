@@ -31,8 +31,10 @@ public class Vision extends MagicVirtualSubsystem {
 
   private final List<AprilTagCamera> aprilTagCameras = new ArrayList<>();
 
-  private static final String aprilTagLogRoot = "AprilTagCamera";
-  private static final String aggregateAprilTagLogRoot = "AggregateAprilTagCameras";
+  private static final String aggregateAprilTagLogRoot = "Subsystems/Vision";
+  private static final String aprilTagLogRoot = "RealOutputs/Subsystems/Vision/Cameras";
+  private static final String validAggregateLoggingPath = aggregateAprilTagLogRoot + "/Valid";
+  private static final String rejectedAggregateLoggingPath = aggregateAprilTagLogRoot + "/Rejected";
 
   public Vision() {
     for (AprilTagCameraConfig config : VisionConstants.aprilTagCamerasConfigs) {
@@ -104,47 +106,47 @@ public class Vision extends MagicVirtualSubsystem {
         BobotState.offerVisionObservation(observation);
       }
 
-      if (cam.source.name() == "frontLeftCam") {
-        Logger.recordOutput("LeftCam validPoses", cam.inputs.validPoses);
-        // flCamPose.set(cam.inputs.validPoses);
-        // flTargets.set(cam.inputs.validAprilTagPoses);
-      } else if (cam.source.name() == "frontRightCam") {
-        Logger.recordOutput("RightCam validPoses", cam.inputs.validPoses);
-        // frCamPose.set(cam.inputs.validPoses);
-        // frTargets.set(cam.inputs.validAprilTagPoses);
-      }
+      // if (cam.source.name() == "frontLeftCam") {
+      //   Logger.recordOutput(validAggregateLoggingPath + "/LeftCamValidPoseObservations", cam.inputs.validPoses);
+      //   // flCamPose.set(cam.inputs.validPoses);
+      //   // flTargets.set(cam.inputs.validAprilTagPoses);
+      // } else if (cam.source.name() == "frontRightCam") {
+      //   Logger.recordOutput(validLoggingPath + "/RightCamValidPoseObservations", cam.inputs.validPoses);
+      //   // frCamPose.set(cam.inputs.validPoses);
+      //   // frTargets.set(cam.inputs.validAprilTagPoses);
+      // }
     }
 
     Logger.recordOutput(
-        aggregateAprilTagLogRoot + "/ValidCorners", validCorners.toArray(Translation2d[]::new));
+        validAggregateLoggingPath + "/ValidCorners", validCorners.toArray(Translation2d[]::new));
     Logger.recordOutput(
-        aggregateAprilTagLogRoot + "/RejectedCorners",
+        rejectedAggregateLoggingPath + "/RejectedCorners",
         rejectedCorners.toArray(Translation2d[]::new));
 
     Logger.recordOutput(
-        aggregateAprilTagLogRoot + "/ValidIds",
+        validAggregateLoggingPath + "/ValidIds",
         validIds.stream().mapToInt(Integer::intValue).toArray());
     Logger.recordOutput(
-        aggregateAprilTagLogRoot + "/RejectedIds",
+        rejectedAggregateLoggingPath + "/RejectedIds",
         rejectedIds.stream().mapToInt(Integer::intValue).toArray());
 
     Logger.recordOutput(
-        aggregateAprilTagLogRoot + "/ValidPoseObservations",
+        validAggregateLoggingPath + "/ValidPoseObservations",
         validPoseObservations.toArray(PoseObservation[]::new));
     Logger.recordOutput(
-        aggregateAprilTagLogRoot + "/RejectedPoseObservations",
+        rejectedAggregateLoggingPath + "/RejectedPoseObservations",
         rejectedPoseObservations.toArray(PoseObservation[]::new));
 
     Logger.recordOutput(
-        aggregateAprilTagLogRoot + "/ValidPoses", validPoses.toArray(Pose3d[]::new));
+        validAggregateLoggingPath + "/ValidPoses", validPoses.toArray(Pose3d[]::new));
     Logger.recordOutput(
-        aggregateAprilTagLogRoot + "/RejectedPoses", rejectedPoses.toArray(Pose3d[]::new));
+        rejectedAggregateLoggingPath + "/RejectedPoses", rejectedPoses.toArray(Pose3d[]::new));
 
     Logger.recordOutput(
-        aggregateAprilTagLogRoot + "/ValidAprilTagPoses",
+        validAggregateLoggingPath + "/ValidAprilTagPoses",
         validAprilTagPoses.toArray(Pose3d[]::new));
     Logger.recordOutput(
-        aggregateAprilTagLogRoot + "/RejectedAprilTagPoses",
+        rejectedAggregateLoggingPath + "/RejectedAprilTagPoses",
         rejectedAprilTagPoses.toArray(Pose3d[]::new));
   }
 

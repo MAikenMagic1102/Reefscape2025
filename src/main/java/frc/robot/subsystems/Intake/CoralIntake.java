@@ -71,6 +71,13 @@ public class CoralIntake extends SubsystemBase {
   private double targetPosition = 0;
 
   private double intakeSpeed = 0;
+
+  // AdvantageScope log paths
+  private final String loggerPath = "Subsystems/Intake";
+  private final String coralSensorLoggerPath = loggerPath + "/CoralSensor";
+  private final String motorLoggerPath = loggerPath + "/Motors";
+  private final String rollerMotorLoggerPath = motorLoggerPath + "/Roller";
+  private final String pivotMotorLoggerPath = motorLoggerPath + "/Pivot";
   
   
   /** Creates a new CoralIntake. */
@@ -112,21 +119,26 @@ public class CoralIntake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
         coralSensor.periodic();
+
+
+       // Logging
        // Logger.recordOutput("RollerVoltageOut", rollerMotor.getMotorVoltage().getValueAsDouble());
-        Logger.recordOutput("Intake/ PivotAngle", getPivotAngle());
-        Logger.recordOutput("Intake/ CoralSensor/ Coral intake at Goal", atGoal());
-        Logger.recordOutput("Intake/ Roller Motor/ Velocity", rollerMotor.getVelocity().getValueAsDouble());
+        Logger.recordOutput(loggerPath + "/PivotAngle", getPivotAngle());
 
-        Logger.recordOutput("Intake/ Pivot Motor/ Voltage",pivotMotor.getMotorVoltage().getValueAsDouble());
-        Logger.recordOutput("Intake/ Pivot Motor/ Pivot Stator Current", pivotMotor.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("Intake/ Pivot Motor/ Temp", pivotMotor.getDeviceTemp().getValueAsDouble());
+        Logger.recordOutput(coralSensorLoggerPath + "/Coral intake at Goal", atGoal());
+        Logger.recordOutput(coralSensorLoggerPath + "/IsDetected?", coralSensor.isDetected());
 
-        Logger.recordOutput("Intake/ Roller Motor/ Voltage", rollerMotor.getMotorVoltage().getValueAsDouble());
-        Logger.recordOutput("Intake/ Roller Motor/ Stator Current", rollerMotor.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("Intake/ Roller Motor/ Temp", rollerMotor.getDeviceTemp().getValueAsDouble() );
+        Logger.recordOutput(rollerMotorLoggerPath + "/Velocity", rollerMotor.getVelocity().getValueAsDouble());
+        Logger.recordOutput(rollerMotorLoggerPath + "/Voltage", rollerMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput(rollerMotorLoggerPath + "/Stator Current", rollerMotor.getStatorCurrent().getValueAsDouble());
+        Logger.recordOutput(rollerMotorLoggerPath + "/Temp", rollerMotor.getDeviceTemp().getValueAsDouble() );
 
+        Logger.recordOutput(pivotMotorLoggerPath + "/Voltage",pivotMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput(pivotMotorLoggerPath + "/Pivot Stator Current", pivotMotor.getStatorCurrent().getValueAsDouble());
+        Logger.recordOutput(pivotMotorLoggerPath + "/Temp", pivotMotor.getDeviceTemp().getValueAsDouble());
+
+        
         // SmartDashboard.putNumber(getName() + "/PivotMotor", pivotMotor.getMotorVoltage().getValueAsDouble());
-        Logger.recordOutput("Intake/ CoralSensor/ IsDetected?", coralSensor.isDetected());
 
         if(intakeSpeed < -0.74){
           if(coralSensor.isDetected()){
