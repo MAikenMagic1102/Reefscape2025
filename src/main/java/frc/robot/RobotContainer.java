@@ -10,29 +10,18 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import choreo.auto.AutoChooser;
-import choreo.auto.AutoFactory;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DrivePerpendicularToPoseCommand;
-import frc.robot.commands.ElevatorTest;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeHome;
 import frc.robot.commands.IntakeRetract;
-import frc.robot.commands.L4finalPos;
 import frc.robot.commands.PrepScore;
-import frc.robot.commands.PrepScoreL123;
 import frc.robot.commands.ReturnToHome;
-import frc.robot.commands.ScoreCoral;
 import frc.robot.field.FieldUtils;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -42,8 +31,6 @@ import frc.robot.subsystems.Intake.CoralIntake;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.Arm.ArmConstants;
-import frc.robot.subsystems.Climber.Climber;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed

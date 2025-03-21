@@ -4,14 +4,11 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.CoralGripper.CoralGripper;
-import frc.robot.subsystems.CoralGripper.CoralGripperConstants;
 import frc.robot.subsystems.Intake.CoralIntake;
 import frc.robot.subsystems.Intake.CoralIntakeConstants;
 
