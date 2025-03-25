@@ -87,7 +87,7 @@ public class RobotContainer {
         autoChooser.addRoutine("Left to One", autoRoutines::LeftToOne);
         autoChooser.addRoutine("Left to One Plus", autoRoutines::LeftToOnePlus);
         autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters);
-
+        autoChooser.addRoutine("Right to One Plus", autoRoutines::RightToOnePlus);
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -163,7 +163,7 @@ public class RobotContainer {
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        //joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
         joystick.leftTrigger()
             .whileTrue(new IntakeDeploy(coralIntake).andThen(new IntakeHome(superstructure, coralIntake))
@@ -190,7 +190,17 @@ public class RobotContainer {
         
         //joystick.rightBumper().onTrue(new ReturnToHome(superstructure, coralIntake, coralGripper));
         joystick.rightTrigger().onTrue(new InstantCommand(() -> coralGripper.setEject()))
-        .onFalse(new ReturnToHome(superstructure, coralIntake, coralGripper));
+        .onFalse(
+
+            new ConditionalCommand(
+                
+            new InstantCommand(), 
+
+            new ReturnToHome(superstructure, coralIntake, coralGripper), 
+            
+            superstructure::getAlgaeNext)
+                 
+            );
 
         joystick.b().onTrue(superstructure.setTargetL1().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
         joystick.a().onTrue(superstructure.setTargetL2().andThen(new PrepScore(superstructure, coralGripper, coralIntake)));
@@ -218,6 +228,9 @@ public class RobotContainer {
 
         // programmerJoystick.y().onTrue(superstructure.setArmAngle(123));
         // programmerJoystick.x().onTrue(superstructure.setArmAngle(-1));
+
+        joystick.start().onTrue(superstructure.setAlgaeNext());
+        joystick.povDown().onTrue(superstructure.setAlgaeNextOFF());
 
         drivetrain.registerTelemetry(logger::telemeterize);
         
