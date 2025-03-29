@@ -194,7 +194,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setArmToHome() {
-    return new InstantCommand(() -> arm.setAnglePosition(-3.0));
+    return new InstantCommand(() -> arm.setAnglePosition(-1.5));
   }
 
   public Command runElevatorUp() {

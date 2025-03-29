@@ -39,6 +39,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralGripper.CoralGripper;
 import frc.robot.subsystems.Elevator.ElevatorConstants;
 import frc.robot.subsystems.Intake.CoralIntake;
+import frc.robot.subsystems.Intake.CoralIntakeConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
 import frc.robot.subsystems.Superstructure;
@@ -174,7 +175,13 @@ public class RobotContainer {
             .alongWith(new InstantCommand(() -> coralGripper.setStop()))
             .alongWith(new ConditionalCommand(
                 superstructure.setTargetL3().andThen(new PrepScore(superstructure, coralGripper, coralIntake)), 
-                new InstantCommand(), 
+                
+                    new ConditionalCommand(
+                        new ConditionalCommand(coralIntake.setAngleCommand(CoralIntakeConstants.l1Position), 
+                        new InstantCommand(), coralIntake::getHasCoral), 
+                    new InstantCommand(), 
+                    coralIntake::getL1Mode), 
+
                 coralGripper::hasCoral))
             );
         
@@ -189,7 +196,7 @@ public class RobotContainer {
         joystick.rightStick().onFalse(new InstantCommand(() -> coralGripper.setHold()));
         
         //joystick.rightBumper().onTrue(new ReturnToHome(superstructure, coralIntake, coralGripper));
-        joystick.rightTrigger().onTrue(new InstantCommand(() -> coralGripper.setEject()))
+        joystick.rightTrigger().onTrue(new InstantCommand(() -> coralGripper.setEject()).alongWith(new InstantCommand(() -> coralIntake.setEjectSlow())))
         .onFalse(
 
             new ConditionalCommand(
@@ -198,7 +205,7 @@ public class RobotContainer {
 
             new ReturnToHome(superstructure, coralIntake, coralGripper), 
             
-            superstructure::getAlgaeNext)
+            superstructure::getAlgaeNext).alongWith(new InstantCommand(() -> coralIntake.stopRoller()))
                  
             );
 
@@ -210,6 +217,10 @@ public class RobotContainer {
         
         joystick.povUp().onTrue(superstructure.setTargetAlgae().andThen(new PrepScore(superstructure, coralGripper, coralIntake))
         .andThen(new InstantCommand(() -> coralGripper.setIntake())));
+
+        joystick.povDown().onTrue(
+            new ConditionalCommand(coralIntake.setL1ModeOFF(), coralIntake.setL1ModeON(), coralIntake::getL1Mode)
+            );
 
         // joystick.povUp().whileTrue(new InstantCommand(() -> climber.setOpenLoop(-0.6))).onFalse(new InstantCommand(() -> climber.setOpenLoop(0.0)));
         // joystick.povDown().whileTrue(new InstantCommand(() -> climber.setOpenLoop(0.6))).onFalse(new InstantCommand(() -> climber.setOpenLoop(0.0)));
