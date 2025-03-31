@@ -44,6 +44,12 @@ public class Elevator extends SubsystemBase {
   private TalonFXSimState motorSim;
   private DCMotor elevatorGearbox = DCMotor.getKrakenX60Foc(2);
 
+  // AdvantageScope log paths
+  private final String loggerPath = "Subsystems/Elevator";
+  private final String motorLoggerPath = loggerPath + "/Motors";
+  private final String leftMotorLoggerPath = motorLoggerPath + "/LeftMotor";
+  private final String rightMotorLoggerPath = motorLoggerPath + "/RightMotor";
+
   private ElevatorSim ElevatorSim = 
   new ElevatorSim(
           elevatorGearbox,
@@ -104,21 +110,22 @@ public class Elevator extends SubsystemBase {
       ElevatorConstants.driveSpeed = 1.0;
     }
     // This method will be called once per scheduler run
-    //SmartDashboard
-    Logger.recordOutput("Elevator/ at Goal", atGoal());
-    Logger.recordOutput("Elevator/ above Intake", aboveIntake());
-    Logger.recordOutput("Elevator/ above Half", aboveHalf());
-    Logger.recordOutput("Elevator/ Position Meters", getPositionMeters());
-    
-    Logger.recordOutput("Elevator/ Motors/ LeftMotor/ Velocity", motorL.getVelocity().getValueAsDouble());
-    Logger.recordOutput("Elevator/ Motors/ LeftMotor/ Acceleration", motorL.getAcceleration().getValueAsDouble());
 
-    Logger.recordOutput("Elevator/ Motors/ LeftMotor/ Voltage", motorL.getMotorVoltage().getValueAsDouble());
-    Logger.recordOutput("Elevator/ Motors/ LeftMotor/ Stator Current", motorL.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput("Elevator/ Motors/ LeftMotor/ Temp", motorL.getDeviceTemp().getValueAsDouble());
-    Logger.recordOutput("Elevator/ Motors/ RightMotor/ Voltage", motorR.getMotorVoltage().getValueAsDouble());
-    Logger.recordOutput("Elevator/ Motors/ RightMotor/ Stator Current", motorR.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput("Elevator/ Motors/ RightMotor/ Temp", motorR.getDeviceTemp().getValueAsDouble());
+    // Logging
+    Logger.recordOutput(loggerPath + "/at Goal", atGoal());
+    Logger.recordOutput(loggerPath + "/above Intake", aboveIntake());
+    Logger.recordOutput(loggerPath + "/above Half", aboveHalf());
+    Logger.recordOutput(loggerPath + "/Position Meters", getPositionMeters());
+    
+    Logger.recordOutput(leftMotorLoggerPath + "/Velocity", motorL.getVelocity().getValueAsDouble());
+    Logger.recordOutput(leftMotorLoggerPath+ "/Acceleration", motorL.getAcceleration().getValueAsDouble());
+    Logger.recordOutput(leftMotorLoggerPath + "/Voltage", motorL.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput(leftMotorLoggerPath + "/Stator Current", motorL.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(leftMotorLoggerPath + "/Temp", motorL.getDeviceTemp().getValueAsDouble());
+    
+    Logger.recordOutput(rightMotorLoggerPath + "/Voltage", motorR.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput(rightMotorLoggerPath + "/Stator Current", motorR.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(rightMotorLoggerPath + "/Temp", motorR.getDeviceTemp().getValueAsDouble());
   }
 
   @Override

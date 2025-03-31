@@ -54,6 +54,10 @@ public class Arm extends SubsystemBase {
   boolean closedLoop = false;
 
   private double targetPosition = 0;
+
+  // AdvantageScope log paths
+  private final String loggerPath = "Subsystems/Arm";
+  private final String motorLoggerPath = loggerPath + "/Motor";
 /** Creates a new Arm. */
   public Arm() {
     armMotor = new TalonFX(ArmConstants.motorID, ArmConstants.busname);
@@ -94,12 +98,15 @@ public class Arm extends SubsystemBase {
       ArmConstants.driveSpeed = 1.0;
     }
     // This method will be called once per scheduler run
-    Logger.recordOutput("Arm/ Angle", getAngleDegrees());
-    Logger.recordOutput("Arm/ At Goal", atGoal());
 
-    Logger.recordOutput("Arm/ Motor Voltage", armMotor.getMotorVoltage().getValueAsDouble());
-    Logger.recordOutput("Arm/ Stator Current", armMotor.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput("Arm/ Motor Temp", armMotor.getDeviceTemp().getValueAsDouble());
+
+    // Logging
+    Logger.recordOutput(loggerPath + "/Angle", getAngleDegrees());
+    Logger.recordOutput(loggerPath + "/At Goal", atGoal());
+
+    Logger.recordOutput(motorLoggerPath + "/Motor Voltage", armMotor.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput(motorLoggerPath + "/Stator Current", armMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(motorLoggerPath + "/Motor Temp", armMotor.getDeviceTemp().getValueAsDouble());
     
     if(closedLoop){
       Logger.recordOutput("Arm/ Setpoint", armMotor.getClosedLoopReference().getValueAsDouble());

@@ -31,6 +31,9 @@ public class CoralGripper extends SubsystemBase {
 
   private boolean hasCoral = false;
 
+  // AdvantageScope log paths
+  private final String loggerPath = "Subsystems/CoralGripper";
+
   /** Creates a new CoralGripper. */
   public CoralGripper() {
     grippers = new ThriftyNova(CoralGripperConstants.motorID, ThriftyNova.MotorType.MINION);
@@ -66,10 +69,11 @@ public class CoralGripper extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Logger.recordOutput("CoralGripper/ Voltage", grippers.getVoltage());
-    Logger.recordOutput("CoralGripper/ Stator Current", grippers.getStatorCurrent());
 
-    Logger.recordOutput("CoralGripper/ CoralDetect", coralDetect.getIsDetected().getValue());
+    // Logging
+    Logger.recordOutput(loggerPath + "/Voltage", grippers.getVoltage());
+    Logger.recordOutput(loggerPath + "/Stator Current", grippers.getStatorCurrent());
+    Logger.recordOutput(loggerPath + "/CoralDetect", coralDetect.getIsDetected().getValue());
 
   //   if (coralSpeed > 0.49) {
 
