@@ -18,6 +18,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Intake.CoralIntakeConstants;
@@ -68,9 +70,12 @@ public class CoralIntake extends SubsystemBase {
   private PositionVoltage posVoltage = new PositionVoltage(0).withSlot(0);
   private boolean isClosedLoop = false;
 
+  private boolean L1Mode = false;
+
   private double targetPosition = 0;
 
   private double intakeSpeed = 0;
+
 
   // AdvantageScope log paths
   private final String loggerPath = "Subsystems/Intake";
@@ -78,6 +83,10 @@ public class CoralIntake extends SubsystemBase {
   private final String motorLoggerPath = loggerPath + "/Motors";
   private final String rollerMotorLoggerPath = motorLoggerPath + "/Roller";
   private final String pivotMotorLoggerPath = motorLoggerPath + "/Pivot";
+  private Debouncer intakeDebouncer;
+
+  private boolean hasCoral = false;
+
   
   
   /** Creates a new CoralIntake. */
@@ -85,6 +94,7 @@ public class CoralIntake extends SubsystemBase {
     rollerMotor = new TalonFX(CoralIntakeConstants.rollerMotorID, CoralIntakeConstants.bus);
     pivotMotor = new TalonFX(CoralIntakeConstants.pivotMotorID, CoralIntakeConstants.bus);
     coralSensor = new CanRange("CoralSensor", canRangeIO);
+    intakeDebouncer = new Debouncer(0.1);
 
     //Roller
     StatusCode status = StatusCode.StatusCodeNotInitialized;
@@ -140,10 +150,23 @@ public class CoralIntake extends SubsystemBase {
         
         // SmartDashboard.putNumber(getName() + "/PivotMotor", pivotMotor.getMotorVoltage().getValueAsDouble());
 
+        Logger.recordOutput("Intake/ L1 Mode", L1Mode);
+        Logger.recordOutput("Intake/ Has Coral", hasCoral);
+
         if(intakeSpeed < -0.74){
           if(coralSensor.isDetected()){
-            intakeSpeed = CoralIntakeConstants.intakeSlow;
+            if(L1Mode){
+              intakeSpeed = 0;
+            }else{
+              //intakeSpeed = CoralIntakeConstants.intakeSlow;
+            }
           }
+        }
+
+        if(intakeDebouncer.calculate(coralSensor.isDetected())){
+          hasCoral = true;
+        }else{
+          hasCoral = false;
         }
         
         setRollerOpenLoop(intakeSpeed);
@@ -158,8 +181,15 @@ public class CoralIntake extends SubsystemBase {
   public void holdCurrentPosition(){
     setAngle(targetPosition);
   }
-  
 
+  public boolean getL1Mode(){
+    return L1Mode;
+  }
+
+  public boolean getHasCoral(){
+    return hasCoral;
+  }
+  
   public boolean atGoal() {
     return Math.abs(targetPosition - getPivotAngle()) < CoralIntakeConstants.positionTolerance;
   }
@@ -198,12 +228,25 @@ public class CoralIntake extends SubsystemBase {
     return Commands.runOnce(() -> setPivotOpenLoop(input));
   }
 
+  public Command setL1ModeON(){
+    return new InstantCommand(() -> L1Mode = true);
+  }
+
+  public Command setL1ModeOFF(){
+    return new InstantCommand(() -> L1Mode = false);
+  }
+
+
   public void setIntake(){
     intakeSpeed = CoralIntakeConstants.intakeFast;
   }
 
   public void setEject(){
     intakeSpeed = CoralIntakeConstants.eject;
+  }
+
+  public void setEjectSlow(){
+    intakeSpeed = CoralIntakeConstants.ejectSlow;
   }
   
   public void stopRoller(){

@@ -10,7 +10,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeRetract;
@@ -402,7 +404,6 @@ public class AutoRoutines {
                 new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
                 new WaitCommand(0.25),
                 positionToPole(() -> FieldUtils.getClosestReef().rightPole, Constants.robotToReefOffset),
-                new WaitCommand(0.25),
                 new ScoreCoral(m_coralGripper),
                 new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper)
                 
@@ -429,13 +430,18 @@ public class AutoRoutines {
                 m_superstructure.setTargetL4(),
                 new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
                 new WaitCommand(0.25),
-                positionToPole(() -> FieldUtils.getClosestReef().rightPole, Constants.robotToReefOffset),
-                new WaitCommand(0.25),
+                positionToPole(() -> FieldUtils.getClosestReef().leftPole, Constants.robotToReefOffset),
+                new WaitCommand(0.1),
                 new ScoreCoral(m_coralGripper),
-                new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                new IntakeRollersOn(m_coralIntake, m_coralGripper),
-                LR2.cmd(),
-                new WaitCommand(0.5),
+                new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper).alongWith(
+                    Commands.sequence(
+                       new WaitUntilCommand(m_superstructure::isElevatorBelowHalf),
+                       new IntakeRollersOn(m_coralIntake, m_coralGripper),
+                       LR2.cmd()
+                    )
+                ),
+                
+                new WaitCommand(0.1),
 
                 new InstantCommand(() -> m_coralIntake.stopRoller()),
 
@@ -447,23 +453,31 @@ public class AutoRoutines {
                     m_superstructure.setTargetL4(),
                     new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
                     new WaitCommand(0.25),
-                    positionToPole(() -> FieldUtils.getClosestReef().leftPole, Constants.robotToReefOffset),
-                    new WaitCommand(0.25),
+                    positionToPole(() -> FieldUtils.getClosestReef().rightPole, Constants.robotToReefOffset),
+                    new WaitCommand(0.1),
                     new ScoreCoral(m_coralGripper),
-                    new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper),
-                    new IntakeRollersOn(m_coralIntake, m_coralGripper),
-                    LR4.cmd()
+                    new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper).alongWith(
+                        Commands.sequence(
+                           new WaitUntilCommand(m_superstructure::isElevatorBelowHalf),
+                           new IntakeRollersOn(m_coralIntake, m_coralGripper),
+                           LR4.cmd()
+                        )
+                    )
+
                 ),
 
                 //Does Not Have Coral
+                new ParallelRaceGroup(
+                new WaitUntilCommand(m_coralGripper::hasCoral),
                 Commands.sequence(
                     new IntakeRollersOn(m_coralIntake, m_coralGripper),
-                    RetryL.cmd()
-                ), 
+                    RetryL.cmd(),
+                    new WaitCommand(0.2)
+                )), 
 
                 m_coralGripper::hasCoral),
 
-                new WaitCommand(0.5),
+                new WaitCommand(0.1),
                 new InstantCommand(() -> m_coralIntake.stopRoller()),
 
                 new ConditionalCommand(
@@ -474,17 +488,120 @@ public class AutoRoutines {
                         m_superstructure.setTargetL4(),
                         new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
                         new WaitCommand(0.25),
-                        positionToPole(() -> FieldUtils.getClosestReef().rightPole, Constants.robotToReefOffset),
-                        new WaitCommand(0.25),
+                        positionToPole(() -> FieldUtils.getClosestReef().leftPole, Constants.robotToReefOffset),
+                        new WaitCommand(0.1),
                         new ScoreCoral(m_coralGripper),
                         new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper)
                     ),
     
                     //Does Not Have Coral
+                    new ParallelRaceGroup(
+                    new WaitUntilCommand(m_coralGripper::hasCoral),
                     Commands.sequence(
                         new IntakeRollersOn(m_coralIntake, m_coralGripper),
-                        RetryL.cmd()
-                    ), 
+                        RetryL.cmd(),
+                        new WaitCommand(0.2)
+                    )), 
+    
+                    m_coralGripper::hasCoral),
+
+                    new InstantCommand(() -> m_coralIntake.stopRoller())
+
+         ) );
+
+            return routine;
+    }
+
+    public AutoRoutine RightToOnePlus(){
+        final AutoRoutine routine = m_factory.newRoutine("Right to One Plus");
+        final AutoTrajectory RR1 = routine.trajectory("RR+1");
+        final AutoTrajectory RR2 = routine.trajectory("RR+2");
+        final AutoTrajectory RHPSR3 = routine.trajectory("RHPSR+3");
+        final AutoTrajectory RetryR = routine.trajectory("RetryR");
+        final AutoTrajectory RR4 = routine.trajectory("RR+4");
+        final AutoTrajectory RHPSR5 = routine.trajectory("RHPSR+5");
+
+        routine.active().onTrue(
+            Commands.sequence(
+                //LeftToReef1.resetOdometry(),
+                m_superstructure.setTargetL3(),
+                new IntakeDeploy(m_coralIntake), 
+                RR1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                m_superstructure.setTargetL4(),
+                new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
+                new WaitCommand(0.25),
+                positionToPole(() -> FieldUtils.getClosestReef().leftPole, Constants.robotToReefOffset),
+                new WaitCommand(0.1),
+                new ScoreCoral(m_coralGripper),
+                new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper).alongWith(
+                    Commands.sequence(
+                       new WaitUntilCommand(m_superstructure::isElevatorBelowHalf),
+                       new IntakeRollersOn(m_coralIntake, m_coralGripper),
+                       RR2.cmd()
+                    )
+                ),
+                
+                new WaitCommand(0.1),
+
+                new InstantCommand(() -> m_coralIntake.stopRoller()),
+
+                new ConditionalCommand(
+                //Has Coral
+                Commands.sequence(
+                    m_superstructure.setTargetL3().andThen(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                    RHPSR3.cmd(),
+                    m_superstructure.setTargetL4(),
+                    new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
+                    new WaitCommand(0.25),
+                    positionToPole(() -> FieldUtils.getClosestReef().rightPole, Constants.robotToReefOffset),
+                    new WaitCommand(0.1),
+                    new ScoreCoral(m_coralGripper),
+                    new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper).alongWith(
+                        Commands.sequence(
+                           new WaitUntilCommand(m_superstructure::isElevatorBelowHalf),
+                           new IntakeRollersOn(m_coralIntake, m_coralGripper),
+                           RR4.cmd()
+                        )
+                    )
+
+                ),
+
+                //Does Not Have Coral
+                new ParallelRaceGroup(
+                new WaitUntilCommand(m_coralGripper::hasCoral),
+                Commands.sequence(
+                    new IntakeRollersOn(m_coralIntake, m_coralGripper),
+                    RetryR.cmd(),
+                    new WaitCommand(0.2)
+                )), 
+
+                m_coralGripper::hasCoral),
+
+                new WaitCommand(0.1),
+                new InstantCommand(() -> m_coralIntake.stopRoller()),
+
+                new ConditionalCommand(
+                    //Has Coral
+                    Commands.sequence(
+                        m_superstructure.setTargetL3().andThen(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                        RHPSR5.cmd(),
+                        m_superstructure.setTargetL4(),
+                        new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
+                        new WaitCommand(0.25),
+                        positionToPole(() -> FieldUtils.getClosestReef().leftPole, Constants.robotToReefOffset),
+                        new WaitCommand(0.1),
+                        new ScoreCoral(m_coralGripper),
+                        new ReturnToHome(m_superstructure, m_coralIntake, m_coralGripper)
+                    ),
+    
+                    //Does Not Have Coral
+                    new ParallelRaceGroup(
+                    new WaitUntilCommand(m_coralGripper::hasCoral),
+                    Commands.sequence(
+                        new IntakeRollersOn(m_coralIntake, m_coralGripper),
+                        RetryR.cmd(),
+                        new WaitCommand(0.2)
+                    )), 
     
                     m_coralGripper::hasCoral),
 

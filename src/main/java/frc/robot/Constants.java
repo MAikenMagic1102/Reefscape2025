@@ -25,5 +25,5 @@ public class Constants {
 
       public static final String canivore = "can2";
       public static double robotArmCenterOffset = Units.inchesToMeters(1.75);
-      public static final double robotToReefOffset = 0.59;
+      public static final double robotToReefOffset = 0.62;
 }

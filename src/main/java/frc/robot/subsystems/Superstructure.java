@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -34,6 +36,8 @@ public class Superstructure extends SubsystemBase {
 
   private double armTargetAngle = 0.0;
   private double elevatorTargetHeight = 0.0;
+
+  private boolean algaeNext = false;
   
   /** Creates a new Superstructure. */
   public Superstructure() {}
@@ -41,6 +45,7 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putString("Score Target", currentTarget.toString());
+    
     // This method will be called once per scheduler run
     elevator.periodic();
     arm.periodic();
@@ -49,8 +54,26 @@ public class Superstructure extends SubsystemBase {
     armTargetAngle = getScoreTargetArmAngle();
     elevatorTargetHeight = getScoreTargetElevatorPos();
 
+    Logger.recordOutput("Superstructure/ Score Target", currentTarget.toString());
+    Logger.recordOutput("Superstructure/ Elevator Target Height", elevatorTargetHeight);
+    Logger.recordOutput("Superstructure/ Arm Target Angle", armTargetAngle);
+    Logger.recordOutput("Superstructure/ Algae Next", algaeNext);
+
     SmartDashboard.putNumber("Elevator Target Height", elevatorTargetHeight);
     SmartDashboard.putNumber("Arm Target Angle", armTargetAngle);
+    SmartDashboard.putBoolean("Algae NEXT", algaeNext);
+  }
+
+  public Command setAlgaeNext(){
+    return new InstantCommand(() -> algaeNext = true);
+  }
+
+  public Command setAlgaeNextOFF(){
+    return new InstantCommand(() -> algaeNext = false);
+  }
+
+  public boolean getAlgaeNext(){
+    return algaeNext && currentTarget == scoreTarget.L4;
   }
 
   public boolean elevatorAtGoal(){
@@ -114,6 +137,10 @@ public class Superstructure extends SubsystemBase {
     return elevator.aboveIntake();
   }
 
+  public boolean isElevatorBelowHalf(){
+    return elevator.belowHalf();
+  }
+  
   public boolean isArmSafeNeeded(){
     return currentTarget == scoreTarget.L4;
   }
@@ -167,7 +194,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command setArmToHome() {
-    return new InstantCommand(() -> arm.setAnglePosition(-3.0));
+    return new InstantCommand(() -> arm.setAnglePosition(-1.5));
   }
 
   public Command runElevatorUp() {

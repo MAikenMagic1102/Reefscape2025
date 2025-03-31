@@ -155,6 +155,11 @@ public class Elevator extends SubsystemBase {
     return getPositionMeters() > 0.5;
   }
 
+  public boolean belowHalf(){
+
+    return getPositionMeters() < 0.5;
+  }
+
   public double getPositionMeters() {
     return rotationsToMeters(motorL.getRotorPosition().getValue()).in(Meters);
   }

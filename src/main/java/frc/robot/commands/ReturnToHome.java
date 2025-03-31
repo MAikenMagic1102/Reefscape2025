@@ -27,7 +27,11 @@ public class ReturnToHome extends SequentialCommandGroup {
 
       new InstantCommand(() -> gripper.setEject()),
 
-      intake.setAngleCommand(CoralIntakeConstants.floorIntake).alongWith(superstructure.setElevatorToScoreSafe()),
+      new ConditionalCommand(new InstantCommand(), 
+      intake.setAngleCommand(CoralIntakeConstants.floorIntake), 
+      intake::getL1Mode)
+      
+      .alongWith(superstructure.setElevatorToScoreSafe()),
 
       new WaitUntilCommand(superstructure::isElevatorSafe),
 

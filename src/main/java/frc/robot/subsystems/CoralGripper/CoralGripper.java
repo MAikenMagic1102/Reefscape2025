@@ -38,7 +38,7 @@ public class CoralGripper extends SubsystemBase {
   public CoralGripper() {
     grippers = new ThriftyNova(CoralGripperConstants.motorID, ThriftyNova.MotorType.MINION);
     coralDetect = new CANrange(33, "rio");
-    gripDebouncer = new Debouncer(0.);
+    gripDebouncer = new Debouncer(0.05);
 
     grippers.factoryReset();
 
@@ -59,7 +59,7 @@ public class CoralGripper extends SubsystemBase {
     cfg.ToFParams.withUpdateMode(UpdateModeValue.ShortRangeUserFreq);
     cfg.FovParams.withFOVRangeX(27);
     cfg.FovParams.withFOVRangeY(27);
-    cfg.ProximityParams.withProximityThreshold(0.075);
+    cfg.ProximityParams.withProximityThreshold(0.07);
     coralDetect.getConfigurator().apply(cfg);
 
     // Clear errors here
