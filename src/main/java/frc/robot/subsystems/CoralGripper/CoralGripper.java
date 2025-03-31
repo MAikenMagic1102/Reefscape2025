@@ -56,7 +56,7 @@ public class CoralGripper extends SubsystemBase {
     cfg.ToFParams.withUpdateMode(UpdateModeValue.ShortRangeUserFreq);
     cfg.FovParams.withFOVRangeX(27);
     cfg.FovParams.withFOVRangeY(27);
-    cfg.ProximityParams.withProximityThreshold(0.065);
+    cfg.ProximityParams.withProximityThreshold(0.07);
     coralDetect.getConfigurator().apply(cfg);
 
     // Clear errors here

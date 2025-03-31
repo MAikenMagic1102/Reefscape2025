@@ -145,7 +145,7 @@ public class CoralIntake extends SubsystemBase {
             if(L1Mode){
               intakeSpeed = 0;
             }else{
-              intakeSpeed = CoralIntakeConstants.intakeSlow;
+              //intakeSpeed = CoralIntakeConstants.intakeSlow;
             }
           }
         }

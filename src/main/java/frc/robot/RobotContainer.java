@@ -113,12 +113,12 @@ public class RobotContainer {
             DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drivetrain,
                 () -> FieldUtils.getClosestReef().rightPole.getPose(),
-                () -> -joystick.getLeftYSquared(),
+                () -> -joystick.getLeftY(),
                 () ->
                     superstructure.isL4Coral()
                     //#TODO: find the offsets and put them here
-                        ? 0.2
-                        : 0.2,
+                        ? Constants.robotToReefOffset
+                        : 0.1,
                 Commands.parallel(
                     joystick.rumbleOnOff(1, 0.25, 0.25, 2),
                     joystick.rumbleOnOff(1, 0.25, 0.25, 2))));
@@ -130,12 +130,12 @@ public class RobotContainer {
                 drivetrain,
                 () -> FieldUtils.getClosestReef().leftPole.getPose(),
                 // () -> new Pose2d(FieldUtils.getClosestReef().leftPole.getPose().getX(), FieldUtils.getClosestReef().leftPole.getPose().getY(), FieldUtils.getClosestReef().leftPole.getPose().getRotation().plus(Rotation2d.kPi)),
-                () -> -joystick.getLeftYSquared(),
+                () -> -joystick.getLeftY(),
                 () ->
                     superstructure.isL4Coral()
                     //#TODO: find the offsets and put them here
-                        ? 0.2
-                        : 0.2,
+                        ? Constants.robotToReefOffset
+                        : 0.1,
                 Commands.parallel(
                     joystick.rumbleOnOff(1, 0.25, 0.25, 2),
                     joystick.rumbleOnOff(1, 0.25, 0.25, 2))));
