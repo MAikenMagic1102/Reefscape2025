@@ -46,7 +46,7 @@ public class CoralIntakeConstants {
     public static double intakeFast = -0.75;
     public static double intakeSlow = -0.50;
     public static double eject = 0.5;
-    public static double ejectSlow = 0.3;
+    public static double ejectSlow = 0.35;
 
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(

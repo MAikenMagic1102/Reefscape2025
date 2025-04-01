@@ -72,6 +72,10 @@ public class Superstructure extends SubsystemBase {
     return new InstantCommand(() -> algaeNext = false);
   }
 
+  public boolean getAgaeState(){
+    return algaeNext;
+  }
+
   public boolean getAlgaeNext(){
     return algaeNext && currentTarget == scoreTarget.L4;
   }

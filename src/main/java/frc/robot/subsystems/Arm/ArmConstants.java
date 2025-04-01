@@ -45,7 +45,7 @@ public class ArmConstants {
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(
             new CurrentLimitsConfigs()
-                .withSupplyCurrentLimit(40)
+                .withSupplyCurrentLimit(70)
 
         )  
         .withMotorOutput(

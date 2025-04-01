@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.AutoRunToCoral;
 import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeRetract;
@@ -45,13 +46,21 @@ public class AutoRoutines {
     }
 
     public AutoRoutine simplePathAuto() {
-        final AutoRoutine routine = m_factory.newRoutine("SimplePath Auto");
+        final AutoRoutine routine = m_factory.newRoutine("SimplePath");
         final AutoTrajectory simplePath = routine.trajectory("SimplePath");
 
         routine.active().onTrue(
-            simplePath.resetOdometry()
-                .andThen(simplePath.cmd())
+            Commands.sequence(
+                new IntakeDeploy(m_coralIntake),
+                new IntakeRollersOn(m_coralIntake, m_coralGripper),
+                new AutoRunToCoral(drive).withDeadline(new WaitUntilCommand(m_coralIntake::getHasCoral).withTimeout(3.0)),
+                new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.0),
+                
+                //m_superstructure.setTargetL3().andThen(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
+                new InstantCommand(() -> m_coralIntake.stopRoller())
+            )
         );
+
         return routine;
     }
 

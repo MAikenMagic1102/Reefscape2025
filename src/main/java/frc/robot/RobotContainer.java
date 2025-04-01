@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -85,6 +86,7 @@ public class RobotContainer {
         new BobotState(); // no-op
         autoRoutines = new AutoRoutines(drivetrain, coralGripper, coralIntake, superstructure);
         
+        autoChooser.addRoutine("Coral Aquire Test", autoRoutines::simplePathAuto);
         autoChooser.addRoutine("Left to One", autoRoutines::LeftToOne);
         autoChooser.addRoutine("Left to One Plus", autoRoutines::LeftToOnePlus);
         autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters);
@@ -113,7 +115,7 @@ public class RobotContainer {
             DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drivetrain,
                 () -> FieldUtils.getClosestReef().rightPole.getPose(),
-                () -> -joystick.getLeftY(),
+                () -> -joystick.getLeftYSquared(),
                 () ->
                     superstructure.isL4Coral()
                     //#TODO: find the offsets and put them here
@@ -130,7 +132,7 @@ public class RobotContainer {
                 drivetrain,
                 () -> FieldUtils.getClosestReef().leftPole.getPose(),
                 // () -> new Pose2d(FieldUtils.getClosestReef().leftPole.getPose().getX(), FieldUtils.getClosestReef().leftPole.getPose().getY(), FieldUtils.getClosestReef().leftPole.getPose().getRotation().plus(Rotation2d.kPi)),
-                () -> -joystick.getLeftY(),
+                () -> -joystick.getLeftYSquared(),
                 () ->
                     superstructure.isL4Coral()
                     //#TODO: find the offsets and put them here
@@ -172,7 +174,7 @@ public class RobotContainer {
             .alongWith(new InstantCommand(() -> coralGripper.setIntake()))))
         
             .onFalse(new InstantCommand(() -> coralIntake.stopRoller())
-            .alongWith(new InstantCommand(() -> coralGripper.setStop()))
+            .alongWith(new WaitUntilCommand(coralGripper::hasCoral).withTimeout(0.5).andThen(new InstantCommand(() -> coralGripper.setStop())))
             .alongWith(new ConditionalCommand(
                 superstructure.setTargetL3().andThen(new PrepScore(superstructure, coralGripper, coralIntake)), 
                 
@@ -190,6 +192,7 @@ public class RobotContainer {
             .whileTrue(new InstantCommand(() -> coralIntake.setEject()))
 
             .onFalse(new InstantCommand(() -> coralIntake.stopRoller())
+            .alongWith(new InstantCommand(() -> coralGripper.setStop()))
             .alongWith(new IntakeRetract(coralIntake)));            
 
         joystick.rightStick().whileTrue(new InstantCommand(() -> coralGripper.setIntake()));
@@ -222,6 +225,8 @@ public class RobotContainer {
             new ConditionalCommand(coralIntake.setL1ModeOFF(), coralIntake.setL1ModeON(), coralIntake::getL1Mode)
             );
 
+        joystick.start().onTrue(new ConditionalCommand(superstructure.setAlgaeNextOFF(), superstructure.setAlgaeNext(), superstructure::getAgaeState));
+
         // joystick.povUp().whileTrue(new InstantCommand(() -> climber.setOpenLoop(-0.6))).onFalse(new InstantCommand(() -> climber.setOpenLoop(0.0)));
         // joystick.povDown().whileTrue(new InstantCommand(() -> climber.setOpenLoop(0.6))).onFalse(new InstantCommand(() -> climber.setOpenLoop(0.0)));
 
@@ -239,9 +244,6 @@ public class RobotContainer {
 
         // programmerJoystick.y().onTrue(superstructure.setArmAngle(123));
         // programmerJoystick.x().onTrue(superstructure.setArmAngle(-1));
-
-        joystick.start().onTrue(superstructure.setAlgaeNext());
-        joystick.povDown().onTrue(superstructure.setAlgaeNextOFF());
 
         drivetrain.registerTelemetry(logger::telemeterize);
         
