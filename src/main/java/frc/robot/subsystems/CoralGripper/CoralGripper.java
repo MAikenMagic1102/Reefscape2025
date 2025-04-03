@@ -38,7 +38,7 @@ public class CoralGripper extends SubsystemBase {
   public CoralGripper() {
     grippers = new ThriftyNova(CoralGripperConstants.motorID, ThriftyNova.MotorType.MINION);
     coralDetect = new CANrange(33, "rio");
-    gripDebouncer = new Debouncer(0.05);
+    gripDebouncer = new Debouncer(0.06);
 
     grippers.factoryReset();
 

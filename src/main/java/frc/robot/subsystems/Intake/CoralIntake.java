@@ -118,7 +118,7 @@ public class CoralIntake extends SubsystemBase {
       System.out.println("Could not apply configs, error code: " + status2.toString());
     }
 
-    pivotMotor.setPosition(0);
+    pivotMotor.setPosition(Units.degreesToRotations(92));
 
     rollerSimState = rollerMotor.getSimState();
     pivotSimState = pivotMotor.getSimState();

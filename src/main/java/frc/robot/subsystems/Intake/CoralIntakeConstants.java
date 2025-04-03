@@ -34,10 +34,10 @@ public class CoralIntakeConstants {
 
     public static double positionTolerance = 7.0;
 
-    public static double setHome = -2;
+    public static double setHome = 92;
     public static double hpLoad = 0;
-    public static double l1Position = -55;
-    public static double floorIntake = -110;
+    public static double l1Position = 35;
+    public static double floorIntake = -23.5;
     public static double stationIntake = 0;
     public static double stowedPos = 0;
     public static double idle = 0;
@@ -65,12 +65,12 @@ public class CoralIntakeConstants {
         
         .withSlot0(
             new Slot0Configs()
-            .withKG(1.2)
+            .withKG(.82)
             .withKV(0.0)
             .withKA(0.0)
-            .withKP(75.0)
+            .withKP(40.0)
             .withKI(0.0)
-            .withKD(7.0)
+            .withKD(4.0)
             .withGravityType(GravityTypeValue.Arm_Cosine)
         );
 

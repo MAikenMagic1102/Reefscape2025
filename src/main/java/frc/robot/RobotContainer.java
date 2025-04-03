@@ -91,7 +91,7 @@ public class RobotContainer {
         autoChooser.addRoutine("Left to One Plus", autoRoutines::LeftToOnePlus);
         autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters);
         autoChooser.addRoutine("Right to One Plus", autoRoutines::RightToOnePlus);
-        autoChooser.addRoutine("WHYYYY", autoRoutines::WTFISBROONABTOT);
+        //autoChooser.addRoutine("WHYYYY", autoRoutines::WTFISBROONABTOT);
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         configureBindings();
@@ -174,7 +174,7 @@ public class RobotContainer {
             .alongWith(new InstantCommand(() -> coralGripper.setIntake()))))
         
             .onFalse(new InstantCommand(() -> coralIntake.stopRoller())
-            .alongWith(new WaitUntilCommand(coralGripper::hasCoral).withTimeout(0.5).andThen(new InstantCommand(() -> coralGripper.setStop())))
+            .alongWith(new WaitUntilCommand(coralGripper::hasCoral).withTimeout(0.5).andThen(new InstantCommand(() -> coralGripper.setStop()))
             .alongWith(new ConditionalCommand(
                 superstructure.setTargetL3().andThen(new PrepScore(superstructure, coralGripper, coralIntake)), 
                 
@@ -184,7 +184,7 @@ public class RobotContainer {
                     new InstantCommand(), 
                     coralIntake::getL1Mode), 
 
-                coralGripper::hasCoral))
+                coralGripper::hasCoral)))
             );
         
         
@@ -206,7 +206,7 @@ public class RobotContainer {
                 
             new InstantCommand(), 
 
-            new ReturnToHome(superstructure, coralIntake, coralGripper), 
+            new ReturnToHome(superstructure, coralIntake).andThen(new InstantCommand(() -> coralGripper.setStop())), 
             
             superstructure::getAlgaeNext).alongWith(new InstantCommand(() -> coralIntake.stopRoller()))
                  

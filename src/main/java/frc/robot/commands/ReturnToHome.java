@@ -20,12 +20,10 @@ import frc.robot.subsystems.Intake.CoralIntakeConstants;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ReturnToHome extends SequentialCommandGroup {
   /** Creates a new ReturnToHome. */
-  public ReturnToHome(Superstructure  superstructure, CoralIntake intake, CoralGripper gripper) {
+  public ReturnToHome(Superstructure  superstructure, CoralIntake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-
-      new InstantCommand(() -> gripper.setEject()),
 
       new ConditionalCommand(new InstantCommand(), 
       intake.setAngleCommand(CoralIntakeConstants.floorIntake), 
@@ -39,9 +37,7 @@ public class ReturnToHome extends SequentialCommandGroup {
 
       new WaitUntilCommand(superstructure::isArmAtGoal),
 
-      superstructure.setElevatorHome(),
-
-      new InstantCommand(() -> gripper.setStop())
+      superstructure.setElevatorHome()
 
     );
   }
