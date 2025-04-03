@@ -621,6 +621,19 @@ public class AutoRoutines {
             return routine;
     }
 
+    public AutoRoutine WTFISBROONABTOT(){
+        final AutoRoutine routine = m_factory.newRoutine("WHYYYY");
+        final AutoTrajectory LR2 = routine.trajectory("LR+2");
+
+        routine.active().onTrue(
+            LR2.resetOdometry().andThen(LR2.cmd())
+            
+        );
+        
+
+        return routine; 
+    }
+
 
     public Command positionToPole(Supplier<ReefPole> pole, double offsetMeters){
         return new DriveToPoseCommand(drive, 
@@ -629,3 +642,5 @@ public class AutoRoutines {
     
    
 }
+
+

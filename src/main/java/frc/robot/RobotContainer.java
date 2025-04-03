@@ -91,7 +91,7 @@ public class RobotContainer {
         autoChooser.addRoutine("Left to One Plus", autoRoutines::LeftToOnePlus);
         autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters);
         autoChooser.addRoutine("Right to One Plus", autoRoutines::RightToOnePlus);
-
+        autoChooser.addRoutine("WHYYYY", autoRoutines::WTFISBROONABTOT);
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         configureBindings();
