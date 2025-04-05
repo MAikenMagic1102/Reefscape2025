@@ -19,8 +19,8 @@ public class ScoreCoral extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> gripper.setEject()),
-      new WaitCommand(0.5),
+      new InstantCommand(() -> gripper.setEjectFast()),
+      new WaitCommand(0.25),
       new InstantCommand(() -> gripper.setStop())
     );
   }

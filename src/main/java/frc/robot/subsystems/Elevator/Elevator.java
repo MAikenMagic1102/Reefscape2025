@@ -64,7 +64,6 @@ public class Elevator extends SubsystemBase {
   private DutyCycleOut dutyCycleOutput = new DutyCycleOut(0);
   private PositionVoltage posVoltage = new PositionVoltage(0).withSlot(0);
   private MotionMagicVoltage mmPosition = new MotionMagicVoltage(0).withSlot(1);
-
   double kG;
   double kV;
   double kA;
@@ -172,7 +171,7 @@ public class Elevator extends SubsystemBase {
 
   public void setPositionMetersMM(double height) {
     targetPosition = height;
-    mmPosition.withPosition(height / ElevatorConstants.elevatorPullyCircum);
+    mmPosition.withPosition(height / ElevatorConstants.elevatorPullyCircum).withEnableFOC(true);
     motorL.setControl(mmPosition);
   }
 

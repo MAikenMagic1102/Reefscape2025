@@ -10,7 +10,8 @@ public class CoralGripperConstants {
 
     public static double intake = 0.65;
     public static double hold = 0.1;
-    public static double eject = -0.25;
+    public static double eject = -0.35;
+    public static double ejectFast = -0.5;
     public static double stop = 0;
 
 }

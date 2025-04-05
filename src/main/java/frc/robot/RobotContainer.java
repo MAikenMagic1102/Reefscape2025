@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.bobot_state.BobotState;
+import frc.robot.commands.DriveCommandToPoseTest;
 import frc.robot.commands.DrivePerpendicularToPoseCommand;
 import frc.robot.commands.ElevatorTest;
 import frc.robot.commands.IntakeDeploy;
@@ -43,6 +44,7 @@ import frc.robot.subsystems.Intake.CoralIntake;
 import frc.robot.subsystems.Intake.CoralIntakeConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
+import frc.robot.util.PoseUtils;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Arm.ArmConstants;
 import frc.robot.subsystems.Climber.Climber;
@@ -142,11 +144,11 @@ public class RobotContainer {
                     joystick.rumbleOnOff(1, 0.25, 0.25, 2),
                     joystick.rumbleOnOff(1, 0.25, 0.25, 2))));
 
-        // joystick.rightBumper().whileTrue(drivetrain.applyRequest(() ->
-        //     facingAngle.withVelocityX(-joystick.getLeftY() * MaxSpeed * ArmConstants.driveSpeed) // Drive forward with negative Y (forward)
-        //                .withVelocityY(-joystick.getLeftX() * MaxSpeed * ArmConstants.driveSpeed) // Drive left with negative X (left)0
-        //                .withTargetDirection(BobotState.getRotationToClosestReef())
-        // ));
+        joystick.rightStick().whileTrue(drivetrain.applyRequest(() ->
+            facingAngle.withVelocityX(-joystick.getLeftY() * MaxSpeed * ArmConstants.driveSpeed) // Drive forward with negative Y (forward)
+                       .withVelocityY(-joystick.getLeftX() * MaxSpeed * ArmConstants.driveSpeed) // Drive left with negative X (left)0
+                       .withTargetDirection(BobotState.getRotationToClosestReef())
+        ));
         
 
 
@@ -226,6 +228,7 @@ public class RobotContainer {
             );
 
         joystick.start().onTrue(new ConditionalCommand(superstructure.setAlgaeNextOFF(), superstructure.setAlgaeNext(), superstructure::getAgaeState));
+
 
         // joystick.povUp().whileTrue(new InstantCommand(() -> climber.setOpenLoop(-0.6))).onFalse(new InstantCommand(() -> climber.setOpenLoop(0.0)));
         // joystick.povDown().whileTrue(new InstantCommand(() -> climber.setOpenLoop(0.6))).onFalse(new InstantCommand(() -> climber.setOpenLoop(0.0)));

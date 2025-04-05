@@ -47,7 +47,7 @@ import edu.wpi.first.units.measure.Distance;
     public static double reefL2 = 0.005;
     public static double reefL3 = 0.005;
     public static double reefL4 = 0.745;
-    public static double ALGAE = 0.34;
+    public static double ALGAE = 0.32;
     public static double idle = 0;
     public static double safePos = 0.25;
 

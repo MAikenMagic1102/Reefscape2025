@@ -17,6 +17,20 @@
      "exp":"2.5 m / s",
      "val":2.5
     }
+   },
+   "SLOWA":{
+    "dimension":"LinAcc",
+    "var":{
+     "exp":"3 m / s ^ 2",
+     "val":3.0
+    }
+   },
+   "SLOWV":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"2 m / s",
+     "val":2.0
+    }
    }
   },
   "poses":{}

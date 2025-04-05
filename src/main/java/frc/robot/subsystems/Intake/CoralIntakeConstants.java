@@ -37,7 +37,7 @@ public class CoralIntakeConstants {
     public static double setHome = 92;
     public static double hpLoad = 0;
     public static double l1Position = 35;
-    public static double floorIntake = -23.5;
+    public static double floorIntake = -23.75;
     public static double stationIntake = 0;
     public static double stowedPos = 0;
     public static double idle = 0;
@@ -46,7 +46,7 @@ public class CoralIntakeConstants {
     public static double intakeFast = -0.75;
     public static double intakeSlow = -0.50;
     public static double eject = 0.5;
-    public static double ejectSlow = 0.35;
+    public static double ejectSlow = 0.45;
 
     public static TalonFXConfiguration config = new TalonFXConfiguration()
         .withCurrentLimits(

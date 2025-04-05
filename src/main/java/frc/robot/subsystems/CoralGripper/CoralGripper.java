@@ -120,6 +120,11 @@ public class CoralGripper extends SubsystemBase {
     hasCoral = false;
   }
 
+  public void setEjectFast(){
+    coralSpeed = CoralGripperConstants.ejectFast;
+    hasCoral = false;
+  }
+
   public void setStop(){
     coralSpeed = 0;
   }

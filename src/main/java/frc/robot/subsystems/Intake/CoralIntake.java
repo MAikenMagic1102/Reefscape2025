@@ -200,7 +200,7 @@ public class CoralIntake extends SubsystemBase {
 
   public void setAngle(double angle){
     targetPosition = angle;
-    posVoltage.withPosition(Units.degreesToRotations(angle));
+    posVoltage.withPosition(Units.degreesToRotations(angle)).withEnableFOC(true);
     pivotMotor.setControl(posVoltage);
   }
 
@@ -210,7 +210,7 @@ public class CoralIntake extends SubsystemBase {
 
   //Controls the pivot and rollers 
   public void setRollerOpenLoop(double input){
-    rollerOut.withOutput(input);
+    rollerOut.withOutput(input).withEnableFOC(true);
     rollerMotor.setControl(rollerOut);
   }
 

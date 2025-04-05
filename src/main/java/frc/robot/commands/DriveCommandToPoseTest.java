@@ -26,7 +26,7 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.jni.SwerveJNI.DriveState;
 
-public class DriveToPoseCommand extends Command {
+public class DriveCommandToPoseTest extends Command {
   private final PIDController parallelController =
       DriveCommandConstants.makeTranslationController();
 
@@ -43,7 +43,7 @@ public class DriveToPoseCommand extends Command {
   private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
 
-  public DriveToPoseCommand(
+  public DriveCommandToPoseTest(
       CommandSwerveDrivetrain drive, Supplier<Pose2d> targetPoseSupplier) {
     addRequirements(drive);
 
@@ -78,11 +78,12 @@ public class DriveToPoseCommand extends Command {
     parallelSpeed = !parallelController.atSetpoint() ? parallelSpeed : 0;
 
    double perpendicularSpeed = perpendicularController.calculate(-perpendicularError, 0);
-    if(thetaError < 0.05){
-      perpendicularSpeed = !perpendicularController.atSetpoint() ? perpendicularSpeed : 0;
-    }else{
-      perpendicularSpeed = 0;
-    }
+   
+   if (parallelController.atSetpoint()){
+    perpendicularSpeed = !perpendicularController.atSetpoint() ? perpendicularSpeed : 0;
+   } else {
+    perpendicularSpeed = 0; 
+   }
 
 
     double angularSpeed = angleController.calculate(thetaError, 0);

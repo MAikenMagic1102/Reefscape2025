@@ -434,7 +434,6 @@ public class AutoRoutines {
             Commands.sequence(
                 //LeftToReef1.resetOdometry(),
                 m_superstructure.setTargetL4(),
-                new IntakeDeploy(m_coralIntake), 
                 LR1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                 positionToPole(() -> FieldUtils.getClosestReef().rightPole, Constants.robotToReefOffset),
                 new WaitCommand(0.1),
@@ -445,7 +444,7 @@ public class AutoRoutines {
                        new IntakeRollersOn(m_coralIntake, m_coralGripper),
                        LR2.cmd(),
                        new AutoRunToCoral(drive).withDeadline(new WaitUntilCommand(m_coralIntake::getHasCoral).withTimeout(3.0)),
-                       new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.0)                    )
+                       new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.5)                    )
                 ),
                 
                 new InstantCommand(() -> m_coralIntake.stopRoller()),
@@ -464,7 +463,7 @@ public class AutoRoutines {
                            new IntakeRollersOn(m_coralIntake, m_coralGripper),
                            LR4.cmd(),
                            new AutoRunToCoral(drive).withDeadline(new WaitUntilCommand(m_coralIntake::getHasCoral).withTimeout(3.0)),
-                           new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.0)   
+                           new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.5)   
                         )
                     )
 
@@ -478,7 +477,7 @@ public class AutoRoutines {
                     RetryL.cmd(),
                     new WaitCommand(0.2),
                     new AutoRunToCoral(drive).withDeadline(new WaitUntilCommand(m_coralIntake::getHasCoral).withTimeout(3.0)),
-                    new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.0)   
+                    new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.5)   
                 )), 
 
                 m_coralGripper::hasCoral),
@@ -503,7 +502,7 @@ public class AutoRoutines {
                         new IntakeRollersOn(m_coralIntake, m_coralGripper),
                         RetryL.cmd(),
                         new AutoRunToCoral(drive).withDeadline(new WaitUntilCommand(m_coralIntake::getHasCoral).withTimeout(3.0)),
-                        new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.0)   
+                        new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.5)   
                     )), 
     
                     m_coralGripper::hasCoral),
@@ -527,43 +526,37 @@ public class AutoRoutines {
         routine.active().onTrue(
             Commands.sequence(
                 //LeftToReef1.resetOdometry(),
-                m_superstructure.setTargetL3(),
-                new IntakeDeploy(m_coralIntake), 
-                RR1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                 m_superstructure.setTargetL4(),
-                new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
-                new WaitCommand(0.25),
+                RR1.cmd().alongWith(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
                 positionToPole(() -> FieldUtils.getClosestReef().leftPole, Constants.robotToReefOffset),
                 new WaitCommand(0.1),
                 new ScoreCoral(m_coralGripper),
                 new ReturnToHome(m_superstructure, m_coralIntake).alongWith(
                     Commands.sequence(
-                       new WaitUntilCommand(m_superstructure::isElevatorBelowHalf),
+                       new WaitUntilCommand(m_superstructure::armHalfScored),
                        new IntakeRollersOn(m_coralIntake, m_coralGripper),
-                       RR2.cmd()
-                    )
+                       RR2.cmd(),
+                       new AutoRunToCoral(drive).withDeadline(new WaitUntilCommand(m_coralIntake::getHasCoral).withTimeout(3.0)),
+                       new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.0)                    )
                 ),
                 
-                new WaitCommand(0.1),
-
                 new InstantCommand(() -> m_coralIntake.stopRoller()),
 
                 new ConditionalCommand(
                 //Has Coral
                 Commands.sequence(
-                    m_superstructure.setTargetL3().andThen(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
-                    RHPSR3.cmd(),
-                    m_superstructure.setTargetL4(),
-                    new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
-                    new WaitCommand(0.25),
+                    m_superstructure.setTargetL4().andThen(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake))
+                    .alongWith(RHPSR3.cmd()),
                     positionToPole(() -> FieldUtils.getClosestReef().rightPole, Constants.robotToReefOffset),
                     new WaitCommand(0.1),
                     new ScoreCoral(m_coralGripper),
                     new ReturnToHome(m_superstructure, m_coralIntake).alongWith(
                         Commands.sequence(
-                           new WaitUntilCommand(m_superstructure::isElevatorBelowHalf),
+                           new WaitUntilCommand(m_superstructure::armHalfScored),
                            new IntakeRollersOn(m_coralIntake, m_coralGripper),
-                           RR4.cmd()
+                           RR4.cmd(),
+                           new AutoRunToCoral(drive).withDeadline(new WaitUntilCommand(m_coralIntake::getHasCoral).withTimeout(3.0)),
+                           new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.0)   
                         )
                     )
 
@@ -575,22 +568,20 @@ public class AutoRoutines {
                 Commands.sequence(
                     new IntakeRollersOn(m_coralIntake, m_coralGripper),
                     RetryR.cmd(),
-                    new WaitCommand(0.2)
+                    new WaitCommand(0.2),
+                    new AutoRunToCoral(drive).withDeadline(new WaitUntilCommand(m_coralIntake::getHasCoral).withTimeout(3.0)),
+                    new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.0)   
                 )), 
 
                 m_coralGripper::hasCoral),
 
-                new WaitCommand(0.1),
                 new InstantCommand(() -> m_coralIntake.stopRoller()),
 
                 new ConditionalCommand(
                     //Has Coral
                     Commands.sequence(
-                        m_superstructure.setTargetL3().andThen(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake)),
-                        RHPSR5.cmd(),
-                        m_superstructure.setTargetL4(),
-                        new PrepScore(m_superstructure, m_coralGripper, m_coralIntake),
-                        new WaitCommand(0.25),
+                        m_superstructure.setTargetL4().andThen(new PrepScore(m_superstructure, m_coralGripper, m_coralIntake))
+                        .alongWith(RHPSR5.cmd()),
                         positionToPole(() -> FieldUtils.getClosestReef().leftPole, Constants.robotToReefOffset),
                         new WaitCommand(0.1),
                         new ScoreCoral(m_coralGripper),
@@ -603,7 +594,8 @@ public class AutoRoutines {
                     Commands.sequence(
                         new IntakeRollersOn(m_coralIntake, m_coralGripper),
                         RetryR.cmd(),
-                        new WaitCommand(0.2)
+                        new AutoRunToCoral(drive).withDeadline(new WaitUntilCommand(m_coralIntake::getHasCoral).withTimeout(3.0)),
+                        new WaitUntilCommand(m_coralGripper::hasCoral).withTimeout(1.0)   
                     )), 
     
                     m_coralGripper::hasCoral),
@@ -612,18 +604,6 @@ public class AutoRoutines {
 
          ) );
 
-            return routine;
-    }
-
-    public AutoRoutine WTFISBROONABTOT(){
-        final AutoRoutine routine = m_factory.newRoutine("WHYYYY");
-        final AutoTrajectory LR2 = routine.trajectory("LR+2");
-
-        routine.active().onTrue(
-            LR2.resetOdometry().andThen(LR2.cmd())
-            
-        );
-        
 
         return routine; 
     }
@@ -631,7 +611,7 @@ public class AutoRoutines {
 
     public Command positionToPole(Supplier<ReefPole> pole, double offsetMeters){
         return new DriveToPoseCommand(drive, 
-        () -> PoseUtils.getPerpendicularOffsetPose(pole.get().getPose(), offsetMeters)).withTimeout(1.0);
+        () -> PoseUtils.getPerpendicularOffsetPose(pole.get().getPose(), offsetMeters)).withTimeout(1.25);
     }
     
    

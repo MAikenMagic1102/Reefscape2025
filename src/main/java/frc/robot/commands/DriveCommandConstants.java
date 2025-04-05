@@ -8,10 +8,10 @@ import edu.wpi.first.math.util.Units;
 public class DriveCommandConstants {
   public static ProfiledPIDController makeAngleController() {
     ProfiledPIDController angleController =
-        new ProfiledPIDController(4.5, 0.0, 0.4, new TrapezoidProfile.Constraints(8.0, 20.0));
+        new ProfiledPIDController(4.5, 0.0, 0.4, new TrapezoidProfile.Constraints(8.0, 15.0));
 
     angleController.enableContinuousInput(-Math.PI, Math.PI);
-    angleController.setTolerance(Units.degreesToRadians(1));
+    angleController.setTolerance(Units.degreesToRadians(1.25));
 
     return angleController;
   }
